@@ -2038,6 +2038,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
         else { if (Math.abs(p.x) < MB.x + .3) pts.push([side, edge(p.z)]); pts.push([side, gz]); }
         pts.push([x, gz], [x, z]); return pts;
       }
+      var c0 = { x: x, z: z }; clampPos(c0, false); x = c0.x; z = c0.z;        /* a spot inside a pillar or a person becomes the nearest free spot beside it */
       if (crosses(p.x, p.z, x, z) || onMats(x, z)) {
         if (onMats(x, z)) { var c = { x: x, z: z }; if (MB.x - Math.abs(x) < Math.min(z - MB.z0, MB.z1 - z)) c.x = Math.sign(x || 1) * (MB.x + .3); else c.z = z - MB.z0 < MB.z1 - z ? MB.z0 - .3 : MB.z1 + .3; x = c.x; z = c.z; }
         if (crosses(p.x, p.z, x, z)) { if (Math.abs(p.x) < MB.x + .3 && !onMats(p.x, p.z)) pts.push([side, edge(p.z)]); pts.push([side, edge(z)]); }
@@ -2049,7 +2050,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     function detour(ax, az, bx, bz) {                                 /* if something stands on the straight line, a point just beside it to pass by */
       var best = null, bu = 2, all = solids.concat(sitters.map(function (q) { return [q.x, q.z, .68]; })), dx = bx - ax, dz = bz - az, L = dx * dx + dz * dz; if (L < .04) return null;
       for (var i = 0; i < all.length; i++) { var c = all[i], u = ((c[0] - ax) * dx + (c[1] - az) * dz) / L; if (u <= .03 || u >= .97 || u >= bu) continue;
-        var ox = ax + dx * u - c[0], oz = az + dz * u - c[1], dd = Math.sqrt(ox * ox + oz * oz); if (dd >= c[2] - .03) continue; var ex = bx - c[0], ez = bz - c[1]; if (ex * ex + ez * ez < c[2] * c[2]) continue;
+        var ox = ax + dx * u - c[0], oz = az + dz * u - c[1], dd = Math.sqrt(ox * ox + oz * oz); if (dd >= c[2] - .03) continue; var ex = bx - c[0], ez = bz - c[1]; if (ex * ex + ez * ez < (c[2] - .06) * (c[2] - .06)) continue;
         if (dd < .01) { var l = Math.sqrt(L); ox = -dz / l; oz = dx / l; dd = 1; } bu = u; best = [c[0] + ox / dd * (c[2] + .34), c[1] + oz / dd * (c[2] + .34)]; }
       return best;
     }
