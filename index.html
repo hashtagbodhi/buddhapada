@@ -796,6 +796,12 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
 .nv-logo img { width: 132px; margin: 8px 0 2px 0; }
 .ios .bk-err, .ios-f.bad, .bk-err { color: #ffa08e; }
 .ios .bk-bar { background: rgba(38, 28, 21, .97); } .nav-card { color-scheme: dark; }
+/* phones: fields are 16px so the browser never zooms in on focus; the menu card follows the visible area while the keyboard is up */
+.nav-card input, .nav-card select, .nav-card textarea, .ios .ios-date { font-size: 16px !important; }
+html, body { overscroll-behavior: none; }
+.nav-card { top: calc(10px + env(safe-area-inset-top, 0px) + var(--vo, 0px)); bottom: calc(10px + env(safe-area-inset-bottom, 0px) + var(--kb, 0px)); }
+@media (min-width: 760px) { .nav-card { top: calc(16px + var(--vo, 0px)); bottom: calc(16px + var(--kb, 0px)); } }
+body.kb .ios .bk-bar { position: static; margin-bottom: 0; }
 </style>
 
 <div id="app" class="outside">
@@ -1213,6 +1219,14 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
       leave: function () { var a = ready(); if (!a) return; bell(ROOT * 1.5, .012, .1, 6); bell(ROOT, .013, 1.5, 8); on = false; bus.gain.setTargetAtTime(0, a.currentTime + 3.5, 1.6); },
       rise: function () { var a = ready(); if (!a) return; swell([ROOT / 2, ROOT * .75, ROOT * 1.25, ROOT * 1.5], .0058, 1.2, 15); bell(ROOT * 2, .009, 3, 8); }
     };
+  })();
+  /* the on-screen keyboard: keep the card inside what is actually visible, bring the field into view, and put everything back afterwards */
+  (function () {
+    var vv = window.visualViewport, root = document.documentElement;
+    function fit() { if (!vv) return; var kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop); root.style.setProperty("--kb", (kb > 80 ? kb : 0) + "px"); root.style.setProperty("--vo", Math.max(0, vv.offsetTop) + "px"); document.body.classList.toggle("kb", kb > 80); }
+    if (vv) { vv.addEventListener("resize", fit); vv.addEventListener("scroll", fit); }
+    document.addEventListener("focusin", function (e) { var t = e.target; if (!t || !t.closest || !t.closest(".nav-card") || !/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return; setTimeout(function () { fit(); try { t.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (er) {} }, 320); });
+    document.addEventListener("focusout", function () { setTimeout(function () { var a = document.activeElement; if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return; window.scrollTo(0, 0); root.scrollTop = 0; document.body.scrollTop = 0; fit(); }, 120); });
   })();
   var SFX = (function () {
     var ui = null, last = {};
@@ -2552,28 +2566,28 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     if (left <= 0) finishSit(false);
   }
   var EVENTS = [
-    { id: 1, kind: "music", title: "The Resonance Within", sub: "A journey into Banaras Gayaki & Naad Sadhana", start: "2026-11-23", end: "2026-11-27", fac: "Pandit Prosenjit Chakraborty", gift: "Offered by donation",
+    { id: 1, kind: "music", title: "The Resonance Within", sub: "A journey into Banaras Gayaki & Naad Sadhana", start: "2026-11-23", end: "2026-11-27", fac: "Pandit Prosenjit Chakraborty", gift: "Teachings by donation · room and meals at actuals",
       body: [["", "A five-day residential workshop rooted in Naad Brahma, sound as the divine. Pandit Prosenjit Chakraborty brings the music of the Banaras Gharana together with mindfulness, meditation and the Guru–Shishya tradition, so that music becomes a way inward: from Naad to Nirvana."],
         ["The days", "Each day moves through a morning session (9 am – 12), an afternoon session (2 – 4 pm) and an evening musical satsang (7 – 9 pm). The five days unfold as Awakening through Sound, The Language of the Raga, Music as Inner Expression, Refinement and Presence, and a closing Celebration of the Journey, with raga and bandish, tabla and harmonium practice, riyaz and a final recital."],
         ["What you carry home", "The philosophical roots of Naad, a feel for the aesthetics of the Banaras Gharana, a mindful riyaz practice, and a sense of music as meditation that can live in everyday life."],
         ["The teacher", "Pandit Prosenjit Chakraborty is a Hindustani classical vocalist of the Banaras Gharana and a disciple of Pandit Rajan Mishra, Pandit Sajan Mishra and Pandit Mohanlal Mishra."]] },
-    { id: 2, kind: "retreat", title: "From Wisdom to Experience", sub: "Buddhist philosophy & meditation, in Nepali", start: "2026-11-28", end: "2026-11-29", fac: "Lotsawa Punya Prasad Parajuli & Arun Poudel", gift: "Offered by donation",
+    { id: 2, kind: "retreat", title: "From Wisdom to Experience", sub: "Buddhist philosophy & meditation, in Nepali", start: "2026-11-28", end: "2026-11-29", fac: "Lotsawa Punya Prasad Parajuli & Arun Poudel", gift: "Teachings by donation · room and meals at actuals",
       body: [["", "A two-day retreat that joins study with practice. Lotsawa Punya Prasad Parajuli opens the Buddhist path: the Four Noble Truths, the Three Yanas, the Bodhisattva path of bodhicitta and the six paramitas, and the foundations of Vajrayana. Arun Poudel guides meditation drawn from the teachings of Yongey Mingyur Rinpoche: breath, body sensations, Awareness Yoga and walking meditation, and how to carry it all into daily life."],
         ["The days", "Both days run from 8:30 am to 5 pm in ninety-minute sessions, with lunch, short breaks and a daily time for questions. Sessions are in Nepali and suit beginners and experienced practitioners alike."],
         ["The teachers", "Punya Prasad Parajuli is a Buddhist scholar who has translated more than sixty sadhana texts. Arun Poudel is a licensed teacher of Anytime Anywhere Meditation."]] },
-    { id: 3, kind: "art", title: "Vedic Chanting & Drawing Life", sub: "Two parallel workshops, seen & unseen", start: "2026-11-30", end: "2026-12-04", fac: "Nicola Durvasula", gift: "Offered by donation",
+    { id: 3, kind: "art", title: "Vedic Chanting & Drawing Life", sub: "Two parallel workshops, seen & unseen", start: "2026-11-30", end: "2026-12-04", fac: "Nicola Durvasula", gift: "Teachings by donation · room and meals at actuals",
       body: [["", "Five days and two workshops running side by side: one structured and exacting, one free-flowing and creative."],
         ["Vedic Chanting", "An introduction to recitation as it is taught by pandits in South India: its rules, short chants and the Bhū Gāyatrī mantra, learned from texts in Devanāgarī with English transliteration and colour-coded pronunciation."],
         ["Drawing Life", "Observational and memory drawing, mark-making, tone and landscape, with the act of drawing itself held as meditation. Sessions are in English and open to beginners and experienced practitioners."],
         ["The teacher", "Nicola Durvasula is a UK-based artist who has lived in Hyderabad. She holds an MA in Fine Art, has tutored at the Royal Drawing School, and trained in Vedic chanting through INDICA's Veda Studies programme."]] },
-    { id: 4, kind: "retreat", title: "Teachings and Practices for Turbulent Times", sub: "A ten-day intensive meditation retreat", start: "2027-01-07", end: "2027-01-16", fac: "June Crow & Tashi Colman", gift: "Offered by donation",
+    { id: 4, kind: "retreat", title: "Teachings and Practices for Turbulent Times", sub: "A ten-day intensive meditation retreat", start: "2027-01-07", end: "2027-01-16", fac: "June Crow & Tashi Colman", gift: "Teachings by donation · room and meals at actuals",
       body: [["", "A ten-day intensive held within the precinct of Buddha Pāda, built on three streams of teaching from Chögyam Trungpa Rinpoche: shamatha-vipashyana meditation, the Sadhana of Mahamudra, and the Shambhala teachings."],
         ["The days", "Several hours each day of sitting and walking meditation, the sadhana and daily chants, recorded teachings, discussion groups and individual meetings with the instructors, with two full days of silence and mindful speech throughout. Full attendance for all ten days and all four daily sessions is required."],
         ["The teachers", "June Crow studied with Suzuki Roshi and Chögyam Trungpa Rinpoche and has trained meditation instructors in India. Tashi Colman, a former secretary to Dzongsar Khyentse Rinpoche, is the author of What Really Counts."]] },
-    { id: 5, kind: "workshop", title: "Subject to Change", sub: "Exploring impermanence and how we relate to it", start: "2027-02-03", end: "2027-02-07", fac: "Dr. Nivedita Chalill", gift: "Offered by donation",
+    { id: 5, kind: "workshop", title: "Subject to Change", sub: "Exploring impermanence and how we relate to it", start: "2027-02-03", end: "2027-02-07", fac: "Dr. Nivedita Chalill", gift: "Teachings by donation · room and meals at actuals",
       body: [["", "A five-day experiential retreat that meets impermanence not as an abstract idea, but as a reality we encounter every day. The days move between contemplative practice, guided reflection, experiential exercises and open conversation."],
         ["The teacher", "Dr. Nivedita Chalill is a counsellor and arts-based therapist working in Mumbai and Dubai and the founder of ARTH, with more than twenty-five years in mental health. She holds a PhD and MPhil in Social Work from TISS and teaches Applied Buddhist Psychology."]] },
-    { id: 6, kind: "retreat", title: "Meditation & Self Care", sub: "A winter retreat", start: "2027-02-09", end: "2027-02-15", fac: "Michelle Faye Pereira", gift: "Offered by donation",
+    { id: 6, kind: "retreat", title: "Meditation & Self Care", sub: "A winter retreat", start: "2027-02-09", end: "2027-02-15", fac: "Michelle Faye Pereira", gift: "Teachings by donation · room and meals at actuals",
       body: [["", "A week of quiet time in the lap of nature: four days in noble silence and three days where speaking is allowed. Open to everyone; no prior meditation experience is needed."],
         ["The practice", "Sitting, movement and tea meditation, breath-work and somatic movement, stream-of-consciousness journalling and deep-listening circles, with free time, an outing, and a rest from phones and social media."],
         ["The days", "Mornings begin at 6 am with movement and breath-work, then guided meditation, prayers and kirtan before breakfast. Late mornings are held in silent meditation, afternoons in self-care and inner listening, and the day closes with a night practice before rest at 8:30 pm. The retreat opens with an orientation at 4:30 pm on 9 February and closes at 4:30 pm on 15 February."],
@@ -2581,7 +2595,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     { id: 7, kind: "retreat", title: "The Joy of Living I, II & III", sub: "A month-long residential retreat", start: "2027-04-11", end: "2027-05-08", fac: "Kunsang Palmo & George Hughes", gift: "",
       body: [["", "A month-long residential retreat on the Joy of Living teachings with senior Tergar facilitators Kunsang Palmo and George Hughes, held in collaboration with the Tergar Nalanda Foundation."],
         ["", "Further details will be shared soon. Write to us to hear first."]] },
-    { id: 9, kind: "retreat", title: "The Weave of Wholeness 2", sub: "Deepening practice & reflection", start: "2027-03-23", end: "2027-03-29", fac: "Dr Yamuna", gift: "Offered by donation", res: true,
+    { id: 9, kind: "retreat", title: "The Weave of Wholeness 2", sub: "Deepening practice & reflection", start: "2027-03-23", end: "2027-03-29", fac: "Dr Yamuna", gift: "Teachings by donation · room and meals at actuals", res: true,
       body: [["", "A six-day immersive wellness programme weaving holistic therapies with embodied wisdom for balanced living. A second chapter of the Weave of Wholeness retreat, it returns to Clinical Somatics, myofascial roll and release, and deep Yin restoration for body, nervous system and mind, and is open to returning and new retreatants alike."],
         ["The practice", "Somatic pandiculation, breathing practices, self-massage and acupressure along the myofascial lines, yoga therapy and partner-assisted release, somatic experiencing for nervous-system regulation, Yin therapy and guided yoga nidra, with journalling, drawing, reflection and sharing, mindful walks and song circles."],
         ["The days", "Arrive and check in before 5 pm on 23 March, for dinner, orientation and a welcome circle. Full days begin at 6:30 am with somatic practice and move through morning and afternoon workshops, a sunset walk and song gathering, and evening Yin therapy and nidra, with mindful silence from 9 pm to 8:30 am. The retreat closes on 29 March with a morning practice, a closing circle and lunch."],
@@ -2679,8 +2693,8 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       ["h", "Halls"],
       ["p", "One prayer hall and three teaching halls, the dojo, hold from 50 to 400 people, with workshop and studio spaces and three classrooms for smaller groups of about twenty."],
       ["h", "Staying here"],
-      ["facts", [["bed", "48 rooms", "3 suites, 7 singles with bathroom, 5 doubles and 33 singles sharing bathrooms"], ["gift", "By contribution", "Residents give toward running costs; stays are at the discretion of the Institute"], ["bowl", "Vegetarian meals", "Breakfast 8 am · lunch 12 noon · dinner 6 pm"]]],
-      ["p", "Buddha Pāda is a non-profit. Teachings, rooms and meals are offered by donation."],
+      ["facts", [["bed", "48 rooms", "3 suites, 7 singles with bathroom, 5 doubles and 33 singles sharing bathrooms"], ["gift", "Room and meals at actuals", "Residents pay the actual cost of their room and meals; stays are at the discretion of the Institute"], ["bowl", "Vegetarian meals", "Breakfast 8 am · lunch 12 noon · dinner 6 pm"]]],
+      ["p", "Buddha Pāda is a non-profit. Teachings are offered by donation; rooms and meals are charged at actuals."],
       ["p", "Rooms are for registered students and programme participants, and for those on retreat or working quietly from here. Clean sheets, blankets and pillows are provided; please bring your own towel, toiletries and water bottle. Filtered water is free all day, and laundry is available for a small charge."],
       ["p", "Meals are vegetarian, though not vegan, and are cooked only for booked guests. To join a meal, write your name in the meal register a few hours before. A Japanese tea room, a library and a theatre are on the way."],
       ["cta", "To stay at Buddha Pāda, write to us with your dates.", "Stay at Buddha Pāda"]] },
@@ -2733,7 +2747,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       ["faq", [["How do I register?", "Open the programme under Upcoming Programs and choose Register. Tell us your dates, how many of you are coming and the room you would like. We reply by email to confirm."],
         ["Do I need any experience?", "Each programme page says who it is for. If you are not sure whether a programme suits you, ask us before you register."],
         ["Can I come just for the day?", "Please write to us first, so we know to expect you. If you would like to eat with us, write your name in the meal register a few hours before the meal."],
-        ["What does it cost?", "Buddha Pāda is a non-profit and runs on donations. The teachings, rooms and meals are offered by donation; there is no fixed price."]]],
+        ["What does it cost?", "Buddha Pāda is a non-profit. The teachings are offered by donation. Rooms and meals are charged at actuals, and we confirm the amount by email when we reply to your registration."]]],
       ["h", "Staying"],
       ["faq", [["What rooms are there?", "There are 48 rooms: 3 suites, 7 singles with their own bathroom, 5 doubles, and 33 singles sharing bathrooms."],
         ["What is provided, and what should I bring?", "Clean sheets, blankets and pillows are provided. Please bring your own towel, toiletries and a water bottle, and warm layers for the hill evenings."],
@@ -2825,7 +2839,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     var h = '<div class="art"><img class="hero" decoding="async" src="img/ev/h' + e.id + '.jpg" alt=""><p class="eyebrow">' + KIND_NAME[e.kind] + '</p><h2 class="nv-title">' + esc(e.title) + '</h2><p class="sub">' + esc(e.sub) + "</p>" +
       block(["facts", [["cal", range(e, true)], ["who", e.fac], ["pin", "Buddha Pāda, Kalimpong"]].concat(e.gift ? [["gift", e.gift]] : [])]);
     if (SECT[e.id]) h += fullBody(e.id); else e.body.forEach(function (s) { if (s[0]) h += "<h3>" + esc(s[0]) + "</h3>"; h += '<p class="t">' + esc(s[1]) + "</p>"; });
-    h += '<div class="cta"><p>Register and tell us which room you would prefer. Buddha Pāda is a non-profit and everything is offered by donation.</p><button class="cta-b" data-book="' + e.id + '">Register</button><a class="cta-l" href="mailto:' + MAIL + "?subject=" + encodeURIComponent("Enquiry: " + e.title + " (" + range(e) + ")") + '">or ask a question</a><button class="cta-l" data-go="faq" style="margin-top:2px">Frequently asked questions</button></div></div>';
+    h += '<div class="cta"><p>Register and tell us which room you would prefer. Teachings are offered by donation; room and meals are charged at actuals.</p><button class="cta-b" data-book="' + e.id + '">Register</button><a class="cta-l" href="mailto:' + MAIL + "?subject=" + encodeURIComponent("Enquiry: " + e.title + " (" + range(e) + ")") + '">or ask a question</a><button class="cta-l" data-go="faq" style="margin-top:2px">Frequently asked questions</button></div></div>';
     return { title: e.title, html: h };
   }
   /* ---------- booking: a request form inside the same sheet. Rooms come from the Facilities page; rates are filled in when the centre publishes them ---------- */
@@ -2862,7 +2876,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       '<p class="ios-h">Have You Been Here Before?</p><div class="ios-seg" role="radiogroup" aria-label="Attended a programme here before" id="bk-before"><label><input type="radio" name="before" value="first"><span>First Time</span></label><label><input type="radio" name="before" value="yes"><span>Yes, I Have</span></label></div>' +
       '<p class="ios-h">Notes</p><div class="ios-g"><textarea name="note" rows="3" placeholder="Arrival time, health or food needs, questions"></textarea></div><p class="ios-f">Optional.</p></section>' +
       '<section class="bk-pane" data-s="2" hidden><p class="ios-h">Your Request</p><div class="ios-g" id="bk-sum" aria-live="polite"></div><p class="ios-h">Your Details</p><div class="ios-g" id="bk-me"></div>' +
-      '<p class="ios-h">What Happens Next</p><div class="ios-g"><div class="ios-r num"><i>1</i><span>You send this request to ' + MAIL + ' from your own email.</span></div><div class="ios-r num"><i>2</i><span>We reply to confirm your place and your room.</span></div><div class="ios-r num"><i>3</i><span>Nothing is charged. Buddha Pāda is a non-profit and runs on donations.</span></div></div>' +
+      '<p class="ios-h">What Happens Next</p><div class="ios-g"><div class="ios-r num"><i>1</i><span>You send this request to ' + MAIL + ' from your own email.</span></div><div class="ios-r num"><i>2</i><span>We reply to confirm your place and your room.</span></div><div class="ios-r num"><i>3</i><span>Teachings are by donation. Room and meals are charged at actuals, which we confirm by email.</span></div></div>' +
       '<p class="ios-h">Good to Know</p><div class="ios-g faq">' + pick.map(function (q) { return "<details><summary><span>" + esc(q[0]) + "</span>" + CH + "</summary><p>" + esc(q[1]) + "</p></details>"; }).join("") + '<button type="button" class="ios-r link" data-go="faq"><span>All Questions</span>' + CH + "</button></div></section>" +
       '<p class="bk-err" id="bk-err" role="alert"></p>' +
       '<div class="bk-bar"><div class="bk-est"><small id="bk-el">Your stay</small><b id="bk-ev"></b></div><button type="button" class="bk-back" id="bk-back">Back</button><button class="cta-b" type="submit" id="bk-go">Continue</button></div></form>';
@@ -2886,7 +2900,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       function sum() {
         var r = room(), n = nights(), need = r.two ? Math.ceil(guests / 2) : guests, total = r.rate * n * need, okDates = v("in") && v("out") && pd(v("out")) >= pd(v("in"));
         var rows = [["Programme", esc(e.title)], ["Dates", okDates ? range({ start: v("in"), end: v("out") }) + " · " + n + (n === 1 ? " night" : " nights") : "—"], ["Guests", guests],
-          ["Room", r.name + (need > 1 ? " × " + need : "") + " <small>" + r.detail + "</small>"], ["Meals", "Vegetarian <small>join by the meal register</small>"], ["Contribution", "By donation"]];
+          ["Room", r.name + (need > 1 ? " × " + need : "") + " <small>" + r.detail + "</small>"], ["Meals", "Vegetarian <small>join by the meal register</small>"], ["Teachings", "By donation"], ["Room and meals", "At actuals"]];
         q("#bk-sum").innerHTML = rows.map(function (x) { return '<div class="ios-r sum"><span>' + x[0] + "</span><b>" + x[1] + "</b></div>"; }).join("");
         var me = details(); q("#bk-me").innerHTML = me.map(function (x) { return '<div class="ios-r sum"><span>' + x[0] + "</span><b>" + esc(x[1]) + "</b></div>"; }).join("");
         q("#bk-n").textContent = !okDates ? "Please check the dates." : n === 0 ? "A day visit, no night's stay." : n + (n === 1 ? " night" : " nights") + (v("in") === e.start && v("out") === e.end ? " · the whole programme" : "");
