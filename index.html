@@ -629,6 +629,15 @@ p, li, .faq p, .bk-meal p, .bk-what li { text-wrap: pretty; }
 .m-win { display: flex; gap: 6px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x; overscroll-behavior: contain; } .m-win::-webkit-scrollbar { display: none; }
 #p-mala .m-win .chip { flex: 0 0 calc((100% - 12px) / 3); min-width: 0; min-height: 40px; padding: 4px 6px; font-size: 12px; line-height: 1.15; white-space: normal; scroll-snap-align: center; text-wrap: balance; }
 .mantra.long .m-bo { font-size: 16px; line-height: 1.45; } .mantra.long .m-en { font-size: 14px; line-height: 1.3; }
+/* the mala: the hall dims so the mantra can be read; long mantras show one script at a time */
+body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
+#p-mala .m-en { font-size: clamp(21px, 5.8vw, 26px); line-height: 1.25; font-weight: 500; letter-spacing: .01em; text-wrap: balance; }
+#p-mala .m-bo { margin-top: 8px; font-size: clamp(21px, 5.8vw, 26px); line-height: 1.5; text-wrap: balance; }
+#p-mala .mantra { display: flex; flex-direction: column; align-items: center; text-shadow: 0 1px 10px rgba(0, 0, 0, .6); } #p-mala .m-en { order: 1; } #p-mala .m-bo { order: 2; } #p-mala .m-of { order: 3; margin-top: 10px; color: rgba(255, 255, 255, .8); } #p-mala .m-sw { order: 4; }
+#p-mala .mantra.long .m-en { font-size: clamp(19px, 5.2vw, 23px); line-height: 1.28; } #p-mala .mantra.long .m-bo { display: none; font-size: clamp(19px, 5.2vw, 23px); line-height: 1.55; margin-top: 0; }
+#p-mala .mantra.long.alt .m-bo { display: block; } #p-mala .mantra.long.alt .m-en { display: none; }
+.m-sw { min-height: 36px; margin-top: 2px; padding: 0 6px; font-size: 12px; color: rgba(255, 255, 255, .85); text-decoration: underline; text-underline-offset: 3px; }
+#p-mala .mantra { padding: 0 30px; box-sizing: border-box; width: 100%; }
 </style>
 
 <div id="app" class="outside">
@@ -723,7 +732,7 @@ p, li, .faq p, .bk-meal p, .bk-what li { text-wrap: pretty; }
   <div class="panel" id="p-mala" hidden>
     <div class="sheet glass deep">
       <button class="x" data-close aria-label="Close">×</button>
-      <div class="mantra" id="mantra"><p class="m-bo" id="m-bo" lang="bo"></p><p class="m-en" id="m-en"></p><p class="m-of" id="m-of"></p></div>
+      <div class="mantra" id="mantra"><p class="m-bo" id="m-bo" lang="bo"></p><p class="m-en" id="m-en"></p><p class="m-of" id="m-of"></p><button type="button" class="m-sw" id="m-sw" hidden></button></div>
       <div class="enso"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="track" cx="60" cy="60" r="52"/><g class="q"><path d="M60 5v6M115 60h-6M60 115v-6M5 60h6"/></g><circle class="ink" id="enso-ink" cx="60" cy="60" r="52"/></svg><div class="n"><span id="count">0</span><small>of 108</small></div></div>
       <p id="rounds"></p>
       <canvas id="mala-cv" tabindex="0" role="button" aria-describedby="mala-hint"></canvas>
@@ -2120,6 +2129,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     { k: "gate", n: "Heart Sutra", of: "Mantra of the Perfection of Wisdom", bo: "ཏདྱ་ཐཱ། ཨོཾ་ག་ཏེ་ག་ཏེ་པཱ་ར་ག་ཏེ་པཱ་ར་སཾ་ག་ཏེ་བོ་དྷི་སྭཱ་ཧཱ།", en: "Tayata Om Gate Gate Paragate Parasamgate Bodhi Soha" }
   ], mantra = store.get("bp-mantra", "guru"); if (!MANTRAS.some(function (m) { return m.k === mantra; })) mantra = "guru";
   MANTRAS.forEach(function (m) { var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = m.n; b.dataset.k = m.k; b.onclick = function () { mantra = m.k; store.set("bp-mantra", mantra); paintMala(); mShow(true); SFX.tap(); }; $("m-chips").appendChild(b); });
+  $("m-sw").onclick = function () { $("mantra").classList.toggle("alt"); SFX.tap(); paintMala(); };
   function mShow(smooth) { var c = document.querySelector('#m-chips .chip[data-k="' + mantra + '"]'), w = $("m-chips"); if (c) try { w.scrollTo({ left: c.offsetLeft - (w.clientWidth - c.offsetWidth) / 2, behavior: smooth ? "smooth" : "auto" }); } catch (e) { w.scrollLeft = c.offsetLeft; } }
   function mStep(d) { var i = 0; MANTRAS.forEach(function (m, j) { if (m.k === mantra) i = j; }); i = (i + d + MANTRAS.length) % MANTRAS.length; mantra = MANTRAS[i].k; store.set("bp-mantra", mantra); paintMala(); mShow(true); SFX.tap(); }
   $("m-prev").onclick = function () { mStep(-1); }; $("m-next").onclick = function () { mStep(1); };
@@ -2155,7 +2165,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   function paintMala() {
     $("count").textContent = count; var len = 2 * Math.PI * 52, ink = $("enso-ink");
     ink.style.strokeDasharray = len; ink.style.strokeDashoffset = len * (1 - Math.max(.004, count / 108) * .965); ink.style.opacity = count ? 1 : 0;
-    var M = MANTRAS.filter(function (m) { return m.k === mantra; })[0]; $("m-bo").textContent = M.bo; $("m-en").textContent = M.en; $("m-of").textContent = M.of || "Mantra of " + M.n; $("mantra").classList.toggle("long", M.en.length > 44);
+    var M = MANTRAS.filter(function (m) { return m.k === mantra; })[0]; $("m-bo").textContent = M.bo; $("m-en").textContent = M.en; $("m-of").textContent = M.of || "Mantra of " + M.n; var lg = M.en.length > 44; $("mantra").classList.toggle("long", lg); if (!lg) $("mantra").classList.remove("alt"); $("m-sw").hidden = !lg; $("m-sw").textContent = $("mantra").classList.contains("alt") ? "Show in roman letters" : "Show in Tibetan";
     document.querySelectorAll("#m-chips .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.k === mantra ? "true" : "false"); });
     document.querySelector("#p-mala .enso").classList.toggle("done", count >= 108);
     $("rounds").textContent = rounds ? t("rounds", rounds) : ""; $("mala-hint").textContent = t(count >= 108 ? "malaDone" : "malaHint"); drawMala();
