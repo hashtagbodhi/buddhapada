@@ -623,6 +623,12 @@ p, li, .faq p, .bk-meal p, .bk-what li { text-wrap: pretty; }
 .rm figcaption { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; margin-top: 10px; font-size: 13px; color: var(--ink-2); } .rm figcaption b { font-size: 15px; color: var(--ink); } .rm figcaption span { grid-column: 1; } .rm figcaption em { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-style: normal; font-size: 15px; font-weight: 600; color: var(--ink); } .rm figcaption small { font-size: 11px; font-weight: 400; color: var(--ink-2); }
 .faq summary { min-height: 0; padding: 12px 16px; } .faq p { padding-bottom: 14px; }
 .gu-q.hk { font-size: clamp(22px, 6vw, 28px); line-height: 1.32; text-wrap: nowrap; }
+.m-car { display: grid; grid-template-columns: 36px minmax(0, 1fr) 36px; align-items: center; gap: 6px; width: 100%; max-width: 420px; margin: 4px auto 0; }
+.m-car > button { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); transition: transform .12s; } .m-car > button:active { transform: scale(.9); }
+.m-car svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.m-win { display: flex; gap: 6px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x; overscroll-behavior: contain; } .m-win::-webkit-scrollbar { display: none; }
+#p-mala .m-win .chip { flex: 0 0 calc((100% - 12px) / 3); min-width: 0; min-height: 40px; padding: 4px 6px; font-size: 12px; line-height: 1.15; white-space: normal; scroll-snap-align: center; text-wrap: balance; }
+.mantra.long .m-bo { font-size: 16px; line-height: 1.45; } .mantra.long .m-en { font-size: 14px; line-height: 1.3; }
 </style>
 
 <div id="app" class="outside">
@@ -722,7 +728,7 @@ p, li, .faq p, .bk-meal p, .bk-what li { text-wrap: pretty; }
       <p id="rounds"></p>
       <canvas id="mala-cv" tabindex="0" role="button" aria-describedby="mala-hint"></canvas>
       <p class="hint" id="mala-hint"></p>
-      <div class="chips" id="m-chips"></div>
+      <div class="m-car"><button type="button" id="m-prev" aria-label="Previous mantra"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></button><div class="m-win" id="m-chips"></div><button type="button" id="m-next" aria-label="Next mantra"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></div>
       <button class="m-reset" id="mala-reset" data-t="again"></button>
     </div>
   </div>
@@ -1700,7 +1706,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     }
     canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", function () { down = null; canvas.classList.remove("dragging"); });
     var keyMap = { ArrowUp: "f", w: "f", W: "f", ArrowDown: "b", s: "b", S: "b", ArrowLeft: "l", a: "l", A: "l", ArrowRight: "r", d: "r", D: "r" };
-    document.addEventListener("keydown", function (e) { if (keyMap[e.key] && !e.target.closest(".panel")) { S.keys[keyMap[e.key]] = true; e.preventDefault(); } });
+    document.addEventListener("keydown", function (e) { if (keyMap[e.key] && !e.metaKey && !e.ctrlKey && !e.altKey && !e.target.closest(".panel, .nav, .sitdone, input, textarea, select, [contenteditable]")) { S.keys[keyMap[e.key]] = true; e.preventDefault(); } });
     document.addEventListener("keyup", function (e) { if (keyMap[e.key]) S.keys[keyMap[e.key]] = false; });
 
     var solids = pillars.map(function (q) { return [q[0], q[1], .62]; }).concat([[-2.1, -D + 1.62, .5], [LS.x - .45, LS.z, .6], [LS.x + .45, LS.z, .6], [CS.x, CS.z, .5], [GURU.x, GURU.z, 1.1], [GURU.x + Math.sin(GURU.ry) * 1.02, GURU.z + Math.cos(GURU.ry) * 1.02, .45]]);
@@ -2008,7 +2014,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   /* sheets follow the finger and can be flicked away */
   document.querySelectorAll(".sheet").forEach(function (sh) {
     var st = null;
-    sh.addEventListener("pointerdown", function (e) { if (e.target.closest("button, canvas, input, label, .rite-stage")) return; st = { y: e.clientY, t: e.timeStamp, dy: 0, v: 0 }; sh.style.transition = "none"; try { sh.setPointerCapture(e.pointerId); } catch (er) {} });
+    sh.addEventListener("pointerdown", function (e) { if (e.target.closest("button, canvas, input, label, .rite-stage, .m-win")) return; st = { y: e.clientY, t: e.timeStamp, dy: 0, v: 0 }; sh.style.transition = "none"; try { sh.setPointerCapture(e.pointerId); } catch (er) {} });
     sh.addEventListener("pointermove", function (e) {
       if (!st) return; var dy = e.clientY - st.y, dt = Math.max(1, e.timeStamp - st.t); st.v = (dy - st.dy) / dt * 1000; st.dy = dy; st.t = e.timeStamp;
       sh.style.transform = "translateY(" + (dy > 0 ? dy : dy * 300 * .55 / (300 + .55 * Math.abs(dy))) + "px)";
@@ -2100,12 +2106,26 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
 
   /* ---------- mala: rosewood beads on an arc, pulled one at a time under the marker ---------- */
   var count = Math.min(108, parseInt(store.get("bp-mala", "0"), 10) || 0), rounds = parseInt(store.get("bp-rounds", "0"), 10) || 0;
-  var MANTRAS = [
+  var MANTRAS = [                                                     /* the mantras most often recited on a mala in the Tibetan tradition */
     { k: "guru", n: "Guru Rinpoche", bo: "ཨོཾ་ཨཱཿཧཱུྃ་བཛྲ་གུ་རུ་པདྨ་སིདྡྷི་ཧཱུྃ།", en: "Om Ah Hum Vajra Guru Padma Siddhi Hum" },
     { k: "mani", n: "Chenrezig", bo: "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ།", en: "Om Mani Padme Hum" },
-    { k: "tara", n: "Tara", bo: "ཨོཾ་ཏཱ་རེ་ཏུཏྟཱ་རེ་ཏུ་རེ་སྭཱ་ཧཱ།", en: "Om Tare Tuttare Ture Soha" }
+    { k: "tara", n: "Green Tara", bo: "ཨོཾ་ཏཱ་རེ་ཏུཏྟཱ་རེ་ཏུ་རེ་སྭཱ་ཧཱ།", en: "Om Tare Tuttare Ture Soha" },
+    { k: "muni", n: "Shakyamuni", of: "Mantra of Buddha Shakyamuni", bo: "ཨོཾ་མུ་ནི་མུ་ནི་མ་ཧཱ་མུ་ན་ཡེ་སྭཱ་ཧཱ།", en: "Om Muni Muni Maha Muniye Soha" },
+    { k: "manju", n: "Manjushri", bo: "ཨོཾ་ཨ་ར་པ་ཙ་ན་དྷཱིཿ", en: "Om Ah Ra Pa Tsa Na Dhi" },
+    { k: "men", n: "Medicine Buddha", of: "Mantra of the Medicine Buddha", bo: "ཏདྱ་ཐཱ། ཨོཾ་བྷཻ་ཥ་ཛྱེ་བྷཻ་ཥ་ཛྱེ་མ་ཧཱ་བྷཻ་ཥ་ཛྱེ་རཱ་ཛ་ས་མུདྒ་ཏེ་སྭཱ་ཧཱ།", en: "Tayata Om Bekandze Bekandze Maha Bekandze Radza Samudgate Soha" },
+    { k: "sattva", n: "Vajrasattva", bo: "ཨོཾ་བཛྲ་སཏྭ་ཧཱུྃ།", en: "Om Vajrasattva Hum" },
+    { k: "ami", n: "Amitabha", bo: "ཨོཾ་ཨ་མི་དྷེ་ཝ་ཧྲཱིཿ", en: "Om Ami Dewa Hrih" },
+    { k: "wtara", n: "White Tara", bo: "ཨོཾ་ཏཱ་རེ་ཏུཏྟཱ་རེ་ཏུ་རེ་མ་མ་ཨཱ་ཡུཿཔུ་ཎྱེ་ཛྙཱ་ན་པུཥྚིཾ་ཀུ་རུ་སྭཱ་ཧཱ།", en: "Om Tare Tuttare Ture Mama Ayur Punye Jnana Pushtim Kuru Soha" },
+    { k: "oah", n: "Om Ah Hum", of: "The three syllables: body, speech and mind", bo: "ཨོཾ་ཨཱཿཧཱུྃ།", en: "Om Ah Hum" },
+    { k: "gate", n: "Heart Sutra", of: "Mantra of the Perfection of Wisdom", bo: "ཏདྱ་ཐཱ། ཨོཾ་ག་ཏེ་ག་ཏེ་པཱ་ར་ག་ཏེ་པཱ་ར་སཾ་ག་ཏེ་བོ་དྷི་སྭཱ་ཧཱ།", en: "Tayata Om Gate Gate Paragate Parasamgate Bodhi Soha" }
   ], mantra = store.get("bp-mantra", "guru"); if (!MANTRAS.some(function (m) { return m.k === mantra; })) mantra = "guru";
-  MANTRAS.forEach(function (m) { var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = m.n; b.dataset.k = m.k; b.onclick = function () { mantra = m.k; store.set("bp-mantra", mantra); paintMala(); }; $("m-chips").appendChild(b); });
+  MANTRAS.forEach(function (m) { var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = m.n; b.dataset.k = m.k; b.onclick = function () { mantra = m.k; store.set("bp-mantra", mantra); paintMala(); mShow(true); SFX.tap(); }; $("m-chips").appendChild(b); });
+  function mShow(smooth) { var c = document.querySelector('#m-chips .chip[data-k="' + mantra + '"]'), w = $("m-chips"); if (c) try { w.scrollTo({ left: c.offsetLeft - (w.clientWidth - c.offsetWidth) / 2, behavior: smooth ? "smooth" : "auto" }); } catch (e) { w.scrollLeft = c.offsetLeft; } }
+  function mStep(d) { var i = 0; MANTRAS.forEach(function (m, j) { if (m.k === mantra) i = j; }); i = (i + d + MANTRAS.length) % MANTRAS.length; mantra = MANTRAS[i].k; store.set("bp-mantra", mantra); paintMala(); mShow(true); SFX.tap(); }
+  $("m-prev").onclick = function () { mStep(-1); }; $("m-next").onclick = function () { mStep(1); };
+  /* a touch you can feel: vibration where the phone allows it, and on iPhone the small tick of a hidden switch */
+  var hapSw = (function () { try { var l = document.createElement("label"), i = document.createElement("input"); i.type = "checkbox"; i.setAttribute("switch", ""); l.appendChild(i); l.style.cssText = "position:fixed;left:-99px;top:0;opacity:0;pointer-events:none"; l.setAttribute("aria-hidden", "true"); document.body.appendChild(l); return l; } catch (e) { return null; } })();
+  function feel(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); else if (hapSw) hapSw.click(); } catch (e) {} }
   var bead = new Image(), beadReady = false, slide = 0, slideRaf = 0; bead.onload = function () { beadReady = true; drawMala(); }; bead.src = "tex/bead.jpg";
   function drawMala() {
     var c = $("mala-cv"); if ($("p-mala").hidden) return;
@@ -2135,14 +2155,14 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   function paintMala() {
     $("count").textContent = count; var len = 2 * Math.PI * 52, ink = $("enso-ink");
     ink.style.strokeDasharray = len; ink.style.strokeDashoffset = len * (1 - Math.max(.004, count / 108) * .965); ink.style.opacity = count ? 1 : 0;
-    var M = MANTRAS.filter(function (m) { return m.k === mantra; })[0]; $("m-bo").textContent = M.bo; $("m-en").textContent = M.en; $("m-of").textContent = "Mantra of " + M.n;
+    var M = MANTRAS.filter(function (m) { return m.k === mantra; })[0]; $("m-bo").textContent = M.bo; $("m-en").textContent = M.en; $("m-of").textContent = M.of || "Mantra of " + M.n; $("mantra").classList.toggle("long", M.en.length > 44);
     document.querySelectorAll("#m-chips .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.k === mantra ? "true" : "false"); });
     document.querySelector("#p-mala .enso").classList.toggle("done", count >= 108);
     $("rounds").textContent = rounds ? t("rounds", rounds) : ""; $("mala-hint").textContent = t(count >= 108 ? "malaDone" : "malaHint"); drawMala();
   }
   function commit() {                                                 /* one bead has come through */
     if (count >= 108) count = 0; else count += 1;
-    store.set("bp-mala", count); tick(); try { if (navigator.vibrate) navigator.vibrate(count % 27 === 0 ? 22 : 8); } catch (e) {}
+    store.set("bp-mala", count); tick(); feel(count % 27 === 0 ? 30 : 12);
     if (count === 108) { rounds += 1; store.set("bp-rounds", rounds); ringBell(.5); play("chime", .6); }
     else if (count && count % 27 === 0) play("chime", .35);               /* a quarter of the way round */
     var en = document.querySelector("#p-mala .enso"); en.classList.add("bump"); setTimeout(function () { en.classList.remove("bump"); }, 160);
@@ -2163,7 +2183,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     if (d.moved < 6) { pull(); return; }
     if (slide <= -.45) { commit(); settle(slide + 1); } else settle(slide); }
   $("mala-cv").addEventListener("pointerup", dragEnd); $("mala-cv").addEventListener("pointercancel", function () { if (drag) { drag = null; settle(slide); } });
-  $("a-mala").onclick = function () { open("p-mala", this); paintMala(); $("mala-cv").focus({ preventScroll: true }); };
+  $("a-mala").onclick = function () { open("p-mala", this); paintMala(); mShow(false); $("mala-cv").focus({ preventScroll: true }); };
   $("mala-cv").addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") { e.preventDefault(); pull(); } });
   $("mala-reset").onclick = function () { count = 0; store.set("bp-mala", 0); slide = 0; paintMala(); };
   window.addEventListener("resize", drawMala);
