@@ -322,7 +322,7 @@ button:focus-visible, canvas:focus-visible { outline: 1.5px solid #fff; outline-
 #p-sit { align-items: flex-end; background: linear-gradient(to top, rgba(10, 9, 8, .72), rgba(10, 9, 8, .3) 55%, rgba(10, 9, 8, 0) 85%); }
 #p-sit .sheet { width: min(100%, 420px); gap: 0; color: #fff; }
 .sitset { width: 100%; display: flex; flex-direction: column; align-items: center; }
-.sit-mark { width: 54px; height: 36px; filter: drop-shadow(0 2px 10px rgba(240, 140, 170, .55)); } .sit-mark.big { width: 96px; height: 62px; }
+.sit-mark { width: 54px; height: 36px; filter: drop-shadow(0 2px 10px rgba(233, 190, 110, .55)); } .sit-mark.big { width: 96px; height: 62px; }
 .sitset h2 { margin: 8px 0 0; font-size: 15px; font-weight: 500; letter-spacing: .02em; color: rgba(255, 255, 255, .88); }
 .sit-dial { display: flex; align-items: center; justify-content: center; gap: 26px; margin-top: 18px; }
 .sit-dial button { width: 46px; height: 46px; border-radius: 50%; font-size: 22px; color: #fff; background: rgba(255, 255, 255, .04); border: 1px solid rgba(233, 205, 150, .12); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: transform .1s; }
@@ -340,8 +340,8 @@ button:focus-visible, canvas:focus-visible { outline: 1.5px solid #fff; outline-
 #p-sit .pick-label { margin: 18px 0 8px; align-self: flex-start; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .7); }
 #p-sit .seg { background: rgba(255, 255, 255, .04); border-color: rgba(233, 205, 150, .09); } .seg.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 #p-sit .seg button { color: rgba(255, 255, 255, .85); } #p-sit .seg button[aria-pressed="true"] { background: rgba(233, 205, 150, .22); color: #1d1418; }
-#p-sit .check { align-self: flex-start; color: rgba(255, 255, 255, .85); margin-top: 6px; } #p-sit .check input { accent-color: #f6a5bf; }
-.sit-go { width: 100%; min-height: 54px; margin-top: 12px; border-radius: 999px; background: linear-gradient(135deg, #f9bdcd, #f6d9b0); color: #2a1418; font-size: 16px; font-weight: 600; letter-spacing: .02em; box-shadow: 0 10px 30px rgba(240, 140, 170, .35), inset 0 1px 0 rgba(233, 205, 150, .24); transition: transform .12s; }
+#p-sit .check { align-self: flex-start; color: rgba(255, 255, 255, .85); margin-top: 6px; } #p-sit .check input { accent-color: #e9cd96; }
+.sit-go { width: 100%; min-height: 54px; margin-top: 12px; border-radius: 999px; background: linear-gradient(135deg, #f4dfb0, #f6d9b0); color: #2a1418; font-size: 16px; font-weight: 600; letter-spacing: .02em; box-shadow: 0 10px 30px rgba(233, 190, 110, .35), inset 0 1px 0 rgba(233, 205, 150, .24); transition: transform .12s; }
 .sit-go:active { transform: scale(.97); }
 .sit-stat { margin: 10px 0 2px; min-height: 16px; font-size: 12px; color: rgba(255, 255, 255, .65); }
 .sitdone { position: fixed; inset: 0; z-index: 13; display: flex; align-items: flex-end; justify-content: center; padding: 16px 20px calc(28px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, rgba(10, 9, 8, .78), rgba(10, 9, 8, .3) 60%, rgba(10, 9, 8, 0) 90%); animation: navdim .8s ease; }
@@ -541,8 +541,8 @@ button:focus-visible, canvas:focus-visible { outline: 1.5px solid #fff; outline-
 /* the pink, about a quarter softer */
 .bg-lotus { filter: saturate(.72) drop-shadow(0 4px 14px rgba(0, 0, 0, .25)); }
 .bg-halo, .bg-ring .prog { filter: saturate(.72); }
-.sit-mark { filter: saturate(.72) drop-shadow(0 2px 10px rgba(240, 160, 180, .4)); }
-.sit-go { background: linear-gradient(135deg, #f6cdd6, #f5dfc0); box-shadow: 0 10px 30px rgba(230, 160, 180, .26), inset 0 1px 0 rgba(233, 205, 150, .24); }
+.sit-mark { filter: saturate(.72) drop-shadow(0 2px 10px rgba(233, 190, 110, .4)); }
+.sit-go { background: linear-gradient(135deg, #f4dfb0, #f5dfc0); box-shadow: 0 10px 30px rgba(233, 190, 110, .26), inset 0 1px 0 rgba(233, 205, 150, .24); }
 .sd-ded { font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-style: normal; font-weight: 500; font-size: 19px; letter-spacing: .005em; }
 .vbtn { min-width: 44px; padding: 0 14px !important; display: inline-flex !important; align-items: center; justify-content: center; gap: 7px; line-height: 1; }
 .vbtn svg { flex: none; display: block; }
@@ -796,7 +796,7 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
 .nav-card::before { background: radial-gradient(90% 34% at 50% 0, rgba(255, 214, 140, .16), rgba(255, 214, 140, 0) 70%); }
 .card.glass .primary, .cta a, .cta-b, .ios .cta-b, .mp-b, .q-themes button[aria-pressed="true"], .ios-r.num i { color: var(--btn-ink); } .mp-b + .mp-b { background: rgba(233, 205, 150, .12); color: var(--ink); } .ios .cta-b:disabled { color: var(--ink-3); }
 .ios-r.pick:has(input:checked) .ios-ck path { stroke: var(--btn-ink); } .card.glass .place, .card.glass .credit { color: var(--ink-2); }
-.card .logo, .nv-logo img { box-sizing: border-box; padding: 12px 18px; border-radius: 22px; background: #f6eedf; } .card .logo { width: 176px; } .nv-logo img { margin-left: 0; }
+.nv-logo img { width: 132px; margin: 8px 0 2px 0; }
 .ios .bk-err, .ios-f.bad, .bk-err { color: #ffa08e; }
 .ios .bk-bar { background: rgba(38, 28, 21, .97); } .nav-card { color-scheme: dark; }
 </style>
@@ -836,7 +836,7 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
       <svg class="bg-lotus" id="bg-lotus" viewBox="-74 -66 148 148" aria-hidden="true">
         <defs>
           <linearGradient id="lpO" x1="0" y1="0" x2="0" y2="-1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#f08fb0" stop-opacity=".62"/><stop offset=".6" stop-color="#f7b9cc" stop-opacity=".34"/><stop offset="1" stop-color="#ffe3ec" stop-opacity=".16"/></linearGradient>
-          <linearGradient id="lpG" x1="0" y1="0" x2="0" y2="-1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#f6a5bf" stop-opacity=".78"/><stop offset=".55" stop-color="#fbd0dc" stop-opacity=".46"/><stop offset="1" stop-color="#fff1f5" stop-opacity=".22"/></linearGradient>
+          <linearGradient id="lpG" x1="0" y1="0" x2="0" y2="-1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#e9cd96" stop-opacity=".78"/><stop offset=".55" stop-color="#fbd0dc" stop-opacity=".46"/><stop offset="1" stop-color="#fff1f5" stop-opacity=".22"/></linearGradient>
           <linearGradient id="lpF" x1="0" y1="0" x2="0" y2="-1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#ffc4d4" stop-opacity=".92"/><stop offset=".6" stop-color="#ffe6ec" stop-opacity=".6"/><stop offset="1" stop-color="#ffffff" stop-opacity=".3"/></linearGradient>
           <radialGradient id="lpC"><stop offset="0" stop-color="#fff7d6"/><stop offset=".35" stop-color="#ffd98a" stop-opacity=".85"/><stop offset="1" stop-color="#ffc56a" stop-opacity="0"/></radialGradient>
         </defs>
@@ -881,7 +881,7 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
 
   <div class="sitdone" id="sitdone" hidden role="dialog" aria-label="Sitting complete">
     <div class="sd-card">
-      <svg class="sit-mark big" viewBox="-40 -34 80 52" aria-hidden="true"><path d="M0 14C-9 2-9-14 0-28 9-14 9 2 0 14Z" fill="#f9c6d4"/><path d="M0 14C-16 8-24-6-22-20-10-14-2 0 0 14Z" fill="#f4a9bf" opacity=".85"/><path d="M0 14C16 8 24-6 22-20 10-14 2 0 0 14Z" fill="#f4a9bf" opacity=".85"/><path d="M0 14C-22 14-34 4-36-8-22-8-8 2 0 14Z" fill="#ee93ae" opacity=".7"/><path d="M0 14C22 14 34 4 36-8 22-8 8 2 0 14Z" fill="#ee93ae" opacity=".7"/></svg>
+      <svg class="sit-mark big" viewBox="-40 -34 80 52" aria-hidden="true"><path d="M0 14C-9 2-9-14 0-28 9-14 9 2 0 14Z" fill="#fbf3e0"/><path d="M0 14C-16 8-24-6-22-20-10-14-2 0 0 14Z" fill="#ecd49c" opacity=".85"/><path d="M0 14C16 8 24-6 22-20 10-14 2 0 0 14Z" fill="#ecd49c" opacity=".85"/><path d="M0 14C-22 14-34 4-36-8-22-8-8 2 0 14Z" fill="#d9b676" opacity=".7"/><path d="M0 14C22 14 34 4 36-8 22-8 8 2 0 14Z" fill="#d9b676" opacity=".7"/></svg>
       <p class="sd-k" id="sd-k">Sitting complete</p>
       <p class="sd-n"><b id="sd-min">10</b><span id="sd-unit">minutes</span></p>
       <div class="sd-stats"><div><b id="sd-breaths">0</b><span>breaths</span></div><div><b id="sd-sits">0</b><span>sittings</span></div><div><b id="sd-total">0</b><span>minutes in all</span></div></div>
@@ -919,7 +919,7 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
       <button class="x" data-close aria-label="Close">×</button>
       <p class="fs-k">Sitting</p>
       <div class="sitset">
-        <svg class="sit-mark" viewBox="-40 -34 80 52" aria-hidden="true"><path d="M0 14C-9 2-9-14 0-28 9-14 9 2 0 14Z" fill="#f9c6d4"/><path d="M0 14C-16 8-24-6-22-20-10-14-2 0 0 14Z" fill="#f4a9bf" opacity=".85"/><path d="M0 14C16 8 24-6 22-20 10-14 2 0 0 14Z" fill="#f4a9bf" opacity=".85"/><path d="M0 14C-22 14-34 4-36-8-22-8-8 2 0 14Z" fill="#ee93ae" opacity=".7"/><path d="M0 14C22 14 34 4 36-8 22-8 8 2 0 14Z" fill="#ee93ae" opacity=".7"/></svg>
+        <svg class="sit-mark" viewBox="-40 -34 80 52" aria-hidden="true"><path d="M0 14C-9 2-9-14 0-28 9-14 9 2 0 14Z" fill="#fbf3e0"/><path d="M0 14C-16 8-24-6-22-20-10-14-2 0 0 14Z" fill="#ecd49c" opacity=".85"/><path d="M0 14C16 8 24-6 22-20 10-14 2 0 0 14Z" fill="#ecd49c" opacity=".85"/><path d="M0 14C-22 14-34 4-36-8-22-8-8 2 0 14Z" fill="#d9b676" opacity=".7"/><path d="M0 14C22 14 34 4 36-8 22-8 8 2 0 14Z" fill="#d9b676" opacity=".7"/></svg>
         <h2>How long will you sit?</h2>
         <div class="sit-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="tk" cx="60" cy="60" r="56" pathLength="120"/><circle class="tr" cx="60" cy="60" r="49"/><circle class="ar" id="sit-arc" cx="60" cy="60" r="49" pathLength="100"/></svg><div class="sit-n"><output id="sit-num">10</output><small>minutes</small></div></div>
         <div class="chips" id="sit-chips"></div>
@@ -1499,7 +1499,7 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
       var ftop = butterLamp(lx, ly - .055, lz, .9), of = makeFlame(lx, ftop, lz, .85); of.g.visible = false; offerLamps.push(of);
     }
     var lampGlow = new THREE.PointLight(0xffa850, 0, 4.5, 2); lampGlow.position.set(LS.x, 1.0, LS.z + .1); scene.add(lampGlow); var litLamps = 0;
-    box(.46, .5, .46, woodDark, CS.x, .25, CS.z); box(.52, .04, .52, wood, CS.x, .52, CS.z);
+    box(.92, .5, .46, woodDark, CS.x, .25, CS.z); box(.98, .04, .52, wood, CS.x, .52, CS.z);
     /* the censer: a turned brass bowl of pale ash */
     var censer = new THREE.Mesh(new THREE.LatheGeometry([[0, 0], [.09, 0], [.1, .02], [.07, .05], [.08, .07], [.15, .1], [.17, .17], [.165, .18], [.15, .12], [0, .11]].map(function (q) { return new THREE.Vector2(q[0], q[1]); }), 32), brass);
     censer.position.set(CS.x, .54, CS.z); censer.castShadow = true; scene.add(censer);
@@ -1677,8 +1677,17 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
       } }); }
     statue("models/statue_centre.json", 5.4, 0, .93);
     /* the altar's offerings, modelled in the round from the shrine photograph: tormas, clay figures and the eight auspicious symbols on their stepped stand; and an incense box by the censer */
-    loadModel("models/offerings.json", function (g) { fixMaterials(g.scene, false); var r = place(g.scene, 1.85, 0, 1.09, 0, -Math.PI / 2); r.holder.position.z = CF - .36 - r.d / 2; });
-    loadModel("models/incense_box.json", function (g) { fixMaterials(g.scene, true); place(g.scene, .09, CS.x - .36, .54, CS.z + .06, -Math.PI / 2 + .2); }); statue("models/statue_left.json", 4.19, -4.22, .93); statue("models/statue_right.json", 4.19, 4.22, .93);
+    /* the offering stand: three cloth-covered tiers on the upper step, water bowls in front, tormas rising behind */
+    (function () {
+      var back = CF - .84, y0 = 1.09, cloth = M(0x8e1f1a, { roughness: .85 }), tiers = [[1.7, .44], [1.2, .3], [.62, .16]];
+      tiers.forEach(function (t, i) { box(t[0], .12, t[1], cloth, 0, y0 + .06 + i * .12, back + t[1] / 2); box(t[0] + .012, .016, .012, gold, 0, y0 + .112 + i * .12, back + t[1] + .004, true); });
+      for (var wb = 0; wb < 7; wb++) { var bowl = new THREE.Mesh(new THREE.LatheGeometry([[0, 0], [.03, 0], [.034, .008], [.05, .04], [.054, .05], [.05, .05], [.03, .012], [0, .012]].map(function (q) { return new THREE.Vector2(q[0], q[1]); }), 20), brass); bowl.position.set((wb - 3) * .23, y0 + .12, back + .37); bowl.castShadow = true; scene.add(bowl);
+        var water = new THREE.Mesh(new THREE.CircleGeometry(.047, 20), M(0xdfe9ee, { roughness: .08, metalness: .3 })); water.rotation.x = -Math.PI / 2; water.position.set((wb - 3) * .23, y0 + .164, back + .37); scene.add(water); }
+      loadModel("models/torma.json", function (g) { fixMaterials(g.scene, true);
+        [[0, 2, .36], [-.42, 1, .25], [.42, 1, .25], [-.74, 0, .19], [.74, 0, .19]].forEach(function (q, i) { var m = i ? g.scene.clone(true) : g.scene; place(m, q[2], q[0], y0 + .12 * (q[1] + 1), back + (q[1] === 2 ? .08 : q[1] === 1 ? .22 : .2), -Math.PI / 2); });
+      });
+    })();
+    loadModel("models/incense_box.json", function (g) { fixMaterials(g.scene, true); place(g.scene, .085, CS.x - .33, .54, CS.z + .03, -Math.PI / 2 + .12); }); statue("models/statue_left.json", 4.19, -4.22, .93); statue("models/statue_right.json", 4.19, 4.22, .93);
 
     function cushion(x, z) {
       var m = new THREE.Mesh(new THREE.CylinderGeometry(.34, .37, .09, 24), maroon); m.position.set(x, .06, z); m.castShadow = true; m.receiveShadow = true; scene.add(m);
@@ -1880,8 +1889,8 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       var dx = e.clientX - down.x, dy = e.clientY - down.y;
       if (!moved && Math.abs(dx) + Math.abs(dy) < 7) return;
       moved = true; canvas.classList.add("dragging");
-      var nt = performance.now(), el = Math.max(8, nt - down.t); S.vy = -dx * .0052 / el * 16; S.vp = dy * .0044 / el * 16; down.t = nt;
-      S.yaw -= dx * .0052; S.pitch = Math.max(PMIN, Math.min(1.05, S.pitch + dy * .0044)); down.x = e.clientX; down.y = e.clientY;
+      var nt = performance.now(), el = Math.max(8, nt - down.t); S.vy = -dx * .0046 / el * 16; S.vp = dy * .0038 / el * 16; down.t = nt;
+      S.yaw -= dx * .0046; S.pitch = Math.max(PMIN, Math.min(1.05, S.pitch + dy * .0038)); down.x = e.clientX; down.y = e.clientY;
     });
     function up(e) {
       if (!down) return; canvas.classList.remove("dragging"); if (!moved || performance.now() - down.t > 90) S.vy = S.vp = 0;
@@ -1954,7 +1963,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
 
       S.door += (S.doorTo - S.door) * Math.min(1, dt * 2.4); leafL.rotation.y = S.door * 1.5; leafR.rotation.y = -S.door * 1.5;
 
-      var kx = (S.keys.r ? 1 : 0) - (S.keys.l ? 1 : 0), kz = (S.keys.f ? 1 : 0) - (S.keys.b ? 1 : 0), speed = charKey === "cat" ? .85 : 1.02; S.ramp = S.wasMoving ? Math.min(1, S.ramp + dt * 1.5) : 0; var ease = .3 + .7 * S.ramp * S.ramp * (3 - 2 * S.ramp); S.moving = false;
+      var kx = (S.keys.r ? 1 : 0) - (S.keys.l ? 1 : 0), kz = (S.keys.f ? 1 : 0) - (S.keys.b ? 1 : 0), speed = charKey === "cat" ? .82 : .95; S.ramp = S.wasMoving ? Math.min(1, S.ramp + dt * 1.05) : 0; var ease = .12 + .88 * S.ramp * S.ramp * (3 - 2 * S.ramp); S.moving = false;
       if (S.mode === "entering") {
         if (S.target) {
           var ex = S.target.x - p.x, ez = S.target.z - p.z, el = Math.sqrt(ex * ex + ez * ez);
@@ -1966,19 +1975,21 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
         if (kx || kz) {
           var fx = -Math.sin(S.yaw), fz = -Math.cos(S.yaw), rx = Math.cos(S.yaw), rz = -Math.sin(S.yaw);
           var mx = fx * kz + rx * kx, mz = fz * kz + rz * kx, ml = Math.sqrt(mx * mx + mz * mz);
-          var was = onMats(p.x, p.z), ox2 = p.x, oz2 = p.z; p.x += mx / ml * speed * ease * dt; p.z += mz / ml * speed * ease * dt; if (!was && onMats(p.x, p.z)) { if (!onMats(p.x, oz2)) p.z = oz2; else if (!onMats(ox2, p.z)) p.x = ox2; else { p.x = ox2; p.z = oz2; } } face(mx, mz); cancelTrip(); S.target = null; S.onArrive = null; marker.material.opacity = 0; S.moving = true; clampPos(p);
-        } else if (S.target) {
+          var was = onMats(p.x, p.z), ox2 = p.x, oz2 = p.z; p.x += mx / ml * speed * ease * dt; p.z += mz / ml * speed * ease * dt; if (!was && onMats(p.x, p.z)) { if (!onMats(p.x, oz2)) p.z = oz2; else if (!onMats(ox2, p.z)) p.x = ox2; else { p.x = ox2; p.z = oz2; } } face(mx, mz); cancelTrip(); S.target = null; S.onArrive = null; marker.material.opacity = 0; S.moving = true; clampPos(p); S.gx = mx / ml; S.gz = mz / ml; S.gl = ease;
+        } else if (S.target) { S.gl = 0;
           var dx = S.target.x - p.x, dz = S.target.z - p.z, dl = Math.sqrt(dx * dx + dz * dz);
           if (dl < .06) { var cb = S.onArrive; S.target = null; S.onArrive = null; if (cb) cb(); }
-          else { var step = Math.min(dl, speed * ease * Math.min(1, .3 + dl / .8) * dt), ox = p.x, oz = p.z; p.x += dx / dl * step; p.z += dz / dl * step; face(dx, dz); S.moving = true; clampPos(p, !!S.onArrive);
+          else { var step = Math.min(dl, speed * ease * Math.min(1, .16 + dl / 1.25) * dt), ox = p.x, oz = p.z; p.x += dx / dl * step; p.z += dz / dl * step; face(dx, dz); S.moving = true; clampPos(p, !!S.onArrive);
             if (!S.onArrive && Math.abs(p.x - ox) + Math.abs(p.z - oz) < step * .25) S.target = null; }
+        } else if (S.gl > .03) { /* let a keyboard walk settle to a stop instead of halting dead */
+          S.gl *= Math.exp(-dt * 4.5); var gw = onMats(p.x, p.z), g0x = p.x, g0z = p.z; p.x += S.gx * speed * S.gl * dt; p.z += S.gz * speed * S.gl * dt; if (!gw && onMats(p.x, p.z)) { p.x = g0x; p.z = g0z; S.gl = 0; } clampPos(p); S.moving = S.gl > .2;
         }
       }
       S.wasMoving = S.moving;
-      if (!down && (S.vy || S.vp)) { S.yaw += S.vy; S.pitch = Math.max(PMIN, Math.min(1.05, S.pitch + S.vp)); var fr = Math.exp(-dt * 5); S.vy *= fr; S.vp *= fr; if (Math.abs(S.vy) + Math.abs(S.vp) < .0004) S.vy = S.vp = 0; }
-      var dcy = S.yaw - cy; dcy = Math.atan2(Math.sin(dcy), Math.cos(dcy)); var kk = 1 - Math.exp(-dt * 11); cy += dcy * kk; cp += (S.pitch - cp) * kk;
+      if (!down && (S.vy || S.vp)) { S.yaw += S.vy; S.pitch = Math.max(PMIN, Math.min(1.05, S.pitch + S.vp)); var fr = Math.exp(-dt * 3); S.vy *= fr; S.vp *= fr; if (Math.abs(S.vy) + Math.abs(S.vp) < .0004) S.vy = S.vp = 0; }
+      var dcy = S.yaw - cy; dcy = Math.atan2(Math.sin(dcy), Math.cos(dcy)); var kk = 1 - Math.exp(-dt * 6.5); cy += dcy * kk; cp += (S.pitch - cp) * kk;
       if (marker.material.opacity > 0 && !S.target) marker.material.opacity = Math.max(0, marker.material.opacity - dt * 2);
-      var dh = S.heading - me.rotation.y; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); me.rotation.y += dh * Math.min(1, dt * 9);
+      var dh = S.heading - me.rotation.y; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); me.rotation.y += dh * Math.min(1, dt * 5);
 
       var bend = 0;
       if (S.bowT >= 0) { S.bowT += dt; var u = S.bowT / S.bowDur; bend = Math.sin(Math.min(1, u) * Math.PI); if (S.bowMid && u >= .5) { var bm = S.bowMid; S.bowMid = null; bm(); } if (u >= 1) { S.bowT = -1; bend = 0; if (S.bowDone) S.bowDone(); } }
@@ -2700,7 +2711,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   /* views */
   var stack = [];
   function menuView() {
-    var list = upcoming(), next = list[0], h = '<h2 class="nv-logo"><img src="img/logo.png" alt="Buddha Pāda"></h2><p class="nv-lede">A Himalayan centre for Buddhist study, practice and the contemplative arts, in Kalimpong.</p>';
+    var list = upcoming(), next = list[0], h = '<h2 class="nv-logo"><img src="img/logotype.png" alt="Buddha Pāda"></h2><p class="nv-lede">A Himalayan centre for Buddhist study, practice and the contemplative arts, in Kalimpong.</p>';
     if (next) h += '<button class="feat" data-go="programs" style="width:100%"><img decoding="async" src="img/ev/h' + next.id + '.jpg" alt=""><span><small>Next program</small><b>' + esc(next.title) + "</b><i>" + range(next) + " · " + esc(next.fac) + "</i></span></button>";
     h += '<div class="grp" style="margin-top:12px"><button class="cell" data-go="programs"><span class="ti gold">' + svg("cal") + '</span><span class="tx"><b>Upcoming Programs</b><small>' + list.length + " retreats and workshops</small></span>" + svg("chev", "chev") + "</button></div>";
     h += '<div class="grp" style="margin-top:12px"><button class="cell" data-go="quotes"><span class="ti gold">' + svg("quote") + '</span><span class="tx"><b>Words of Rinpoche</b><small>' + QUOTES.length + ' quotations from Dzongsar Khyentse Rinpoche</small></span>' + svg("chev", "chev") + "</button></div>";
