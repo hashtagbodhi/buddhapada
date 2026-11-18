@@ -301,17 +301,16 @@ button:focus-visible, canvas:focus-visible { outline: 1.5px solid #fff; outline-
 .bg.on { opacity: 1; }
 .bg-stage { position: relative; width: 100%; aspect-ratio: 1; display: grid; place-items: center; isolation: isolate; }
 .bg-stage > * { grid-area: 1 / 1; }
-.bg-halo { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(255, 190, 210, .42) 0%, rgba(250, 160, 190, .18) 42%, rgba(250, 150, 180, 0) 70%); will-change: transform, opacity; }
+.bg-halo { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(255, 246, 222, .4) 0%, rgba(255, 230, 178, .16) 42%, rgba(255, 226, 170, 0) 70%); will-change: transform, opacity; }
 .bg-ring { width: 100%; height: 100%; overflow: visible; transform: rotate(-90deg); }
 .bg-ring circle { fill: none; stroke-width: 1.4; }
 .bg-ring .track { stroke: rgba(255, 255, 255, .16); }
-.bg-ring .prog { stroke: rgba(255, 214, 226, .95); stroke-linecap: round; stroke-dasharray: 603.2; stroke-dashoffset: 603.2; filter: drop-shadow(0 0 5px rgba(250, 160, 190, .7)); transition: stroke .8s ease; }
+.bg-ring .prog { stroke: rgba(255, 244, 216, .95); stroke-linecap: round; stroke-dasharray: 603.2; stroke-dashoffset: 603.2; filter: drop-shadow(0 0 5px rgba(255, 222, 150, .7)); transition: stroke .8s ease; }
 .bg-orb { width: 74%; height: 74%; border-radius: 50%; will-change: transform;
-  background: radial-gradient(circle at 50% 50%, rgba(24, 18, 10, .5) 0%, rgba(24, 18, 10, .42) 56%, rgba(255, 228, 180, .14) 82%, rgba(30, 22, 17, .34) 100%);
-  border: 1px solid rgba(30, 22, 17, .55); position: relative; z-index: 1;
-  box-shadow: 0 0 40px rgba(255, 220, 160, .32), inset 0 0 22px rgba(255, 226, 170, .22); }
-.bg-lotus { width: 80%; height: 80%; overflow: visible; position: relative; z-index: 2; filter: drop-shadow(0 4px 14px rgba(0, 0, 0, .25)); }
-.bg-lotus path.pt { stroke: rgba(30, 22, 17, .8); stroke-width: .9; vector-effect: non-scaling-stroke; }
+  background: radial-gradient(circle at 50% 56%, rgba(255, 250, 232, .2) 0%, rgba(255, 238, 196, .1) 52%, rgba(255, 230, 180, 0) 76%);
+  border: 0; position: relative; z-index: 1; box-shadow: 0 0 56px rgba(255, 232, 178, .22); }
+.bg-lotus { width: 80%; height: 80%; overflow: visible; position: relative; z-index: 2; filter: drop-shadow(0 0 9px rgba(255, 240, 204, .7)) drop-shadow(0 0 28px rgba(255, 222, 150, .32)); }
+.bg-lotus path.pt { stroke: rgba(255, 246, 220, .5); stroke-width: .6; vector-effect: non-scaling-stroke; }
 .bg-word { margin-top: -6px; position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 2px; color: #fff; text-shadow: 0 1px 10px rgba(0, 0, 0, .45); transition: opacity .45s ease; }
 .bg-word b { font-weight: 400; font-size: 18px; white-space: nowrap; letter-spacing: .04em; }
 .bg-word small { font-size: 13px; font-weight: 300; color: rgba(255, 255, 255, .72); font-variant-numeric: tabular-nums; min-height: 1.2em; }
@@ -539,8 +538,6 @@ button:focus-visible, canvas:focus-visible { outline: 1.5px solid #fff; outline-
 @media (prefers-reduced-transparency: reduce) { .gbtn, .top .clock, .acts, .card.glass, .nav-card { background: rgb(244, 242, 238); -webkit-backdrop-filter: none; backdrop-filter: none; } }
 @media (prefers-contrast: more) { :root { --ink-2: rgba(21, 19, 15, .85); --ink-3: rgba(21, 19, 15, .7); --veil: rgba(30, 22, 17, .92); } }
 /* the pink, about a quarter softer */
-.bg-lotus { filter: saturate(.72) drop-shadow(0 4px 14px rgba(0, 0, 0, .25)); }
-.bg-halo, .bg-ring .prog { filter: saturate(.72); }
 .sit-mark { filter: saturate(.72) drop-shadow(0 2px 10px rgba(233, 190, 110, .4)); }
 .sit-go { background: linear-gradient(135deg, #f4dfb0, #f5dfc0); box-shadow: 0 10px 30px rgba(233, 190, 110, .26), inset 0 1px 0 rgba(233, 205, 150, .24); }
 .sd-ded { font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-style: normal; font-weight: 500; font-size: 19px; letter-spacing: .005em; }
@@ -835,9 +832,9 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
       <svg class="bg-ring" viewBox="0 0 200 200" aria-hidden="true"><circle class="track" cx="100" cy="100" r="96"/><circle class="prog" id="bg-prog" cx="100" cy="100" r="96"/></svg>
       <svg class="bg-lotus" id="bg-lotus" viewBox="-74 -66 148 148" aria-hidden="true">
         <defs>
-          <linearGradient id="lpO" x1="0" y1="0" x2="0" y2="-1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#f08fb0" stop-opacity=".62"/><stop offset=".6" stop-color="#f7b9cc" stop-opacity=".34"/><stop offset="1" stop-color="#ffe3ec" stop-opacity=".16"/></linearGradient>
-          <linearGradient id="lpG" x1="0" y1="0" x2="0" y2="-1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#e9cd96" stop-opacity=".78"/><stop offset=".55" stop-color="#fbd0dc" stop-opacity=".46"/><stop offset="1" stop-color="#fff1f5" stop-opacity=".22"/></linearGradient>
-          <linearGradient id="lpF" x1="0" y1="0" x2="0" y2="-1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#ffc4d4" stop-opacity=".92"/><stop offset=".6" stop-color="#ffe6ec" stop-opacity=".6"/><stop offset="1" stop-color="#ffffff" stop-opacity=".3"/></linearGradient>
+          <linearGradient id="lpO" x1="0" y1="0" x2="0" y2="-1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#ecd49c" stop-opacity=".5"/><stop offset=".6" stop-color="#fff3d8" stop-opacity=".3"/><stop offset="1" stop-color="#ffffff" stop-opacity=".14"/></linearGradient>
+          <linearGradient id="lpG" x1="0" y1="0" x2="0" y2="-1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#f0d9a4" stop-opacity=".72"/><stop offset=".55" stop-color="#fff6e2" stop-opacity=".48"/><stop offset="1" stop-color="#ffffff" stop-opacity=".24"/></linearGradient>
+          <linearGradient id="lpF" x1="0" y1="0" x2="0" y2="-1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#fff2d2" stop-opacity=".95"/><stop offset=".6" stop-color="#fffaf0" stop-opacity=".72"/><stop offset="1" stop-color="#ffffff" stop-opacity=".4"/></linearGradient>
           <radialGradient id="lpC"><stop offset="0" stop-color="#fff7d6"/><stop offset=".35" stop-color="#ffd98a" stop-opacity=".85"/><stop offset="1" stop-color="#ffc56a" stop-opacity="0"/></radialGradient>
         </defs>
         <g id="lp-out"></g><g id="lp-back"></g><circle id="lp-core" cx="0" cy="26" r="16" fill="url(#lpC)"/><g id="lp-front"></g>
