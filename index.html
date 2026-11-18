@@ -738,32 +738,58 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
 .h-spot::before { content: ""; position: absolute; left: calc(var(--ax, 50%) - 6px); width: 12px; height: 12px; background: rgba(20, 16, 12, .62); transform: rotate(45deg); } .h-spot.below::before { top: -5px; } .h-spot.above::before { bottom: -5px; top: auto; }
 @media (prefers-reduced-motion: reduce) { .spot { animation: none; filter: drop-shadow(0 0 14px rgba(255, 232, 180, .95)); } }
 
-/* practice screens take the whole screen: a quiet label at the top, the one thing that matters large in the middle, the action low where the thumb rests */
-body:has(.panel.full:not([hidden])) #gl { filter: brightness(.32) saturate(.8); }
-.panel.full { align-items: stretch; padding: 0; background: rgba(10, 9, 8, .22) !important; }
-.panel.full .sheet { width: 100%; max-width: 560px; height: 100%; max-height: none; margin: 0 auto; padding: calc(20px + env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px)); gap: 0; color: #fff; }
-.panel.full .x { top: calc(14px + env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); width: 44px; height: 44px; font-size: 24px; color: #fff; background: rgba(255, 255, 255, .12); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .26); z-index: 3; }
-.fs-k { align-self: flex-start; display: flex; align-items: center; min-height: 44px; margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: rgba(255, 255, 255, .78); }
-.panel.full h2 { margin: 0; font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: clamp(26px, 7vw, 34px); line-height: 1.2; font-weight: 500; letter-spacing: -.005em; color: #fff; text-wrap: balance; }
-.fs-sub { margin: 10px 0 0; font-size: 16px; line-height: 23px; color: rgba(255, 255, 255, .78); text-wrap: balance; }
-/* sitting */
-#p-sit.full .sitset { flex: 1; min-height: 0; padding-top: min(4vh, 34px); } #p-sit.full .sit-mark { width: 76px; height: 50px; } #p-sit.full .sitset h2 { margin-top: 14px; }
-#p-sit.full .sit-n { margin-top: min(2vh, 14px); } #p-sit.full .sit-n output { font-size: min(34vw, 19vh, 148px); line-height: 1; } #p-sit.full .sit-n small { margin-top: 6px; font-size: 13px; letter-spacing: .2em; }
-#p-sit.full .chips { gap: 12px; margin: min(3vh, 24px) 0 min(1.5vh, 10px); } #p-sit.full .chip { width: 60px; height: 60px; min-width: 0; padding: 0; border-radius: 50%; font-size: 19px; }
-#p-sit.full .sit-row { grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: min(2.4vh, 20px); } #p-sit.full .sit-row > span { font-size: 12px; letter-spacing: .18em; } #p-sit.full .seg { padding: 4px; } #p-sit.full .seg button { min-height: 48px; font-size: 15px; }
-#p-sit.full .gd-about { margin-top: 12px; font-size: 14px; line-height: 20px; } #p-sit.full .sit-go { margin-top: auto; min-height: 60px; font-size: 18px; } #p-sit.full .sit-stat { margin: 12px 0 0; font-size: 13px; }
-/* mala */
-#p-mala.full .sheet { justify-content: space-between; } #p-mala.full .mantra { padding: 0 6px; } #p-mala.full .m-en, #p-mala.full .m-bo { font-size: clamp(25px, 7vw, 34px); } #p-mala.full .mantra.long .m-en, #p-mala.full .mantra.long .m-bo { font-size: clamp(21px, 5.8vw, 27px); }
-#p-mala.full .m-of { font-size: 12px; letter-spacing: .18em; } #p-mala.full .m-sw { font-size: 14px; min-height: 40px; }
-#p-mala.full .enso { width: min(54vw, 25vh, 220px); height: min(54vw, 25vh, 220px); } #p-mala.full .enso .n { font-size: min(17vw, 8vh, 76px); font-weight: 200; } #p-mala.full .enso .n small { margin-top: 8px; font-size: 14px; } #p-mala.full #rounds { margin: 0; min-height: 20px; font-size: 14px; color: rgba(255, 255, 255, .8); }
-#p-mala.full #mala-cv { height: min(30vh, 290px); } #p-mala.full .hint { margin: 0; font-size: 15px; line-height: 22px; color: rgba(255, 255, 255, .86); text-wrap: balance; }
-#p-mala.full .m-car { max-width: 500px; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 8px; margin-top: 0; } #p-mala.full .m-car > button { width: 44px; height: 44px; } #p-mala.full .m-win .chip { min-height: 50px; font-size: 14px; } #p-mala.full .m-reset { min-height: 44px; font-size: 15px; }
-/* offerings */
-#p-offer.full .sheet { justify-content: flex-start; } #p-offer.full h2 { margin-top: min(9vh, 70px); } #p-offer.full .tiles { gap: 12px; margin-top: 30px; }
-#p-offer.full .tile { min-height: 98px; padding: 18px 20px; gap: 18px; border-radius: 26px; border: 0; background: rgba(255, 255, 255, .1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); } #p-offer.full .tile:active { transform: scale(.98); background: rgba(255, 255, 255, .18); }
-#p-offer.full .tile .ico { width: 56px; height: 56px; border-radius: 50%; background: rgba(255, 255, 255, .14); } #p-offer.full .tile .ico svg { width: 28px; height: 28px; }
-#p-offer.full .tile b { font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: 21px; line-height: 26px; font-weight: 500; color: #fff; } #p-offer.full .tile span span { margin-top: 4px; font-size: 15px; line-height: 20px; color: rgba(255, 255, 255, .76); }
-#p-sit.full, #p-mala.full, #p-offer.full { align-items: stretch; } .panel.full .sheet { box-sizing: border-box; }
+/* practice cards: one lacquer-and-gold card floating in the dimmed hall, with room to breathe above and below */
+body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); }
+.panel.full { align-items: center !important; justify-content: center; box-sizing: border-box; padding: max(28px, 7vh, env(safe-area-inset-top, 0px)) 16px max(28px, 7vh, env(safe-area-inset-bottom, 0px)); background: radial-gradient(120% 80% at 50% 50%, rgba(10, 8, 6, .12), rgba(10, 8, 6, .55)) !important; }
+.panel.full .sheet { --gold: #e9cd96; --cream: #f7f0e3; --mut: rgba(247, 240, 227, .66); box-sizing: border-box; isolation: isolate; width: 100%; max-width: 404px; max-height: 100%; padding: 20px 22px 24px; gap: 0; border-radius: 40px; color: var(--cream); text-shadow: none; scrollbar-width: none;
+  background: linear-gradient(180deg, rgba(46, 33, 24, .84), rgba(20, 14, 11, .92)); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); box-shadow: inset 0 0 0 1px rgba(233, 205, 150, .26), inset 0 1px 0 rgba(255, 240, 210, .3), 0 40px 90px rgba(0, 0, 0, .6); }
+.panel.full .sheet::-webkit-scrollbar { display: none; }
+.panel.full .sheet::before { content: ""; position: absolute; z-index: -1; inset: 0 0 auto; height: 200px; border-radius: 40px 40px 0 0; background: radial-gradient(70% 100% at 50% 0, rgba(255, 214, 140, .2), rgba(255, 214, 140, 0) 70%); pointer-events: none; }
+.panel.full .x { top: 12px; right: 12px; width: 44px; height: 44px; font-size: 22px; color: var(--mut); background: rgba(255, 255, 255, .07); z-index: 3; }
+.fs-k { align-self: stretch; display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 36px; margin: 0; padding: 0 44px; font-size: 11px; font-weight: 600; letter-spacing: .26em; text-indent: .26em; text-transform: uppercase; color: var(--gold); }
+.fs-k::before, .fs-k::after { content: ""; flex: 1; height: 1px; background: linear-gradient(to right, rgba(233, 205, 150, 0), rgba(233, 205, 150, .5)); } .fs-k::after { transform: scaleX(-1); }
+.panel.full h2 { margin: 14px 0 0; font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: 25px; line-height: 31px; font-weight: 500; letter-spacing: -.005em; color: var(--cream); text-wrap: balance; }
+.fs-sub { margin: 8px 0 0; font-size: 15px; line-height: 22px; color: var(--mut); text-wrap: balance; }
+/* sitting: a dial */
+#p-sit.full .sit-mark { display: none; } #p-sit.full .sitset h2 { margin-top: 14px; font-size: 25px; font-weight: 500; }
+.sit-ring { position: relative; flex: none; width: min(200px, 25vh); height: min(200px, 25vh); margin-top: 22px; } .sit-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+.sit-ring circle { fill: none; } .sit-ring .tk { stroke: rgba(233, 205, 150, .42); stroke-width: 3; stroke-dasharray: .22 1.78; } .sit-ring .tr { stroke: rgba(255, 255, 255, .1); stroke-width: 1.5; }
+.sit-ring .ar { stroke: var(--gold); stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 83; transition: stroke-dashoffset .6s cubic-bezier(.3, .7, .2, 1); filter: drop-shadow(0 0 5px rgba(255, 214, 140, .6)); }
+#p-sit.full .sit-n { position: absolute; inset: 0; min-width: 0; display: grid; place-content: center; } #p-sit.full .sit-n output { font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: min(76px, 9.5vh); line-height: 1; font-weight: 400; letter-spacing: -.02em; text-shadow: none; } #p-sit.full .sit-n small { margin-top: 8px; font-size: 11px; letter-spacing: .24em; text-indent: .24em; color: var(--mut); }
+#p-sit.full .chips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; margin: 22px 0 0; }
+.panel.full .chip { min-height: 48px; border-radius: 16px; border: 0; background: rgba(255, 255, 255, .05); box-shadow: inset 0 0 0 1px rgba(233, 205, 150, .22); font-size: 17px; font-weight: 500; color: var(--cream); }
+.panel.full .chip[aria-pressed="true"] { background: linear-gradient(180deg, #f4dfb0, #dab873); color: #2a1c0e; box-shadow: 0 6px 18px rgba(233, 190, 110, .28), inset 0 1px 0 rgba(255, 255, 255, .6); }
+#p-sit.full .sit-row { grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 20px; } #p-sit.full .sit-row > span { font-size: 11px; letter-spacing: .2em; color: var(--mut); }
+#p-sit.full .seg { padding: 4px; gap: 4px; border: 0; border-radius: 18px; background: rgba(0, 0, 0, .28); box-shadow: inset 0 0 0 1px rgba(233, 205, 150, .16); } #p-sit.full .seg button { min-height: 42px; border-radius: 14px; font-size: 14px; color: var(--mut); }
+#p-sit.full .seg button[aria-pressed="true"] { background: rgba(233, 205, 150, .18); color: var(--gold); box-shadow: inset 0 0 0 1px rgba(233, 205, 150, .55); }
+#p-sit.full #modes { padding: 0; gap: 8px; background: none; box-shadow: none; border-radius: 0; }
+#p-sit.full #modes button { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 3px; min-height: 70px; padding: 10px 16px; border-radius: 20px; text-align: left; font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: 18px; line-height: 22px; color: var(--cream); background: rgba(255, 255, 255, .05); box-shadow: inset 0 0 0 1px rgba(233, 205, 150, .2); }
+#p-sit.full #modes button::after { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 12.5px; line-height: 16px; color: var(--mut); } #p-sit.full #modes button[data-m="open"]::after { content: "In silence"; } #p-sit.full #modes button[data-m="guided"]::after { content: "With a teacher\2019s voice"; }
+#p-sit.full #modes button[aria-pressed="true"] { background: rgba(233, 205, 150, .16); color: var(--gold); box-shadow: inset 0 0 0 1.5px rgba(233, 205, 150, .7); }
+#p-sit.full .gd-about { margin-top: 12px; font-size: 13.5px; line-height: 19px; color: var(--mut); }
+.panel.full .sit-go { margin-top: 24px; min-height: 56px; border-radius: 20px; background: linear-gradient(180deg, #f4dfb0, #d6b26b); color: #2a1c0e; font-size: 17px; font-weight: 600; letter-spacing: .02em; box-shadow: 0 12px 30px rgba(233, 190, 110, .3), inset 0 1px 0 rgba(255, 255, 255, .65); }
+#p-sit.full .sit-stat { margin: 10px 0 0; min-height: 0; font-size: 12.5px; color: var(--mut); } #p-sit.full .sit-stat:empty { display: none; }
+/* chanting */
+#p-mala.full .mantra { margin-top: 10px; padding: 0 4px; text-shadow: none; } #p-mala.full .m-en, #p-mala.full .m-bo { font-size: 24px; line-height: 1.3; } #p-mala.full .m-en { font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; letter-spacing: 0; } #p-mala.full .mantra.long .m-en, #p-mala.full .mantra.long .m-bo { font-size: 19px; line-height: 1.38; }
+#p-mala.full .m-of { margin: 8px 0 0; font-size: 11px; letter-spacing: .2em; color: var(--gold); } #p-mala.full .m-sw { font-size: 13px; min-height: 40px; color: var(--mut); }
+#p-mala.full .enso { width: min(132px, 34vw, 15vh); height: min(132px, 34vw, 15vh); margin-top: 16px; } #p-mala.full .enso .track { stroke: rgba(255, 255, 255, .12); stroke-width: 1.5; } #p-mala.full .enso .ink { stroke: var(--gold); stroke-width: 2.6; filter: drop-shadow(0 0 5px rgba(255, 214, 140, .6)); } #p-mala.full .enso .q path { stroke: rgba(233, 205, 150, .5); }
+#p-mala.full .enso .n { font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: min(46px, 5.6vh); font-weight: 400; } #p-mala.full .enso .n small { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin-top: 5px; font-size: 12px; color: var(--mut); }
+#p-mala.full #rounds { margin: 6px 0 0; min-height: 18px; font-size: 13px; color: var(--mut); } #p-mala.full #mala-cv { width: calc(100% + 44px); margin: 0 -22px; height: min(200px, 24vh); }
+#p-mala.full .hint { margin: 0; font-size: 14px; line-height: 20px; color: var(--mut); text-wrap: balance; } #p-mala.full .hint:empty { display: none; }
+#p-mala.full .m-car { max-width: none; grid-template-columns: 40px minmax(0, 1fr) 40px; gap: 6px; margin-top: 14px; } #p-mala.full .m-car > button { width: 40px; height: 44px; border-radius: 14px; box-shadow: inset 0 0 0 1px rgba(233, 205, 150, .22); } #p-mala.full .m-car svg { stroke: var(--gold); }
+#p-mala.full .m-win .chip { min-height: 44px; border-radius: 14px; font-size: 13px; } #p-mala.full .m-reset { margin-top: 6px; min-height: 40px; font-size: 13px; color: var(--mut); }
+/* offerings: three living medallions */
+#p-offer.full .tiles { gap: 10px; margin-top: 22px; }
+#p-offer.full .tile { position: relative; min-height: 92px; padding: 14px 40px 14px 14px; gap: 16px; border: 0; border-radius: 26px; background: linear-gradient(120deg, rgba(255, 226, 170, .11), rgba(255, 255, 255, .035) 60%); box-shadow: inset 0 0 0 1px rgba(233, 205, 150, .2); transition: transform .14s ease-out, background .2s, box-shadow .2s; }
+#p-offer.full .tile:hover, #p-offer.full .tile:active { background: linear-gradient(120deg, rgba(255, 226, 170, .2), rgba(255, 255, 255, .06) 60%); box-shadow: inset 0 0 0 1px rgba(233, 205, 150, .5); } #p-offer.full .tile:active { transform: scale(.98); }
+#p-offer.full .tile::after { content: ""; position: absolute; right: 18px; top: 50%; width: 8px; height: 8px; border: solid rgba(233, 205, 150, .7); border-width: 1.5px 1.5px 0 0; transform: translateY(-50%) rotate(45deg); }
+#p-offer.full .tile .ico { width: 64px; height: 64px; border-radius: 50%; background: radial-gradient(circle at 50% 42%, rgba(255, 200, 110, .38), rgba(255, 200, 110, .06) 68%); box-shadow: inset 0 0 0 1px rgba(233, 205, 150, .3); }
+#p-offer.full .tile .ico svg { width: 44px; height: 44px; overflow: visible; fill: none; stroke: var(--gold); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+#p-offer.full .tile b { font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: 20px; line-height: 25px; font-weight: 500; color: var(--cream); } #p-offer.full .tile span span { margin-top: 3px; font-size: 14px; line-height: 19px; color: var(--mut); }
+.ico .fl { fill: #ffdc8f; stroke: none; transform-origin: 24px 26px; filter: drop-shadow(0 0 6px rgba(255, 190, 90, .95)); animation: fl 1.7s ease-in-out infinite; } @keyframes fl { 0%, 100% { transform: scale(1, 1) skewX(0); } 30% { transform: scale(.94, 1.07) skewX(-3deg); } 62% { transform: scale(1.05, .95) skewX(3deg); } }
+.ico .sm { stroke: rgba(255, 255, 255, .8) !important; stroke-width: 1.3 !important; stroke-dasharray: 5 4; animation: sm 2.6s linear infinite; } @keyframes sm { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 18; } }
+.ico .em { fill: #ff9d5c; stroke: none; filter: drop-shadow(0 0 4px rgba(255, 140, 70, .95)); } .ico .ring { stroke-dasharray: 1.5 5; opacity: .75; } .ico .orb { transform-origin: 24px 24px; animation: orb 7s linear infinite; } .ico .orb circle { fill: #ffdc8f; stroke: none; filter: drop-shadow(0 0 4px rgba(255, 200, 110, .95)); } .ico .dot { fill: var(--gold); stroke: none; } @keyframes orb { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ico .fl, .ico .sm, .ico .orb { animation: none; } }
 </style>
 
 <div id="app" class="outside">
@@ -886,7 +912,7 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.32) saturate(.8); 
       <div class="sitset">
         <svg class="sit-mark" viewBox="-40 -34 80 52" aria-hidden="true"><path d="M0 14C-9 2-9-14 0-28 9-14 9 2 0 14Z" fill="#f9c6d4"/><path d="M0 14C-16 8-24-6-22-20-10-14-2 0 0 14Z" fill="#f4a9bf" opacity=".85"/><path d="M0 14C16 8 24-6 22-20 10-14 2 0 0 14Z" fill="#f4a9bf" opacity=".85"/><path d="M0 14C-22 14-34 4-36-8-22-8-8 2 0 14Z" fill="#ee93ae" opacity=".7"/><path d="M0 14C22 14 34 4 36-8 22-8 8 2 0 14Z" fill="#ee93ae" opacity=".7"/></svg>
         <h2>How long will you sit?</h2>
-        <div class="sit-n"><output id="sit-num">10</output><small>minutes</small></div>
+        <div class="sit-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="tk" cx="60" cy="60" r="56" pathLength="120"/><circle class="tr" cx="60" cy="60" r="49"/><circle class="ar" id="sit-arc" cx="60" cy="60" r="49" pathLength="100"/></svg><div class="sit-n"><output id="sit-num">10</output><small>minutes</small></div></div>
         <div class="chips" id="sit-chips"></div>
         <div class="sit-row"><span>Practice</span><div class="seg two" id="modes"></div></div>
         <div class="sit-row" id="gd-row" hidden><span>Guide</span><div class="seg three" id="gd-pick"></div></div>
@@ -925,9 +951,9 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.32) saturate(.8); 
       <h2 data-t="offerAsk"></h2>
       <p class="fs-sub">Choose what you would like to offer at the shrine.</p>
       <div class="tiles">
-        <button class="tile" id="o-lamp"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 2.800c1.7 2.1 2.5 3.5 2.5 4.800a2.5 2.5 0 0 1-5 0c0-1.3.8-2.7 2.5-4.800zM6.5 12.800h11l-1.4 3.100a2.8 2.8 0 0 1-2.5 1.600h-3.200a2.8 2.8 0 0 1-2.5-1.600zM12 17.500v2.500M9 21.200h6"/></svg></span><span><b data-t="lamp"></b><span data-t="lampSub"></span></span></button>
-        <button class="tile" id="o-incense"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 21v-9.500M9 21l1-8M15 21l-1-8M7 21h10M12 8.500c-1.6-1.2 1.6-2.5 0-4.2"/></svg></span><span><b data-t="incense"></b><span data-t="incenseSub"></span></span></button>
-        <button class="tile" id="o-kora"><span class="ico"><svg viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.300M19.5 4.500v3.800h-3.8"/></svg></span><span><b data-t="kora"></b><span data-t="koraSub"></span></span></button>
+        <button class="tile" id="o-lamp"><span class="ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path class="fl" d="M24 7c3.800 4.800 5.600 8 5.600 11.200a5.600 5.600 0 0 1-11.200 0C18.400 15 20.200 11.800 24 7z"/><path d="M12 27h24l-2.800 6.200a6 6 0 0 1-5.500 3.500h-7.400a6 6 0 0 1-5.500-3.500zM24 36.700v4M18.500 42.500h11"/></svg></span><span><b data-t="lamp"></b><span data-t="lampSub"></span></span></button>
+        <button class="tile" id="o-incense"><span class="ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path class="sm" d="M24 17c-4-3 4-5.500 0-9s3-4.500 0-6.500"/><circle class="em" cx="24" cy="20.500" r="1.700"/><path d="M24 42V22.500M19.500 42l1.700-15M28.500 42l-1.700-15M15 42.500h18"/></svg></span><span><b data-t="incense"></b><span data-t="incenseSub"></span></span></button>
+        <button class="tile" id="o-kora"><span class="ico"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="ring" cx="24" cy="24" r="14.500"/><circle class="dot" cx="24" cy="24" r="2.400"/><g class="orb"><circle cx="24" cy="9.500" r="3"/></g></svg></span><span><b data-t="kora"></b><span data-t="koraSub"></span></span></button>
       </div>
     </div>
   </div>
@@ -2386,7 +2412,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   bellEvery = 0;                                                    /* one bell to begin, three to close */
   function sitStats() { try { return JSON.parse(store.get("bp-sits", "")) || { n: 0, min: 0 }; } catch (e) { return { n: 0, min: 0 }; } }
   function paintSit() {
-    $("sit-num").textContent = sitMin;
+    $("sit-num").textContent = sitMin; $("sit-arc").style.strokeDashoffset = 100 - Math.min(100, sitMin / 60 * 100);
     document.querySelectorAll("#sit-chips .chip").forEach(function (c) { c.setAttribute("aria-pressed", +c.dataset.m === sitMin ? "true" : "false"); });
     document.querySelectorAll("#modes button").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.m === sitMode ? "true" : "false"); });
     document.querySelectorAll("#gd-pick button").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.g === gdKey ? "true" : "false"); });
