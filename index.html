@@ -674,6 +674,39 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
 .ios .sub { color: var(--lab2); }
 .ios-r.pick { gap: 10px; } .ios-tx b, .ios-tx small { text-wrap: wrap; } .ios-tx small { font-size: 14px; line-height: 19px; }
 .ios .bk-est small { white-space: nowrap; } .ios .cta-b { min-width: 118px; padding: 0 18px; } .ios .bk-back { padding: 0 8px; }
+/* the form in glass: clear rounded panes, quiet labels, strong values, ink for every accent */
+.ios { --tint: var(--ink); --lab: var(--ink); --lab2: var(--ink-2); --lab3: var(--ink-3); --sep: rgba(21, 19, 15, .1); --fill: rgba(21, 19, 15, .07); --cellbg: rgba(255, 255, 255, .3); }
+.ios-g, .ios .bk-bar, .ios-seg { background: var(--cellbg); -webkit-backdrop-filter: blur(22px) saturate(1.5); backdrop-filter: blur(22px) saturate(1.5); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .5), inset 0 1px 0 rgba(255, 255, 255, .75), 0 10px 30px rgba(40, 28, 16, .07); }
+.ios-g { border-radius: 22px; }
+.ios-h { margin: 32px 6px 10px; font-size: 11px; line-height: 14px; font-weight: 600; letter-spacing: .14em; color: var(--ink-3); }
+.ios-f { margin: 10px 6px 0; font-size: 12px; line-height: 17px; color: var(--ink-2); }
+.ios-r { min-height: 52px; padding: 0 18px; gap: 14px; font-size: 15px; line-height: 20px; color: var(--ink-2); }
+.ios-r + .ios-r::before, .ios-g details + .ios-r::before, .ios .faq details + details::before { left: 18px; right: 18px; transform: none; background: var(--sep); }
+.ios-r > span:first-child { color: var(--ink-2); font-weight: 400; } .ios-r:focus-within > span:first-child { color: var(--ink); }
+.ios-r input[type="text"], .ios-r input[type="email"], .ios-r input[type="tel"] { height: 52px; font-size: 15px; font-weight: 500; color: var(--ink); }
+.ios-r input::placeholder, .ios textarea::placeholder { font-weight: 400; color: var(--ink-3); }
+.ios-date { height: 34px; padding: 0 12px; border-radius: 999px; background: rgba(255, 255, 255, .5); box-shadow: inset 0 0 0 1px rgba(21, 19, 15, .08); font-size: 14px; font-weight: 500; }
+.ios-r output { font-size: 15px; font-weight: 600; color: var(--ink); }
+.ios-step { width: 88px; height: 34px; border-radius: 999px; background: rgba(255, 255, 255, .5); box-shadow: inset 0 0 0 1px rgba(21, 19, 15, .08); } .ios-step button { font-size: 19px; border-radius: 999px; } .ios-step i { height: 14px; background: rgba(21, 19, 15, .16); }
+.ios-r.pick { min-height: 68px; padding-top: 12px; padding-bottom: 12px; gap: 14px; } .ios-r.pick + .ios-r.pick::before, .ios-r.pick + .ios-r.link::before { left: 78px; }
+.ios .bk-th { width: 46px; height: 46px; border-radius: 12px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .6), 0 4px 12px rgba(0, 0, 0, .1); }
+.ios-tx b { font-size: 15px; line-height: 20px; font-weight: 600; color: var(--ink); } .ios-tx small { font-size: 12px; line-height: 17px; color: var(--ink-2); }
+.ios-v { font-size: 15px; font-weight: 600; color: var(--ink); }
+.ios-ck { width: 22px; height: 22px; padding: 4px; box-sizing: border-box; border-radius: 50%; stroke: #fff; stroke-width: 3; background: transparent; box-shadow: inset 0 0 0 1.5px rgba(21, 19, 15, .22); visibility: visible; } .ios-ck path { opacity: 0; }
+.ios-r.pick:has(input:checked) .ios-ck { background: var(--ink); box-shadow: none; } .ios-r.pick:has(input:checked) .ios-ck path { opacity: 1; }
+.ios-r.pick:has(input:checked) { background: rgba(255, 255, 255, .34); } .ios-r.pick:has(input:focus-visible) { background: rgba(255, 255, 255, .4); }
+.ios-r.link { font-size: 14px; font-weight: 500; color: var(--ink); } .ios-r.link span:first-child { color: var(--ink); } .ios-ch { width: 13px; height: 13px; stroke: var(--ink-3); stroke-width: 2.2; }
+.ios-val { font-size: 15px; font-weight: 600; color: var(--ink); }
+.ios-seg { padding: 4px; border-radius: 999px; gap: 4px; } .ios-seg span { height: 42px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--ink-2); } .ios-seg input:checked + span { background: rgba(255, 255, 255, .92); color: var(--ink); font-weight: 600; box-shadow: 0 4px 14px rgba(40, 28, 16, .12), inset 0 0 0 1px rgba(255, 255, 255, .9); }
+.ios textarea { min-height: 96px; padding: 16px 18px; font-size: 15px; line-height: 21px; }
+.ios-r.sum { padding-top: 14px; padding-bottom: 14px; } .ios-r.sum span { color: var(--ink-2); } .ios-r.sum b { font-weight: 600; color: var(--ink); } .ios-r.sum small { margin-top: 2px; font-size: 12px; line-height: 16px; font-weight: 400; color: var(--ink-2); } .ios-r.sum em { font-size: 18px; }
+.ios-r.num { padding-top: 14px; padding-bottom: 14px; font-size: 14px; line-height: 20px; color: var(--ink); } .ios-r.num span, .ios-r.num > span:first-child { color: var(--ink); } .ios-r.num i { width: 22px; height: 22px; background: var(--ink); font-size: 12px; } .ios-r.num + .ios-r.num::before { left: 54px; }
+.ios .faq summary { min-height: 52px; padding: 14px 18px; font-size: 15px; line-height: 20px; font-weight: 500; color: var(--ink); } .ios .faq p { padding: 0 18px 16px; font-size: 14px; line-height: 20px; }
+.ios .bk-prog { margin-top: 24px; } .ios .bk-prog button { font-size: 12px; letter-spacing: .01em; border-top-width: 2px; }
+.ios .bk-bar { border-radius: 999px; padding: 7px 7px 7px 22px; background: rgba(255, 255, 255, .55); } .ios .bk-est small { font-size: 11px; letter-spacing: .02em; } .ios .bk-est b { font-size: 19px; font-weight: 600; letter-spacing: -.01em; }
+.ios .cta-b { min-height: 48px; border-radius: 999px; background: var(--ink); font-size: 15px; font-weight: 600; letter-spacing: 0; box-shadow: 0 6px 18px rgba(21, 19, 15, .22); } .ios .cta-b:disabled { background: rgba(21, 19, 15, .1); color: var(--ink-3); box-shadow: none; }
+.ios .bk-back { min-height: 48px; font-size: 15px; font-weight: 500; color: var(--ink-2); } .ios .bk-err, .ios-f.bad { color: #a3261a; }
+.ios .bk-bar { background: rgba(250, 247, 242, .86); }
 </style>
 
 <div id="app" class="outside">
@@ -2565,7 +2598,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   var ROOMS = [                                                      /* per room, per night; photos in img/rooms */
     { id: "suite", name: "Suite", detail: "Attached bathroom", rate: 2500, img: 4, more: [5] },
     { id: "single-att", name: "Private room", detail: "Attached bathroom", rate: 1500, img: 1 },
-    { id: "double", name: "Twin sharing room", detail: "Shared bathroom, for two", rate: 1600, two: true, img: 2 },
+    { id: "double", name: "Twin sharing", detail: "Shared bathroom", rate: 1600, two: true, img: 2 },
     { id: "single", name: "Single room", detail: "Shared bathroom", rate: 400, img: 3 }
   ];
   var MEAL_RATE = 150;                                              /* per meal, per person; settled at checkout, not at booking */
