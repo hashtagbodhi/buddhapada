@@ -2,113 +2,160 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
 <style>
-/* layout: the shrine photograph fills the screen; one white glass sheet floats over it holding a sidebar, a list and a working pane */
+/* layout: the shrine photograph fills the screen; one glass sheet floats over it. Everything that carries text sits on solid panels inside the sheet,
+   so the photo shows only around the sheet and through its gutters. Sidebar at 1200 and up, an icon rail from 860, a bottom tab bar below that. */
 :root {
-  --ground: #d9cfc0; --sheet: rgba(255, 255, 255, .8); --card: rgba(255, 255, 255, .72); --well: rgba(27, 25, 21, .05);
-  --ink: #1b1915; --ink2: #5a544b; --ink3: #8b8478; --line: rgba(27, 25, 21, .1); --accent: #8a1f24; --accent-soft: rgba(138, 31, 36, .09); --gold: #a87a1f;
-  --ok: #2c7a4b; --ok-soft: rgba(44, 122, 75, .12); --warn: #a8640a; --warn-soft: rgba(168, 100, 10, .13); --bad: #a3261a; --bad-soft: rgba(163, 38, 26, .11); --info: #2b5c8a; --info-soft: rgba(43, 92, 138, .11);
+  --ground: #d9cfc0; --scrim: rgba(250, 246, 240, .22); --sheet: rgba(255, 255, 255, .8); --panel: #ffffff; --panel-2: #faf7f2; --well: #f1ece4;
+  --ink: #1b1915; --ink2: #5a544b; --ink3: #6b655c; --line: #e4ddd2; --accent: #8a1f24; --accent-soft: #f6e9e8; --gold: #b8892b;
+  --ok: #256b41; --ok-soft: #e4f1e8; --warn: #8a5200; --warn-soft: #fbeed6; --bad: #a3261a; --bad-soft: #f9e4e1; --info: #2b5c8a; --info-soft: #e3edf6;
   --f-text: "Inter", -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif; --f-display: "Fraunces", "Iowan Old Style", Georgia, serif;
-  --r: 16px; color-scheme: light;
+  --tap: 36px; --pad: 24px; color-scheme: light;
 }
 html, body { height: 100%; }
-body { background: var(--ground) url("bg.jpg") center 22% / cover fixed no-repeat; color: var(--ink); font: 14px/1.45 var(--f-text); padding-block: clamp(10px, 3.4vh, 34px); padding-left: max(clamp(16px, 3.4vw, 52px), env(safe-area-inset-left, 0px)); padding-right: max(clamp(16px, 3.4vw, 52px), env(safe-area-inset-right, 0px)); box-sizing: border-box; }
-button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; } button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+body { background: var(--ground) url("bg.jpg") center 20% / cover fixed no-repeat; color: var(--ink); font: 14px/1.5 var(--f-text); box-sizing: border-box; padding-block: clamp(0px, 3vh, 32px); padding-left: max(clamp(0px, 2.6vw, 40px), env(safe-area-inset-left, 0px)); padding-right: max(clamp(0px, 2.6vw, 40px), env(safe-area-inset-right, 0px)); }
+body::after { content: ""; position: fixed; inset: 0; z-index: -1; background: var(--scrim); pointer-events: none; }
+*, *::before, *::after { box-sizing: border-box; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
 input, select, textarea { font: inherit; color: var(--ink); }
-.app { height: 100%; max-width: 1380px; margin: 0 auto; display: grid; grid-template-columns: 228px minmax(0, 1fr); border-radius: 26px; overflow: hidden; background: var(--sheet); -webkit-backdrop-filter: blur(26px) saturate(1.3); backdrop-filter: blur(26px) saturate(1.3); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .7), 0 30px 80px rgba(40, 26, 10, .35); }
-/* sidebar */
-.side { display: flex; flex-direction: column; gap: 4px; padding: 20px 14px; border-right: 1px solid var(--line); background: rgba(255, 255, 255, .22); min-height: 0; overflow-y: auto; }
-.brand { padding: 2px 8px 14px; } .brand b { display: block; font: 600 20px/1.15 var(--f-display); letter-spacing: -.01em; } .brand span { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); }
-.nav-b { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 38px; padding: 0 10px; border-radius: 11px; font-weight: 500; color: var(--ink2); } .nav-b:hover { background: var(--well); } .nav-b[aria-current="page"] { background: var(--ink); color: #fff; }
-.nav-b i { margin-left: auto; min-width: 20px; padding: 0 6px; border-radius: 99px; font: 600 11px/18px var(--f-text); font-style: normal; text-align: center; background: var(--well); color: var(--ink2); } .nav-b[aria-current="page"] i { background: rgba(255, 255, 255, .2); color: #fff; } .nav-b i.hot { background: var(--accent); color: #fff; }
-.side h3 { margin: 18px 10px 6px; font: 600 11px/1 var(--f-text); letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); }
-.ev-b { display: flex; align-items: baseline; gap: 8px; width: 100%; padding: 7px 10px; border-radius: 10px; font-size: 13px; color: var(--ink2); } .ev-b:hover { background: var(--well); } .ev-b[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; } .ev-b span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ev-b small { font-size: 11px; color: var(--ink3); font-variant-numeric: tabular-nums; }
-.proto { margin-top: auto; padding: 10px; border-radius: 12px; background: var(--warn-soft); font-size: 11.500px; line-height: 1.4; color: #6b4206; } .proto button { margin-top: 6px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
-/* main */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.skip { position: absolute; left: -999px; } .skip:focus { left: 16px; top: 16px; z-index: 50; padding: 10px 14px; border-radius: 10px; background: var(--ink); color: #fff; }
+.app { position: relative; height: 100%; max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 200px minmax(0, 1fr); border-radius: 24px; overflow: hidden; background: rgba(255, 255, 255, .94); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .8), 0 24px 70px rgba(40, 26, 10, .32); }
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) { .app { background: var(--sheet); -webkit-backdrop-filter: blur(28px) saturate(1.2); backdrop-filter: blur(28px) saturate(1.2); } }
+
+/* navigation */
+.side { display: flex; flex-direction: column; gap: 4px; padding: 20px 12px 14px; min-height: 0; }
+.brand { padding: 0 8px 16px; } .brand b { display: block; font: 600 20px/1.2 var(--f-display); } .brand span { font-size: 12px; color: var(--ink3); }
+.nav-b { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 10px; border-radius: 10px; font-weight: 500; color: var(--ink2); } .nav-b:hover { background: rgba(255, 255, 255, .6); }
+.nav-b svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.nav-b[aria-current="page"] { background: var(--ink); color: #fff; } .nav-b i { margin-left: auto; min-width: 22px; padding: 0 6px; border-radius: 99px; font: 600 12px/20px var(--f-text); font-style: normal; text-align: center; background: var(--accent); color: #fff; } .nav-b i:empty { display: none; }
+.proto { margin-top: auto; padding: 10px 12px; border-radius: 12px; background: var(--warn-soft); font-size: 12px; line-height: 1.45; color: #5c3900; }
+
+/* main column */
 .main { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
-.top { display: flex; align-items: center; gap: 12px; padding: 16px 22px 12px; flex-wrap: wrap; } .top h1 { margin: 0; font: 600 24px/1.1 var(--f-display); letter-spacing: -.01em; } .top p { margin: 0; font-size: 12.500px; color: var(--ink3); }
-.search { margin-left: auto; width: min(260px, 100%); height: 36px; padding: 0 14px; border-radius: 99px; border: 1px solid var(--line); background: rgba(255, 255, 255, .7); }
-.view { flex: 1; min-height: 0; overflow: auto; padding: 0 22px 22px; }
+.top { display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 12px var(--pad) 12px 8px; }
+.top h1 { margin: 0; font: 600 24px/1.2 var(--f-display); } .top p { margin: 0; font-size: 12px; color: var(--ink2); } .top .sp { flex: 1; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: var(--tap); padding: 0 14px; border-radius: 10px; font-size: 14px; font-weight: 600; background: var(--ink); color: #fff; white-space: nowrap; }
+.btn.sec { background: var(--panel); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); } .btn.quiet { background: none; color: var(--ink2); font-weight: 500; } .btn.quiet:hover { background: var(--well); } .btn.danger { background: var(--bad); } .btn:disabled { opacity: .45; cursor: default; } .btn.block { width: 100%; }
+.btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.view { flex: 1; min-height: 0; padding: 0 var(--pad) var(--pad) 8px; overflow: hidden; }
+.scroll { height: 100%; overflow-y: auto; border-radius: 14px; }
+
 /* chips */
-.chip { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 9px; border-radius: 99px; font: 600 11px/1 var(--f-text); white-space: nowrap; background: var(--well); color: var(--ink2); } .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.s-new { background: var(--info-soft); color: var(--info); } .s-talk { background: var(--well); color: var(--ink2); } .s-hold { background: var(--warn-soft); color: var(--warn); } .s-paid { background: rgba(168, 122, 31, .16); color: #7a5810; } .s-conf { background: var(--ok-soft); color: var(--ok); } .s-wait { background: rgba(90, 84, 75, .12); color: var(--ink2); } .s-lost { background: var(--bad-soft); color: var(--bad); }
-.tag { display: inline-block; max-width: 100%; padding: 2px 8px; border-radius: 7px; font-size: 11px; font-weight: 500; background: var(--accent-soft); color: var(--accent); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
-/* leads: list + detail */
-.split { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 16px; height: 100%; min-height: 0; }
-.list { min-height: 0; overflow-y: auto; border-radius: var(--r); background: var(--card); box-shadow: inset 0 0 0 1px var(--line); }
-.filters { position: sticky; top: 0; z-index: 2; display: flex; gap: 6px; padding: 10px; overflow-x: auto; background: rgba(255, 255, 255, .92); border-bottom: 1px solid var(--line); scrollbar-width: none; } .filters::-webkit-scrollbar { display: none; }
-.filters button { flex: none; height: 28px; padding: 0 11px; border-radius: 99px; font-size: 12px; font-weight: 500; color: var(--ink2); box-shadow: inset 0 0 0 1px var(--line); } .filters button[aria-pressed="true"] { background: var(--ink); color: #fff; box-shadow: none; }
-.row { display: block; width: 100%; padding: 12px 14px; border-bottom: 1px solid var(--line); } .row:hover { background: rgba(255, 255, 255, .6); } .row[aria-current="true"] { background: #fff; box-shadow: inset 3px 0 0 var(--accent); }
-.row-h { display: flex; align-items: center; gap: 8px; } .row-h b { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .row-h time { font-size: 11px; color: var(--ink3); }
-.row-m { display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap; } .row p { margin: 6px 0 0; font-size: 12.500px; color: var(--ink2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.due { font-size: 11px; font-weight: 600; color: var(--bad); } .due.soon { color: var(--warn); }
-.detail { min-height: 0; overflow-y: auto; border-radius: var(--r); background: var(--card); box-shadow: inset 0 0 0 1px var(--line); }
-.empty { display: grid; place-items: center; height: 100%; padding: 30px; text-align: center; color: var(--ink3); }
-.d-head { position: sticky; top: 0; z-index: 2; display: flex; align-items: flex-start; gap: 12px; padding: 16px 18px 12px; background: rgba(255, 255, 255, .94); border-bottom: 1px solid var(--line); }
-.d-head h2 { margin: 0; font: 600 21px/1.15 var(--f-display); } .d-head p { margin: 4px 0 0; font-size: 12.500px; color: var(--ink2); overflow-wrap: anywhere; } .d-back { display: none; width: 34px; height: 34px; border-radius: 50%; background: var(--well); font-size: 18px; text-align: center; }
-.d-body { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; padding: 16px 18px 22px; }
-.sec { border-radius: 14px; background: rgba(255, 255, 255, .7); box-shadow: inset 0 0 0 1px var(--line); padding: 14px; } .sec + .sec { margin-top: 12px; }
-.sec h4 { margin: 0 0 10px; font: 600 11px/1 var(--f-text); letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); }
-.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 7px 14px; margin: 0; font-size: 13px; } .kv dt { color: var(--ink3); } .kv dd { margin: 0; text-align: right; font-weight: 500; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
-.steps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; } .steps li { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px; }
-.steps li > i { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: 600 11px/1 var(--f-text); font-style: normal; box-shadow: inset 0 0 0 1.5px var(--line); color: var(--ink3); } .steps li.done > i { background: var(--ok); color: #fff; box-shadow: none; } .steps li.now > i { box-shadow: inset 0 0 0 2px var(--accent); color: var(--accent); }
-.steps small { display: block; font-size: 11.500px; color: var(--ink3); }
-.btn { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 13px; border-radius: 99px; font-size: 12.500px; font-weight: 600; background: var(--ink); color: #fff; white-space: nowrap; } .btn.ghost { background: none; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); } .btn.sm { height: 28px; padding: 0 11px; font-size: 12px; } .btn:disabled { opacity: .4; cursor: default; } .btn.warn { background: none; color: var(--bad); box-shadow: inset 0 0 0 1px var(--bad-soft); }
-.acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
-.alert { margin-top: 10px; padding: 9px 11px; border-radius: 10px; font-size: 12.500px; background: var(--bad-soft); color: var(--bad); } .alert.ok { background: var(--ok-soft); color: var(--ok); } .alert.warn { background: var(--warn-soft); color: #6b4206; }
-.avail { display: grid; gap: 6px; } .avail div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; font-size: 12.500px; } .avail b { font-variant-numeric: tabular-nums; } .avail .zero b { color: var(--bad); }
-/* thread */
-.thread { display: grid; gap: 10px; } .msg { max-width: 88%; padding: 10px 12px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; } .msg.out { justify-self: end; background: #f6efe6; } .msg header { display: flex; gap: 8px; justify-content: space-between; margin-bottom: 4px; font-size: 11px; color: var(--ink3); white-space: normal; } .msg header b { color: var(--ink2); font-weight: 600; }
-.compose { margin-top: 12px; display: grid; gap: 8px; } .compose select, .compose input, .compose textarea { width: 100%; box-sizing: border-box; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); background: #fff; } .compose textarea { min-height: 150px; resize: vertical; line-height: 1.5; }
-.c-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } .c-row label { font-size: 12px; color: var(--ink2); } .c-row select { width: auto; padding: 6px 9px; }
-/* board */
-.board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(220px, 1fr); gap: 12px; height: 100%; min-height: 0; overflow-x: auto; padding-bottom: 4px; }
-.col { display: flex; flex-direction: column; min-height: 0; border-radius: var(--r); background: var(--card); box-shadow: inset 0 0 0 1px var(--line); } .col h3 { display: flex; justify-content: space-between; margin: 0; padding: 12px 14px; font-size: 13px; font-weight: 600; border-bottom: 1px solid var(--line); } .col h3 small { color: var(--ink3); font-weight: 500; }
-.col-b { flex: 1; min-height: 0; overflow-y: auto; padding: 10px; display: grid; gap: 8px; align-content: start; } .kard { display: block; width: 100%; padding: 10px 11px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px var(--line), 0 2px 6px rgba(40, 26, 10, .05); } .kard b { display: block; font-weight: 600; } .kard small { display: block; margin-top: 3px; font-size: 11.500px; color: var(--ink3); } .kard .tag { margin-top: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; min-height: 22px; padding: 1px 9px; border-radius: 99px; font: 600 12px/1.4 var(--f-text); white-space: nowrap; background: var(--well); color: var(--ink2); } .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.s-new { background: var(--info-soft); color: var(--info); } .s-hold { background: var(--warn-soft); color: var(--warn); } .s-ended { background: var(--bad-soft); color: var(--bad); } .s-paid { background: #f5ead0; color: #6b4d0a; } .s-conf { background: var(--ok-soft); color: var(--ok); } .s-lost { background: var(--well); color: var(--ink3); }
+.tag { font-size: 12px; color: var(--ink3); }
+
+/* guests: filter bar, list, detail */
+.split { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 12px; height: 100%; min-height: 0; }
+.listp { display: flex; flex-direction: column; min-height: 0; border-radius: 14px; background: var(--panel); box-shadow: 0 0 0 1px var(--line); overflow: hidden; }
+.fbar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px; border-bottom: 1px solid var(--line); background: var(--panel-2); }
+.fbar input, .fbar select, .field input, .field select, .field textarea { width: 100%; min-height: var(--tap); padding: 0 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); } .fbar input { grid-column: 1 / -1; }
+.fchips { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; } .fchips button { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 10px; border-radius: 99px; font-size: 12px; font-weight: 500; background: var(--accent-soft); color: var(--accent); }
+.rows { flex: 1; min-height: 0; overflow-y: auto; }
+.row { display: block; width: 100%; padding: 12px 14px; border-bottom: 1px solid var(--line); } .row:hover { background: var(--panel-2); } .row:focus-visible { outline-offset: -2px; }
+.row[aria-current="true"] { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.row-h { display: flex; align-items: baseline; gap: 8px; } .row-h b { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .row-h time { flex: none; font-size: 12px; color: var(--ink3); }
+.row-m { display: flex; align-items: center; gap: 8px; margin-top: 4px; min-width: 0; } .row-m .tag { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row p { margin: 6px 0 0; font-size: 13px; color: var(--ink2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .row .note { display: block; margin-top: 6px; font-size: 12px; color: var(--warn); }
+.empty { display: grid; place-content: center; justify-items: center; gap: 12px; height: 100%; padding: 32px; text-align: center; color: var(--ink2); }
+.detail { display: flex; flex-direction: column; min-width: 0; min-height: 0; border-radius: 14px; background: var(--panel); box-shadow: 0 0 0 1px var(--line); overflow: hidden; }
+.d-head { position: relative; z-index: 3; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
+.d-head h2 { margin: 0; font: 600 18px/1.2 var(--f-display); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .d-head p { margin: 2px 0 0; font-size: 12px; color: var(--ink2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.d-back { display: none; flex: none; width: 44px; height: 44px; margin-left: -8px; border-radius: 10px; font-size: 24px; text-align: center; }
+.d-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 320px; }
+.conv { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--panel-2); } .thread { flex: 1; min-height: 0; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: min(640px, 92%); padding: 10px 12px; border-radius: 14px; background: var(--panel); box-shadow: 0 0 0 1px var(--line); white-space: pre-wrap; overflow-wrap: anywhere; } .msg.out { align-self: flex-end; background: #f4ece1; }
+.msg header { display: flex; gap: 10px; justify-content: space-between; margin-bottom: 4px; font-size: 12px; color: var(--ink3); white-space: normal; } .msg header b { color: var(--ink2); font-weight: 600; }
+button.msg { text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; color: var(--ink2); min-height: var(--tap); flex: none; } button.msg b { color: var(--ink); font-weight: 600; }
+.dock { flex: none; padding: 12px 16px; background: var(--panel); border-top: 1px solid var(--line); display: grid; gap: 8px; }
+.dock-row { display: flex; gap: 8px; flex-wrap: wrap; } .dock-row .btn:first-child { flex: 1; justify-content: flex-start; font-weight: 500; color: var(--ink2); }
+.strip { padding: 8px 12px; border-radius: 10px; font-size: 13px; background: var(--ok-soft); color: var(--ok); } .strip.low { background: var(--warn-soft); color: var(--warn); } .strip.full { background: var(--bad-soft); color: var(--bad); } .strip button { margin-left: 6px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; min-height: 28px; }
+.dock textarea { width: 100%; min-height: 160px; max-height: 44vh; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); resize: vertical; line-height: 1.5; } .dock input[type="text"] { width: 100%; min-height: var(--tap); padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); }
+.dock-f { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; } .dock-f label { font-size: 13px; color: var(--ink2); } .dock-f select { min-height: var(--tap); padding: 0 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); } .dock-f .sp { flex: 1; }
+.err { padding: 8px 12px; border-radius: 10px; font-size: 13px; background: var(--bad-soft); color: var(--bad); }
+.panel { min-height: 0; overflow-y: auto; padding: 16px; border-left: 1px solid var(--line); display: grid; gap: 12px; align-content: start; }
+.card { border-radius: 14px; background: var(--panel); box-shadow: 0 0 0 1px var(--line); padding: 16px; } .card h3 { margin: 0 0 10px; font: 600 12px/1.4 var(--f-text); color: var(--ink2); }
+.next { background: var(--panel-2); } .next .say { margin: 0; font: 600 18px/1.3 var(--f-display); } .next .sub { margin: 4px 0 0; font-size: 13px; color: var(--ink2); } .next .acts { display: grid; gap: 8px; margin-top: 14px; } .next .acts .btn { min-height: 44px; white-space: normal; text-align: center; }
+.dots { display: flex; gap: 4px; margin: 0 0 14px; padding: 0; list-style: none; } .dots li { flex: 1; min-width: 0; font-size: 12px; color: var(--ink3); } .dots li::before { content: ""; display: block; height: 4px; margin-bottom: 6px; border-radius: 4px; background: var(--line); } .dots li.done { color: var(--ok); } .dots li.done::before { background: var(--ok); } .dots li.now { color: var(--ink); font-weight: 600; } .dots li.now::before { background: var(--accent); } .dots span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); gap: 6px; margin-top: 12px; max-height: 168px; overflow-y: auto; padding: 2px; } .pick button { height: 44px; border-radius: 10px; font-weight: 600; text-align: center; background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); font-variant-numeric: tabular-nums; } .pick button[aria-pressed="true"] { background: var(--ink); color: #fff; box-shadow: none; }
+.mini { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; } .mini .btn { grid-column: 1 / -1; min-height: 44px; }
+.field { display: grid; gap: 4px; } .field > span { font-size: 12px; font-weight: 600; color: var(--ink2); } .field textarea { min-height: 72px; padding: 8px 10px; resize: vertical; }
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: 13px; } .kv dt { color: var(--ink3); } .kv dd { margin: 0; text-align: right; font-weight: 500; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.avail { display: grid; gap: 6px; font-size: 13px; } .avail div { display: flex; justify-content: space-between; gap: 10px; } .avail b { font-variant-numeric: tabular-nums; } .avail .zero b { color: var(--bad); } .avail .mine { font-weight: 600; }
+.fold > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; min-height: var(--tap); font-weight: 600; cursor: pointer; } .fold > summary::-webkit-details-marker { display: none; } .fold > summary::after { content: "Show"; font-size: 12px; font-weight: 500; color: var(--ink3); } .fold[open] > summary::after { content: "Hide"; } .fold > div { display: grid; gap: 12px; padding-top: 8px; }
+.menu { position: relative; } .menu-p { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; min-width: 220px; padding: 6px; border-radius: 12px; background: var(--panel); box-shadow: 0 0 0 1px var(--line), 0 14px 34px rgba(40, 26, 10, .2); } .menu-p button { display: block; width: 100%; min-height: 40px; padding: 0 12px; border-radius: 8px; } .menu-p button:hover { background: var(--well); } .menu-p .bad { color: var(--bad); }
+
+/* today */
+.today { display: grid; gap: 20px; max-width: 880px; padding-bottom: 8px; } .grp h2 { display: flex; align-items: baseline; gap: 8px; margin: 0 0 8px; font: 600 18px/1.3 var(--f-display); } .grp h2 small { font: 500 13px var(--f-text); color: var(--ink3); }
+.grp-b { border-radius: 14px; background: var(--panel); box-shadow: 0 0 0 1px var(--line); overflow: hidden; } .t-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); } .t-row:last-child { border-bottom: 0; } .t-row b { font-weight: 600; } .t-row p { margin: 2px 0 0; font-size: 13px; color: var(--ink2); } .t-row .why { color: var(--warn); font-weight: 500; } .t-row .why.bad { color: var(--bad); }
+
 /* rooms */
-.rooms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; } .rm { border-radius: var(--r); background: var(--card); box-shadow: inset 0 0 0 1px var(--line); padding: 16px; }
-.rm h3 { display: flex; justify-content: space-between; align-items: baseline; margin: 0; font: 600 17px/1.2 var(--f-display); } .rm h3 small { font: 500 12px var(--f-text); color: var(--ink3); }
-.bar { display: flex; height: 10px; margin: 12px 0 8px; border-radius: 99px; overflow: hidden; background: var(--well); } .bar i { display: block; height: 100%; } .bar .c { background: var(--ok); } .bar .p { background: var(--gold); } .bar .h { background: #d9a441; opacity: .6; }
-.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11.500px; color: var(--ink2); } .legend span::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 50%; background: var(--k, var(--well)); }
-.cells { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 5px; margin-top: 12px; } .cell { height: 34px; border-radius: 8px; display: grid; place-items: center; font: 600 11px/1 var(--f-text); background: var(--well); color: var(--ink3); font-variant-numeric: tabular-nums; } .cell.c { background: var(--ok); color: #fff; } button.cell { cursor: pointer; }
-.occ { margin: 12px 0 0; padding: 0; list-style: none; font-size: 12.500px; } .occ li { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-top: 1px solid var(--line); } .occ li span { color: var(--ink3); }
-.ev-pick { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; } .ev-pick::-webkit-scrollbar { display: none; } .ev-pick button { flex: none; height: 30px; padding: 0 12px; border-radius: 99px; font-size: 12px; font-weight: 500; box-shadow: inset 0 0 0 1px var(--line); color: var(--ink2); background: rgba(255, 255, 255, .6); } .ev-pick button[aria-pressed="true"] { background: var(--ink); color: #fff; box-shadow: none; }
-/* templates and follow-ups */
-.t-grid { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 16px; height: 100%; min-height: 0; } .t-list { min-height: 0; overflow-y: auto; border-radius: var(--r); background: var(--card); box-shadow: inset 0 0 0 1px var(--line); padding: 8px; }
-.t-list h5 { margin: 12px 8px 4px; font: 600 11px/1 var(--f-text); letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); } .t-list button { display: block; width: 100%; padding: 8px 10px; border-radius: 9px; font-size: 13px; color: var(--ink2); } .t-list button[aria-current="true"] { background: var(--ink); color: #fff; }
-.t-edit { min-height: 0; overflow-y: auto; border-radius: var(--r); background: var(--card); box-shadow: inset 0 0 0 1px var(--line); padding: 18px; } .t-edit input, .t-edit textarea { width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: #fff; } .t-edit textarea { min-height: 300px; margin-top: 8px; line-height: 1.55; resize: vertical; } .t-edit label { display: block; margin: 12px 0 5px; font-size: 12px; color: var(--ink3); }
-.vars { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; } .vars code { padding: 3px 7px; border-radius: 6px; background: var(--well); font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink2); }
-.fu { display: grid; gap: 8px; max-width: 860px; } .fu-r { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); } .fu-r b { font-weight: 600; } .fu-r p { margin: 3px 0 0; font-size: 12.500px; color: var(--ink2); }
-.toast { position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 20; max-width: min(520px, calc(100% - 32px)); padding: 11px 16px; border-radius: 14px; background: var(--ink); color: #fff; font-size: 13px; box-shadow: 0 12px 30px rgba(0, 0, 0, .3); }
-@media (max-width: 1100px) { .d-body { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 860px) {
-  body { padding-block: 8px; } .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); border-radius: 20px; }
-  .side { flex-direction: row; align-items: center; gap: 6px; padding: 10px; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; overflow-y: hidden; scrollbar-width: none; } .side::-webkit-scrollbar { display: none; }
-  .brand, .side h3, .proto { display: none; } .nav-b, .ev-b { flex: none; width: auto; } .ev-b span { overflow: visible; }
-  .top { padding: 12px 14px 8px; } .top h1 { font-size: 20px; } .search { margin-left: 0; width: 100%; } .view { padding: 0 12px 12px; }
-  .split { grid-template-columns: minmax(0, 1fr); } .split .detail { display: none; } .split.open .list { display: none; } .split.open .detail { display: block; } .d-back { display: block; flex: none; }
-  .t-grid { grid-template-columns: minmax(0, 1fr); height: auto; } .t-list { max-height: 220px; } .board { grid-auto-columns: 78%; }
+.rbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; } .rbar select { min-height: var(--tap); padding: 0 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); max-width: 100%; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink2); } .legend span { display: inline-flex; align-items: center; gap: 6px; } .legend i { width: 14px; height: 14px; border-radius: 4px; }
+.k-free { background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); } .k-hold { background: repeating-linear-gradient(135deg, #f3d9a4 0 5px, #fbeed6 5px 10px); color: var(--warn); } .k-paid { background: var(--gold); color: #fff; } .k-conf { background: var(--ok); color: #fff; }
+.rgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; } .rm h3 { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 0; font: 600 18px/1.3 var(--f-display); color: var(--ink); } .rm h3 small { font: 500 13px var(--f-text); color: var(--ink2); } .rm h3 small.full { color: var(--bad); font-weight: 600; }
+.cells { display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 6px; margin-top: 12px; } .cell { height: 48px; padding: 0 2px; border-radius: 10px; display: grid; place-content: center; text-align: center; font: 600 13px/1.15 var(--f-text); font-variant-numeric: tabular-nums; } .cell small { display: block; max-width: 52px; font-size: 10px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } span.cell.k-free { color: var(--ink3); }
+.occ { margin: 12px 0 0; padding: 0; list-style: none; font-size: 13px; } .occ li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); } .occ li span { color: var(--ink3); text-align: right; }
+
+/* replies */
+.t-grid { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 12px; height: 100%; min-height: 0; } .t-list { min-height: 0; overflow-y: auto; border-radius: 14px; background: var(--panel); box-shadow: 0 0 0 1px var(--line); padding: 8px; }
+.t-list h4 { margin: 12px 10px 4px; font: 600 12px/1.4 var(--f-text); color: var(--ink3); } .t-list button { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 40px; padding: 4px 10px; border-radius: 8px; color: var(--ink2); } .t-list button:hover { background: var(--well); } .t-list button[aria-current="true"] { background: var(--ink); color: #fff; } .t-list .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+.t-edit { min-height: 0; overflow-y: auto; border-radius: 14px; background: var(--panel); box-shadow: 0 0 0 1px var(--line); padding: 16px; display: grid; gap: 12px; align-content: start; } .t-edit textarea { min-height: 280px; line-height: 1.55; } .ins { display: flex; gap: 6px; flex-wrap: wrap; } .ins button { min-height: 30px; padding: 0 10px; border-radius: 99px; font-size: 12px; font-weight: 500; background: var(--well); color: var(--ink2); }
+.prev { padding: 12px; border-radius: 12px; background: #f4ece1; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; }
+
+/* undo bar, dialog, picker */
+.undo { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); z-index: 40; display: flex; align-items: center; gap: 14px; max-width: calc(100% - 32px); min-height: 48px; padding: 6px 8px 6px 16px; border-radius: 12px; background: var(--ink); color: #fff; box-shadow: 0 12px 30px rgba(0, 0, 0, .3); } .undo span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .undo button { min-height: 36px; padding: 0 12px; border-radius: 8px; font-weight: 600; background: rgba(255, 255, 255, .16); }
+.veil { position: absolute; inset: 0; z-index: 45; display: grid; place-items: center; padding: 16px; background: rgba(27, 25, 21, .4); }
+.dlg { width: min(100%, 440px); max-height: 100%; overflow-y: auto; border-radius: 16px; background: var(--panel); padding: 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, .3); display: grid; gap: 12px; } .dlg h2 { margin: 0; font: 600 18px/1.3 var(--f-display); } .dlg p { margin: 0; color: var(--ink2); } .dlg-b { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 4px; } .dlg-b .btn { min-height: 44px; }
+.dlg.wide { width: min(100%, 520px); } .pk-list { display: grid; gap: 2px; max-height: 50vh; overflow-y: auto; } .pk-list h4 { margin: 10px 4px 2px; font: 600 12px/1.4 var(--f-text); color: var(--ink3); } .pk-list button { min-height: 44px; padding: 4px 10px; border-radius: 8px; } .pk-list button:hover { background: var(--well); } .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* icon rail */
+@media (max-width: 1199px) {
+  .app { grid-template-columns: 72px minmax(0, 1fr); } .brand, .proto { display: none; } .side { padding: 14px 6px; align-items: stretch; }
+  .nav-b { position: relative; flex-direction: column; justify-content: center; gap: 2px; min-height: 56px; padding: 6px 2px; font-size: 11px; text-align: center; } .nav-b i { position: absolute; top: 4px; right: 8px; margin: 0; min-width: 18px; padding: 0 4px; font-size: 11px; line-height: 18px; }
+  .split { grid-template-columns: 300px minmax(0, 1fr); }
+  .d-grid { display: block; overflow-y: auto; } .panel { border-left: 0; border-bottom: 1px solid var(--line); overflow: visible; } .conv { min-height: 0; } .thread { overflow: visible; } .dock { position: sticky; bottom: 0; z-index: 2; }
 }
-@media (prefers-reduced-motion: no-preference) { .row, .nav-b, .kard { transition: background .15s; } }
+/* phone: bottom tabs, list and guest as separate full screens */
+@media (max-width: 859px) {
+  :root { --tap: 44px; --pad: 16px; } body { padding: 0; font-size: 15px; }
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; border-radius: 0; max-width: none; }
+  .side { order: 2; flex-direction: row; gap: 0; padding: 0 max(8px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(8px, env(safe-area-inset-left, 0px)); background: var(--panel); border-top: 1px solid var(--line); } .nav-b { flex: 1; min-height: 56px; border-radius: 0; } .nav-b[aria-current="page"] { background: none; color: var(--accent); } .nav-b i { right: calc(50% - 26px); }
+  .top { min-height: 52px; padding: 8px max(16px, env(safe-area-inset-right, 0px)) 8px max(16px, env(safe-area-inset-left, 0px)); } .top h1 { font-size: 20px; } .top p { display: none; } #undo-b span { display: none; }
+  .view { padding: 0 max(12px, env(safe-area-inset-right, 0px)) 12px max(12px, env(safe-area-inset-left, 0px)); }
+  .split { grid-template-columns: minmax(0, 1fr); } .split > .detail { display: none; } .split.open > .listp { display: none; } .split.open > .detail { display: flex; }
+  .app.in-guest .side, .app.in-guest .top { display: none; } .app.in-guest .view { padding: 0; } .app.in-guest .detail { border-radius: 0; box-shadow: none; }
+  .d-back { display: block; } .d-head { min-height: 52px; padding-left: max(16px, env(safe-area-inset-left, 0px)); } .dock { padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+  input, select, textarea { font-size: 16px; } .t-row { grid-template-columns: minmax(0, 1fr); } .t-row .btn { width: 100%; }
+  .t-grid { display: block; height: auto; } .t-list { max-height: 240px; margin-bottom: 12px; } .view.free { overflow-y: auto; }
+  .undo { left: 12px; right: 12px; top: calc(8px + env(safe-area-inset-top, 0px)); transform: none; max-width: none; }
+  .veil { place-items: end center; padding: 0; } .dlg { width: 100%; border-radius: 18px 18px 0 0; padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); } .dlg-b .btn { flex: 1; } .cells { grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); }
+}
+@media (max-height: 520px) and (max-width: 959px) { .app { grid-template-columns: 64px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); } .side { order: 0; flex-direction: column; border-top: 0; border-right: 1px solid var(--line); padding: 4px; } .nav-b { flex: none; } .app.in-guest { grid-template-columns: minmax(0, 1fr); } .dock textarea { min-height: 90px; } }
+@media (prefers-reduced-motion: no-preference) { .row, .nav-b, .btn { transition: background .15s, opacity .15s; } .undo, .dlg { animation: up .18s ease-out; } @keyframes up { from { opacity: 0; translate: 0 8px; } } }
 </style>
 
-<div class="app">
+<a class="skip" href="#view">Skip to the guest list</a>
+<div class="app" id="app">
   <nav class="side" aria-label="Sections">
     <div class="brand"><b>Buddha Pāda</b><span>Bookings desk</span></div>
-    <button class="nav-b" data-v="leads" id="nav-leads">Enquiries<i id="n-leads"></i></button>
-    <button class="nav-b" data-v="board" id="nav-board">Pipeline</button>
-    <button class="nav-b" data-v="rooms" id="nav-rooms">Rooms</button>
-    <button class="nav-b" data-v="follow" id="nav-follow">Follow-ups<i id="n-follow"></i></button>
-    <button class="nav-b" data-v="templates" id="nav-templates">Templates</button>
-    <h3>Programmes</h3>
-    <div id="ev-list"></div>
-    <div class="proto"><b>Prototype.</b> Every guest here is invented. Nothing is emailed and nothing leaves this browser.<br><button type="button" id="reset">Reset the sample data</button></div>
+    <button class="nav-b" data-v="today"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg><span>Today</span><i id="n-today"></i></button>
+    <button class="nav-b" data-v="guests"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.500"/><path d="M5 20c.7-4 3.400-6 7-6s6.300 2 7 6"/></svg><span>Guests</span></button>
+    <button class="nav-b" data-v="rooms"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7M3 15h18M7 9V6h10v3"/></svg><span>Rooms</span></button>
+    <button class="nav-b" data-v="replies"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H9l-4 4z"/><path d="M8.500 9h7M8.500 12h4"/></svg><span>Replies</span></button>
+    <div class="proto"><b>Prototype.</b> Every guest here is invented. Nothing is emailed and nothing leaves this browser.</div>
   </nav>
-  <section class="main">
-    <header class="top"><div><h1 id="v-title"></h1><p id="v-sub"></p></div><input class="search" id="q" type="search" placeholder="Search name, email, phone" aria-label="Search guests"></header>
-    <div class="view" id="view"></div>
-  </section>
+  <main class="main">
+    <header class="top"><div><h1 id="v-title"></h1><p id="v-sub"></p></div><span class="sp"></span>
+      <button class="btn sec" id="undo-b" disabled aria-label="Undo the last change"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7L4 11l4 4"/><path d="M4 11h10a5 5 0 0 1 0 10h-3"/></svg><span>Undo</span></button>
+      <button class="btn" id="add-b">Add a guest</button>
+      <div class="menu"><button class="btn sec" id="more-b" aria-label="More" aria-expanded="false">⋯</button><div class="menu-p" id="more-p" hidden><button type="button" id="reset">Reset the sample data</button></div></div>
+    </header>
+    <div class="view" id="view" tabindex="-1"></div>
+  </main>
+  <div class="undo" id="undo" hidden role="status"><span id="undo-t"></span><button type="button" id="undo-x">Undo</button></div>
+  <div class="veil" id="veil" hidden></div>
 </div>
-<div class="toast" id="toast" hidden role="status"></div>
 
 <script>
 (function () {
@@ -116,51 +163,51 @@ input, select, textarea { font: inherit; color: var(--ink); }
   var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function inr(n) { return "₹" + Math.round(n).toLocaleString("en-IN"); }
-  var DAY = 864e5, NOW = Date.now();
+  var DAY = 864e5, HR = 36e5, NOW = Date.now();
+  var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   /* ---------- the centre's programmes and rooms ---------- */
   var EVENTS = [
-    { id: 1, name: "The Resonance Within", start: "2026-11-23", end: "2026-11-27" },
-    { id: 2, name: "From Wisdom to Experience", start: "2026-11-28", end: "2026-11-29" },
-    { id: 3, name: "Vedic Chanting & Drawing Life", start: "2026-11-30", end: "2026-12-04" },
-    { id: 4, name: "Teachings for Turbulent Times", start: "2027-01-07", end: "2027-01-16" },
-    { id: 5, name: "Subject to Change", start: "2027-02-03", end: "2027-02-07" },
-    { id: 6, name: "Meditation & Self Care", start: "2027-02-09", end: "2027-02-15" },
-    { id: 7, name: "The Joy of Living I, II & III", start: "2027-04-01", end: "2027-04-30" },
-    { id: 8, name: "The Metta Vipassana Way", start: "2027-05-10", end: "2027-05-20" },
-    { id: 9, name: "The Weave of Wholeness 2", start: "2027-03-23", end: "2027-03-29" }
+    { id: 1, name: "The Resonance Within", start: "2026-11-23", end: "2026-11-27" }, { id: 2, name: "From Wisdom to Experience", start: "2026-11-28", end: "2026-11-29" },
+    { id: 3, name: "Vedic Chanting & Drawing Life", start: "2026-11-30", end: "2026-12-04" }, { id: 4, name: "Teachings for Turbulent Times", start: "2027-01-07", end: "2027-01-16" },
+    { id: 5, name: "Subject to Change", start: "2027-02-03", end: "2027-02-07" }, { id: 6, name: "Meditation & Self Care", start: "2027-02-09", end: "2027-02-15" },
+    { id: 9, name: "The Weave of Wholeness 2", start: "2027-03-23", end: "2027-03-29" }, { id: 7, name: "The Joy of Living I, II & III", start: "2027-04-01", end: "2027-04-30" },
+    { id: 8, name: "The Metta Vipassana Way", start: "2027-05-10", end: "2027-05-20" }
   ];
   var TYPES = [
-    { id: "suite", name: "Suite", rate: 2500, per: 1, rooms: ["S1", "S2", "S3"] },
-    { id: "private", name: "Private room", rate: 1500, per: 1, rooms: ["P1", "P2", "P3", "P4", "P5", "P6", "P7"] },
+    { id: "suite", name: "Suite", rate: 2500, per: 1, rooms: ["S1", "S2", "S3"] }, { id: "private", name: "Private room", rate: 1500, per: 1, rooms: ["P1", "P2", "P3", "P4", "P5", "P6", "P7"] },
     { id: "twin", name: "Twin sharing", rate: 1600, per: 2, rooms: ["T1", "T2", "T3", "T4", "T5"] },
     { id: "single", name: "Single room", rate: 400, per: 1, rooms: (function () { var a = []; for (var i = 101; i <= 133; i++) a.push(String(i)); return a; })() }
   ];
-  var STAGES = [["new", "New enquiry"], ["talk", "In conversation"], ["hold", "Room held · advance due"], ["paid", "Advance in · ID due"], ["conf", "Confirmed"], ["wait", "Waitlist"], ["lost", "Cancelled"]];
-  var SNAME = {}; STAGES.forEach(function (s) { SNAME[s[0]] = s[1]; });
+  var SNAME = { "new": "New enquiry", talk: "In conversation", hold: "Room held", ended: "Hold ended", paid: "Advance paid", conf: "Confirmed", wait: "Waiting list", lost: "Cancelled" };
+  var SORDER = ["new", "talk", "hold", "ended", "paid", "conf", "wait", "lost"];
   function ev(id) { return EVENTS.filter(function (e) { return e.id === id; })[0]; }
   function type(id) { return TYPES.filter(function (t) { return t.id === id; })[0]; }
   function d(s) { var p = s.split("-"); return new Date(+p[0], p[1] - 1, +p[2]); }
-  var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   function range(e) { var a = d(e.start), b = d(e.end); return a.getDate() + (a.getMonth() === b.getMonth() ? "" : " " + MON[a.getMonth()]) + "–" + b.getDate() + " " + MON[b.getMonth()] + " " + b.getFullYear(); }
   function nights(e) { return Math.round((d(e.end) - d(e.start)) / DAY); }
-  function ago(t) { var m = Math.round((NOW - t) / 6e4); if (m < 60) return Math.max(1, m) + " min ago"; var h = Math.round(m / 60); if (h < 24) return h + " h ago"; var dd = Math.round(h / 24); return dd === 1 ? "yesterday" : dd + " days ago"; }
-  function when(t) { var x = new Date(t); return x.getDate() + " " + MON[x.getMonth()] + ", " + String(x.getHours()).padStart(2, "0") + ":" + String(x.getMinutes()).padStart(2, "0"); }
+  function clock(x) { var h = x.getHours(), m = x.getMinutes(); return (h % 12 || 12) + ":" + String(m).padStart(2, "0") + (h < 12 ? " am" : " pm"); }
+  function when(t) { var x = new Date(t); return DOW[x.getDay()] + " " + x.getDate() + " " + MON[x.getMonth()] + ", " + clock(x); }
+  function ago(t) { var m = Math.round((NOW - t) / 6e4); if (m < 1) return "just now"; if (m < 60) return m + " min ago"; var h = Math.round(m / 60); if (h < 24) return h + (h === 1 ? " hour ago" : " hours ago"); var dd = Math.round(h / 24); return dd === 1 ? "yesterday" : dd + " days ago"; }
+  function left(t) { var h = Math.round((t - NOW) / HR); return h < 1 ? "under an hour" : h < 24 ? h + (h === 1 ? " hour" : " hours") : Math.round(h / 24) + (Math.round(h / 24) === 1 ? " day" : " days"); }
 
-  /* ---------- reply templates ---------- */
+  /* ---------- replies ---------- */
+  var FIELDS = [["first", "Guest first name"], ["event", "Programme"], ["dates", "Dates"], ["room", "Room type"], ["nights", "Nights"], ["total", "Stay amount"], ["advance", "Advance amount"], ["balance", "Balance"], ["available", "Rooms free"], ["holdUntil", "Hold ends"], ["roomNo", "Room number"], ["alternatives", "Other rooms free"]];
+  var SIGN = "\n\nWarm regards,\nBuddha Pāda";
   var TPL0 = [
-    { id: "first", cat: "Replies", name: "First reply · room available", subj: "Your place at {{event}}", body: "Dear {{first}},\n\nThank you for writing to Buddha Pāda. We would be glad to have you with us for {{event}}, {{dates}}.\n\nA {{room}} is available for your dates. For {{nights}} nights the stay comes to {{total}}. Meals are ₹150 each and you pay only for those you take. The teachings are by donation.\n\nIf you would like us to hold the room, reply to this email and we will keep it for you for 48 hours while you arrange the advance.\n\nWarm regards,\nBuddha Pāda" },
-    { id: "soldout", cat: "Replies", name: "First reply · that room is full", subj: "Your place at {{event}}", body: "Dear {{first}},\n\nThank you for writing to Buddha Pāda. We would be glad to have you with us for {{event}}, {{dates}}.\n\nThe {{room}} is already full for these dates. We still have:\n{{alternatives}}\n\nTell us which you would prefer and we will hold it for you. We can also add you to the waiting list for a {{room}}.\n\nWarm regards,\nBuddha Pāda" },
-    { id: "advance", cat: "Booking", name: "Room held · ask for the 50% advance", subj: "Your room is held until {{holdUntil}}", body: "Dear {{first}},\n\nWe are holding a {{room}} for you for {{event}}, {{dates}}.\n\nStay: {{total}} for {{nights}} nights\nAdvance to confirm (50%): {{advance}}\n\nPlease pay the advance by {{holdUntil}} using the details below, and reply with a screenshot of the payment.\n\n[Payment details go here]\n\nAfter that we will ask for a copy of your ID and confirm your room.\n\nWarm regards,\nBuddha Pāda" },
-    { id: "idreq", cat: "Booking", name: "Advance received · ask for ID", subj: "Advance received, one last step", body: "Dear {{first}},\n\nThank you. We have received your advance of {{advance}} for {{event}}.\n\nTo complete the booking, please reply with a clear photo or scan of your Aadhaar card (or passport, if you are travelling from abroad). It is needed for the guest register and is kept only for that purpose.\n\nWarm regards,\nBuddha Pāda" },
-    { id: "confirm", cat: "Booking", name: "Booking confirmed", subj: "Confirmed: {{event}}, room {{roomNo}}", body: "Dear {{first}},\n\nYour booking is confirmed.\n\nProgramme: {{event}}\nDates: {{dates}}\nRoom: {{room}}, number {{roomNo}}\nPaid: {{advance}}\nBalance on arrival: {{balance}}\n\nPlease bring your own towel, toiletries and a water bottle, and warm layers for the evenings. Meals are ₹150 each: write your name in the meal register a few hours before.\n\nWe look forward to welcoming you.\n\nWarm regards,\nBuddha Pāda" },
-    { id: "nudge", cat: "Follow-ups", name: "Follow-up · no reply yet", subj: "Still thinking about {{event}}?", body: "Dear {{first}},\n\nI am writing to check whether you would still like to join {{event}}, {{dates}}. We currently have {{available}} left in the {{room}} category.\n\nIf you have any questions before deciding, just reply here.\n\nWarm regards,\nBuddha Pāda" },
-    { id: "holdnudge", cat: "Follow-ups", name: "Follow-up · hold is about to lapse", subj: "Your room is held until {{holdUntil}}", body: "Dear {{first}},\n\nA gentle reminder that your {{room}} for {{event}} is held until {{holdUntil}}. To keep it, please send the advance of {{advance}} and reply with the screenshot.\n\nIf you need a little more time, tell us and we will do our best to extend the hold.\n\nWarm regards,\nBuddha Pāda" },
-    { id: "waitlist", cat: "Follow-ups", name: "Added to the waiting list", subj: "You are on the waiting list for {{event}}", body: "Dear {{first}},\n\nThe {{room}} category is full for {{event}}, so we have added you to the waiting list. We will write to you the moment a room opens.\n\nWarm regards,\nBuddha Pāda" },
-    { id: "f-meals", cat: "Common questions", name: "Meals", subj: "Meals at Buddha Pāda", body: "Dear {{first}},\n\nMeals are vegetarian (not vegan) and freshly cooked: breakfast at 8 am, lunch at 12 noon and dinner at 6 pm. Each meal is ₹150 and you pay only for the meals you take. To join a meal, write your name in the meal register a few hours before.\n\nIf you have an allergy or a dietary need, tell us and we will let you know what the kitchen can do.\n\nWarm regards,\nBuddha Pāda" },
-    { id: "f-travel", cat: "Common questions", name: "Getting here", subj: "Getting to Buddha Pāda", body: "Dear {{first}},\n\nThe nearest airport is Bagdogra (Siliguri). From there it is about three hours by road along the Teesta to Kalimpong; taxis wait outside the airport. The centre is at the 13th Mile, about twenty minutes beyond Kalimpong town.\n\nWarm regards,\nBuddha Pāda" },
-    { id: "f-bring", cat: "Common questions", name: "What to bring", subj: "What to bring", body: "Dear {{first}},\n\nClean sheets, blankets and pillows are provided. Please bring your own towel, toiletries and a water bottle, and warm layers for the hill evenings. Filtered water is free all day, and laundry is available for a small charge.\n\nWarm regards,\nBuddha Pāda" },
-    { id: "f-cost", cat: "Common questions", name: "What it costs", subj: "Costs for {{event}}", body: "Dear {{first}},\n\nThe teachings are offered by donation. Rooms are charged per night: Suite ₹2,500, Private room ₹1,500, Twin sharing ₹1,600 and Single room with shared bathroom ₹400. Meals are ₹150 each.\n\nFor your dates a {{room}} comes to {{total}}.\n\nWarm regards,\nBuddha Pāda" }
+    { id: "firsthold", cat: "First replies", name: "Room held for 48 hours", subj: "Your room for {{event}} is held", body: "Dear {{first}},\n\nThank you for writing to Buddha Pāda. We would be glad to have you with us for {{event}}, {{dates}}.\n\nWe are holding a {{room}} for you until {{holdUntil}}.\n\nStay: {{total}} for {{nights}} nights\nAdvance to confirm (50%): {{advance}}\n\nTo keep the room, please pay the advance using the details below and reply with a screenshot of the payment.\n\n[Payment details go here]\n\nMeals are ₹150 each and you pay only for those you take. The teachings are by donation." + SIGN },
+    { id: "first", cat: "First replies", name: "Room available, not held", subj: "Your place at {{event}}", body: "Dear {{first}},\n\nThank you for writing to Buddha Pāda. We would be glad to have you with us for {{event}}, {{dates}}.\n\nAt the moment we have {{available}} free in the {{room}} category. For {{nights}} nights the stay comes to {{total}}. Meals are ₹150 each and you pay only for those you take. The teachings are by donation.\n\nRooms are not held until you ask, so if you would like one, reply to this email and we will hold it for 48 hours." + SIGN },
+    { id: "soldout", cat: "First replies", name: "That room type is full", subj: "Your place at {{event}}", body: "Dear {{first}},\n\nThank you for writing to Buddha Pāda. We would be glad to have you with us for {{event}}, {{dates}}.\n\nThe {{room}} category is already full for these dates. We still have:\n{{alternatives}}\n\nTell us which you would prefer and we will hold it for you. We can also add you to the waiting list for a {{room}}." + SIGN },
+    { id: "advance", cat: "Booking steps", name: "Ask for the 50% advance", subj: "Your room is held until {{holdUntil}}", body: "Dear {{first}},\n\nWe are holding a {{room}} for you for {{event}}, {{dates}}, until {{holdUntil}}.\n\nStay: {{total}} for {{nights}} nights\nAdvance to confirm (50%): {{advance}}\n\nPlease pay the advance using the details below and reply with a screenshot of the payment.\n\n[Payment details go here]" + SIGN },
+    { id: "idreq", cat: "Booking steps", name: "Advance received, ask for ID", subj: "Advance received, one last step", body: "Dear {{first}},\n\nThank you. We have received your advance of {{advance}} for {{event}}.\n\nTo complete the booking, please reply with a clear photo or scan of your Aadhaar card (or passport, if you are travelling from abroad). It is needed for the guest register and is kept only for that purpose." + SIGN },
+    { id: "confirm", cat: "Booking steps", name: "Booking confirmed", subj: "Confirmed: {{event}}, room {{roomNo}}", body: "Dear {{first}},\n\nYour booking is confirmed.\n\nProgramme: {{event}}\nDates: {{dates}}\nRoom: {{room}}, number {{roomNo}}\nPaid: {{advance}}\nBalance on arrival: {{balance}}\n\nPlease bring your own towel, toiletries and a water bottle, and warm layers for the evenings. Meals are ₹150 each: write your name in the meal register a few hours before.\n\nWe look forward to welcoming you." + SIGN },
+    { id: "nudge", cat: "Follow-ups", name: "No reply yet", subj: "Still thinking about {{event}}?", body: "Dear {{first}},\n\nI am writing to check whether you would still like to join {{event}}, {{dates}}. We currently have {{available}} free in the {{room}} category.\n\nIf you have any questions before deciding, just reply here." + SIGN },
+    { id: "holdnudge", cat: "Follow-ups", name: "Hold is about to end", subj: "Your room is held until {{holdUntil}}", body: "Dear {{first}},\n\nA gentle reminder that your {{room}} for {{event}} is held until {{holdUntil}}. To keep it, please send the advance of {{advance}} and reply with the screenshot.\n\nIf you need a little more time, tell us and we will do our best to extend the hold." + SIGN },
+    { id: "waitlist", cat: "Follow-ups", name: "Added to the waiting list", subj: "You are on the waiting list for {{event}}", body: "Dear {{first}},\n\nThe {{room}} category is full for {{event}}, so we have added you to the waiting list. We will write to you the moment a room opens." + SIGN },
+    { id: "f-meals", cat: "Common questions", name: "Meals", subj: "Meals at Buddha Pāda", body: "Dear {{first}},\n\nMeals are vegetarian (not vegan) and freshly cooked: breakfast at 8 am, lunch at 12 noon and dinner at 6 pm. Each meal is ₹150 and you pay only for the meals you take. To join a meal, write your name in the meal register a few hours before.\n\nIf you have an allergy or a dietary need, tell us and we will let you know what the kitchen can do." + SIGN },
+    { id: "f-travel", cat: "Common questions", name: "Getting here", subj: "Getting to Buddha Pāda", body: "Dear {{first}},\n\nThe nearest airport is Bagdogra (Siliguri). From there it is about three hours by road along the Teesta to Kalimpong; taxis wait outside the airport. The centre is at the 13th Mile, about twenty minutes beyond Kalimpong town." + SIGN },
+    { id: "f-bring", cat: "Common questions", name: "What to bring", subj: "What to bring", body: "Dear {{first}},\n\nClean sheets, blankets and pillows are provided. Please bring your own towel, toiletries and a water bottle, and warm layers for the hill evenings. Filtered water is free all day, and laundry is available for a small charge." + SIGN },
+    { id: "f-cost", cat: "Common questions", name: "What it costs", subj: "Costs for {{event}}", body: "Dear {{first}},\n\nThe teachings are offered by donation. Rooms are charged per night: Suite ₹2,500, Private room ₹1,500, Twin sharing ₹1,600 and Single room with shared bathroom ₹400. Meals are ₹150 each.\n\nFor your dates a {{room}} comes to {{total}}." + SIGN }
   ];
 
   /* ---------- invented guests, so every state of a booking can be seen ---------- */
@@ -168,184 +215,317 @@ input, select, textarea { font: inherit; color: var(--ink); }
     var r = 7; function rnd() { r = (r * 16807) % 2147483647; return r / 2147483647; }
     var people = ["Anjali Rao", "Tenzin Dolma", "Rohan Mehta", "Meera Krishnan", "Pema Lhamo", "Arjun Sharma", "Sonam Bhutia", "Kavita Iyer", "Daniel Weber", "Nima Sherpa", "Priya Nair", "Karma Tshering", "Lucia Romano", "Aditya Verma", "Yangchen Dolkar", "Farah Khan", "Hiroshi Tanaka", "Sunita Gurung", "Vikram Desai", "Deki Wangmo", "Claire Martin", "Ravi Subba", "Ishita Banerjee", "Lobsang Gyatso", "Neha Kapoor", "Tashi Namgyal", "Ananya Pillai", "Bikash Rai", "Emma Lindqvist", "Dorje Lama", "Shreya Ghosh", "Mingma Tamang", "Rahul Joshi", "Sangita Pradhan", "Oliver Grant", "Tsering Yangzom", "Maya Thapa", "Suresh Menon", "Chimi Dema", "Leela Fernandes"];
     var plan = ["new", "new", "talk", "talk", "hold", "hold", "paid", "conf", "conf", "conf", "wait", "lost"], types = ["single", "single", "single", "private", "twin", "suite"];
-    var asks = ["Is a room still free for these dates? I would be coming alone.", "I would like to join this programme. Could you tell me what it costs in total?", "Hello, are there places left? Also, are meals included?", "I attended last year and would love to come again. Is the private room free?", "Could two of us share a room? We are travelling together from Kolkata.", "Do you have a suite for these dates? I will be arriving a day early if that is possible."];
+    var asks = ["Is a room still free for these dates? I would be coming alone.", "I would like to join this programme. Could you tell me what it costs in total?", "Hello, are there places left? Also, are meals included?", "I attended last year and would love to come again. Is the private room free?", "Could two of us share a room? We are travelling together from Kolkata.", "Do you have a suite for these dates?"];
     var out = [], id = 1;
     EVENTS.forEach(function (e, ei) {
-      var n = ei < 3 ? 6 : ei === 6 || ei === 7 ? 3 : 4;
+      var n = ei < 3 ? 6 : e.id === 7 || e.id === 8 ? 3 : 4;
       for (var k = 0; k < n; k++) {
-        var name = people[(ei * 5 + k * 3) % people.length], st = plan[Math.floor(rnd() * plan.length)], ty = types[Math.floor(rnd() * types.length)], guests = ty === "twin" ? 2 : 1;
-        if (e.id === 1 && k < 3) { ty = "suite"; st = k === 0 ? "conf" : k === 1 ? "paid" : "hold"; }   /* one programme with its suites all taken, to show a sold-out category */
-        var first = name.split(" ")[0], created = NOW - (2 + Math.floor(rnd() * 16)) * DAY - Math.floor(rnd() * 8) * 36e5;
-        var L = { id: id++, name: name, email: name.toLowerCase().replace(/[^a-z]+/g, ".") + "@example.com", phone: "+91 9" + String(100000000 + Math.floor(rnd() * 899999999)), ev: e.id, type: ty, guests: guests, before: rnd() < .35, note: "", stage: "new", created: created, shot: false, idDoc: "", roomNo: "", holdUntil: 0, follow: 0, thread: [] };
+        var name = people[id - 1], st = plan[Math.floor(rnd() * plan.length)], ty = types[Math.floor(rnd() * types.length)];
+        if (e.id === 1 && k < 3) { ty = "suite"; st = k === 0 ? "conf" : k === 1 ? "paid" : "hold"; }      /* one programme with its suites all taken, to show a full category */
+        if (e.id === 1 && k === 3) { ty = "suite"; st = "new"; }
+        var first = name.split(" ")[0], created = NOW - (2 + Math.floor(rnd() * 14)) * DAY - Math.floor(rnd() * 8) * HR;
+        var L = { id: id++, name: name, email: name.toLowerCase().replace(/[^a-z]+/g, ".") + "@example.com", phone: "+91 9" + String(100000000 + Math.floor(rnd() * 899999999)), ev: e.id, type: ty, guests: ty === "twin" ? 2 : 1, before: rnd() < .35, note: "", stage: "new", created: created, shot: false, idDoc: "", roomNo: "", holdUntil: 0, follow: 0, thread: [] };
         L.thread.push({ dir: "in", at: created, subj: "Booking request: " + e.name, body: asks[ty === "twin" ? 4 : ty === "suite" ? 5 : ty === "private" ? 3 : Math.floor(rnd() * 3)] });
-        var t = created + (3 + rnd() * 20) * 36e5, say = function (dir, subj, body) { L.thread.push({ dir: dir, at: t, subj: subj, body: body }); t += (4 + rnd() * 30) * 36e5; };
-        if (st !== "new") { say("out", "Your place at " + e.name, "Dear " + first + ",\n\nThank you for writing to Buddha Pāda. A " + type(ty).name + " is available for " + range(e) + ". Reply to this email and we will hold it for you for 48 hours.\n\nWarm regards,\nBuddha Pāda"); L.stage = "talk"; }
-        if (st === "talk" && rnd() < .5) say("in", "Re: Your place at " + e.name, "Thank you. Could you tell me how meals work, and whether I can arrive in the evening?");
-        if (st === "hold" || st === "paid" || st === "conf") { say("in", "Re: Your place at " + e.name, "Yes please, do hold the room for me."); say("out", "Your room is held", "Dear " + first + ",\n\nWe are holding a " + type(ty).name + " for you. Please pay the 50% advance and reply with a screenshot of the payment.\n\nWarm regards,\nBuddha Pāda"); L.stage = "hold"; L.holdUntil = NOW + (rnd() < .4 ? -6 : 20 + rnd() * 26) * 36e5; }
-        if (st === "paid" || st === "conf") { say("in", "Re: Your room is held", "Advance paid just now. Screenshot attached."); L.shot = true; L.stage = "paid"; say("out", "Advance received, one last step", "Dear " + first + ",\n\nThank you, we have received your advance. Please reply with a photo of your Aadhaar card to complete the booking.\n\nWarm regards,\nBuddha Pāda"); }
-        if (st === "conf") { say("in", "Re: Advance received", "Here is my Aadhaar card."); L.idDoc = "Aadhaar ···· " + String(1000 + Math.floor(rnd() * 8999)); L.stage = "conf"; }
+        var t = created + (3 + rnd() * 16) * HR, say = function (dir, subj, body) { L.thread.push({ dir: dir, at: Math.min(t, NOW - 2 * HR), subj: subj, body: body }); t += (4 + rnd() * 20) * HR; };
+        if (st !== "new") { say("out", "Your place at " + e.name, "Dear " + first + ",\n\nThank you for writing to Buddha Pāda. A " + type(ty).name + " is free for " + range(e) + ". Reply to this email and we will hold it for you for 48 hours." + SIGN); L.stage = "talk"; }
+        if (st === "talk" && rnd() < .6) say("in", "Re: Your place at " + e.name, "Thank you. Could you tell me how meals work, and whether I can arrive in the evening?");
+        if (st === "hold" || st === "paid" || st === "conf") { say("in", "Re: Your place at " + e.name, "Yes please, do hold the room for me."); say("out", "Your room is held", "Dear " + first + ",\n\nWe are holding a " + type(ty).name + " for you. Please pay the 50% advance and reply with a screenshot of the payment." + SIGN); L.stage = "hold"; L.holdUntil = NOW + (e.id === 1 ? 30 : rnd() < .35 ? -5 : rnd() < .5 ? 7 : 30) * HR; }
+        if (st === "paid" || st === "conf") { say("in", "Re: Your room is held", "Advance paid just now. Screenshot attached."); L.shot = true; L.stage = "paid"; say("out", "Advance received, one last step", "Dear " + first + ",\n\nThank you, we have received your advance. Please reply with a photo of your Aadhaar card to complete the booking." + SIGN); }
+        if (st === "conf" || (st === "paid" && rnd() < .5)) { say("in", "Re: Advance received", "Here is my Aadhaar card."); L.idDoc = "Aadhaar ···· " + String(1000 + Math.floor(rnd() * 8999)); if (st === "conf") L.stage = "conf"; }
         if (st === "wait") L.stage = "wait"; if (st === "lost") { say("in", "Re: Your place at " + e.name, "I am sorry, my dates have changed and I will not be able to come this time."); L.stage = "lost"; }
-        if (L.stage === "talk") L.follow = NOW + (rnd() < .5 ? -1 : 2) * DAY; if (L.stage === "hold") L.follow = L.holdUntil - 12 * 36e5;
+        if (L.stage === "talk") L.follow = NOW + (rnd() < .5 ? -1 : 2) * DAY; if (L.stage === "hold") L.follow = L.holdUntil - 12 * HR; if (L.stage === "paid" && !L.idDoc) L.follow = NOW + DAY;
         out.push(L);
       }
     });
-    /* give confirmed guests a real room number, never the same room twice in one programme */
-    out.forEach(function (L) { if (L.stage !== "conf") return; var free = type(L.type).rooms.filter(function (n) { return !out.some(function (o) { return o.ev === L.ev && o.roomNo === n; }); }); L.roomNo = free[0] || ""; if (!L.roomNo) L.stage = "paid"; else L.thread.push({ dir: "out", at: Math.min(L.thread[L.thread.length - 1].at + 5 * 36e5, NOW - (2 + L.id % 30) * 36e5), subj: "Confirmed: " + ev(L.ev).name + ", room " + L.roomNo, body: "Dear " + L.name.split(" ")[0] + ",\n\nYour booking is confirmed. Your room is number " + L.roomNo + ".\n\nWarm regards,\nBuddha Pāda" }); });
+    out.forEach(function (L) { if (L.stage !== "conf") return; var free = type(L.type).rooms.filter(function (n) { return !out.some(function (o) { return o.ev === L.ev && o.roomNo === n; }); }); L.roomNo = free[0] || ""; if (!L.roomNo) { L.stage = "paid"; return; } L.thread.push({ dir: "out", at: Math.min(L.thread[L.thread.length - 1].at + 5 * HR, NOW - (2 + L.id % 30) * HR), subj: "Confirmed: " + ev(L.ev).name + ", room " + L.roomNo, body: "Dear " + L.name.split(" ")[0] + ",\n\nYour booking is confirmed. Your room is number " + L.roomNo + "." + SIGN }); });
     return out;
   }
 
-  /* ---------- state, kept in this browser only ---------- */
-  var KEY = "bp-crm-v2", S;
+  /* ---------- state: kept in this browser only; every change can be undone ---------- */
+  var KEY = "bp-desk-v3", S, hist = [];
   function load() { try { var j = JSON.parse(localStorage.getItem(KEY)); if (j && j.leads && j.tpl) return j; } catch (e) {} return { leads: seed(), tpl: JSON.parse(JSON.stringify(TPL0)) }; }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
   S = load();
-  var ui = { view: "leads", ev: 0, stage: "all", q: "", lead: 0, tpl: "first", roomEv: 1, inbound: false };
+  var ui = { view: "today", from: "today", lead: 0, q: "", fEv: 0, fSt: "", roomEv: EVENTS[0].id, tpl: "firsthold", drafts: {}, pick: {}, idForm: {}, openMsgs: {}, tDraft: null };
+  function lead(id) { return S.leads.filter(function (x) { return x.id === id; })[0]; }
+  function act(label, fn) { hist.push({ label: label, snap: JSON.stringify(S) }); if (hist.length > 20) hist.shift(); fn(); NOW = Date.now(); save(); render(); showUndo(label); }
+  function undo() { var h = hist.pop(); if (!h) return; S = JSON.parse(h.snap); NOW = Date.now(); save(); render(); showUndo("Undone: " + h.label, true); }
+  function showUndo(text, plain) { $("undo-t").textContent = text; $("undo-x").hidden = !!plain; $("undo").hidden = false; clearTimeout(showUndo.t); showUndo.t = setTimeout(function () { $("undo").hidden = true; }, plain ? 4000 : 10000); }
+  $("undo").onmouseenter = $("undo").onfocusin = function () { clearTimeout(showUndo.t); }; $("undo").onmouseleave = function () { showUndo.t = setTimeout(function () { $("undo").hidden = true; }, 4000); };
+  $("undo-x").onclick = $("undo-b").onclick = undo;
+  document.addEventListener("keydown", function (e) { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); undo(); } if (e.key === "Escape") { if (!$("veil").hidden) closeDlg("esc"); closeMenus(); } });
 
-  /* ---------- rooms: what is truly free, counting holds ---------- */
+  /* ---------- rooms: what is truly free, counting live holds ---------- */
   function need(L) { return Math.ceil(L.guests / type(L.type).per); }
-  function holding(L) { return L.stage === "hold" && L.holdUntil > NOW; }
-  function usage(evId, typeId, skip) {
-    var u = { conf: 0, paid: 0, hold: 0 };
-    S.leads.forEach(function (L) { if (L.ev !== evId || L.type !== typeId || L === skip) return; if (L.stage === "conf") u.conf += need(L); else if (L.stage === "paid") u.paid += need(L); else if (holding(L)) u.hold += need(L); });
-    u.total = type(typeId).rooms.length; u.free = Math.max(0, u.total - u.conf - u.paid - u.hold); return u;
-  }
+  function status(L) { return L.stage === "hold" && L.holdUntil <= NOW ? "ended" : L.stage; }
+  function takes(L) { var s = status(L); return s === "hold" || s === "paid" || s === "conf"; }
+  function usage(evId, typeId, skip) { var u = { conf: 0, paid: 0, hold: 0 }; S.leads.forEach(function (L) { if (L.ev !== evId || L.type !== typeId || L === skip) return; var s = status(L); if (u[s] != null) u[s] += need(L); }); u.total = type(typeId).rooms.length; u.free = Math.max(0, u.total - u.conf - u.paid - u.hold); return u; }
   function freeRooms(L) { return type(L.type).rooms.filter(function (n) { return !S.leads.some(function (o) { return o !== L && o.ev === L.ev && o.roomNo === n; }); }); }
-  function money(L) { var e = ev(L.ev), t = type(L.type), total = t.rate * nights(e) * need(L); return { total: total, adv: Math.round(total / 2), bal: total - Math.round(total / 2) }; }
-  function fill(text, L) {
-    var e = ev(L.ev), t = type(L.type), m = money(L), u = usage(L.ev, L.type, L);
-    var alt = TYPES.filter(function (x) { return x.id !== L.type && usage(L.ev, x.id).free > 0; }).map(function (x) { return "• " + x.name + " at " + inr(x.rate) + " a night (" + usage(L.ev, x.id).free + " left)"; }).join("\n") || "• Nothing at the centre for these dates, though there are guest houses nearby.";
-    var map = { first: L.name.split(" ")[0], name: L.name, event: e.name, dates: range(e), room: t.name, nights: nights(e), total: inr(m.total), advance: inr(m.adv), balance: inr(m.bal), available: u.free + (u.free === 1 ? " room" : " rooms"), holdUntil: L.holdUntil ? when(L.holdUntil) : "48 hours from now", roomNo: L.roomNo || "to be allotted", alternatives: alt };
+  function money(L) { var total = type(L.type).rate * nights(ev(L.ev)) * need(L), adv = Math.round(total / 2); return { total: total, adv: adv, bal: total - adv }; }
+  function alts(L) { return TYPES.filter(function (x) { return x.id !== L.type && usage(L.ev, x.id).free >= Math.ceil(L.guests / x.per); }); }
+  function fill(text, L, over) {
+    var e = ev(L.ev), t = type(L.type), m = money(L), u = usage(L.ev, L.type, L), hu = (over && over.holdUntil) || L.holdUntil;
+    var alt = alts(L).map(function (x) { return "• " + x.name + " at " + inr(x.rate) + " a night (" + usage(L.ev, x.id).free + " free)"; }).join("\n") || "• Nothing at the centre for these dates, though there are guest houses nearby.";
+    var map = { first: L.name.split(" ")[0], name: L.name, event: e.name, dates: range(e), room: t.name, nights: nights(e), total: inr(m.total), advance: inr(m.adv), balance: inr(m.bal), available: u.free + (u.free === 1 ? " room" : " rooms"), holdUntil: hu ? when(hu) : "48 hours from now", roomNo: (over && over.roomNo) || L.roomNo || "to be allotted", alternatives: alt };
     return text.replace(/\{\{(\w+)\}\}/g, function (a, k) { return map[k] != null ? map[k] : a; });
   }
-  function due(L) { return L.follow && !/conf|lost/.test(L.stage) ? L.follow : 0; }
   function last(L) { return L.thread[L.thread.length - 1]; }
-  function toast(msg) { var t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3600); }
+  function facts(L) { var e = ev(L.ev); return type(L.type).name + (L.guests > 1 ? " for " + L.guests : "") + " · " + range(e) + " · " + nights(e) + " nights · " + inr(money(L).total); }
+
+  /* ---------- what needs doing today ---------- */
+  function todo() {
+    var reply = [], holds = [], follow = [], endDay = new Date(NOW); endDay.setHours(23, 59, 59, 999);
+    S.leads.forEach(function (L) { var s = status(L);
+      if (s === "lost" || s === "conf") return;
+      if (s === "ended") holds.push([L, "Hold ended " + when(L.holdUntil) + ". The room counts as free again.", "bad"]);
+      else if (s === "hold" && L.holdUntil - NOW < 12 * HR) holds.push([L, "Hold ends in " + left(L.holdUntil) + ". Advance of " + inr(money(L).adv) + " not yet in.", ""]);
+      else if (s === "new") reply.push([L, "New enquiry, " + ago(L.created) + ".", ""]);
+      else if (last(L).dir === "in" && s !== "wait") reply.push([L, "Wrote " + ago(last(L).at) + " and is waiting for an answer.", ""]);
+      else if (L.follow && L.follow <= endDay.getTime()) follow.push([L, L.follow < NOW ? "Follow-up was due " + when(L.follow) + "." : "Follow-up due today.", L.follow < NOW ? "bad" : ""]);
+    });
+    reply.sort(function (a, b) { return last(a[0]).at - last(b[0]).at; }); holds.sort(function (a, b) { return a[0].holdUntil - b[0].holdUntil; }); follow.sort(function (a, b) { return a[0].follow - b[0].follow; });
+    return { reply: reply, holds: holds, follow: follow, n: reply.length + holds.length + follow.length };
+  }
+
+  /* ---------- in-page dialog (the page cannot use browser confirm boxes) ---------- */
+  var dlgDone = null, dlgBack = null;
+  function dialog(html, buttons, done, wide) {
+    dlgBack = document.activeElement; dlgDone = done;
+    $("veil").innerHTML = '<div class="dlg' + (wide ? " wide" : "") + '" role="dialog" aria-modal="true">' + html + (buttons ? '<div class="dlg-b">' + buttons.map(function (b) { return '<button type="button" class="btn ' + (b[2] == null ? "sec" : b[2]) + '" data-d="' + b[0] + '">' + b[1] + "</button>"; }).join("") + "</div>" : "") + "</div>";
+    $("veil").hidden = false; var safe = $("veil").querySelector("input, select, textarea, .btn.sec, button"); if (safe) safe.focus();
+    $("veil").querySelectorAll("[data-d]").forEach(function (b) { b.onclick = function () { closeDlg(b.dataset.d); }; });
+  }
+  function closeDlg(v) { var box = $("veil").firstChild, fn = dlgDone; if (fn && fn(v, box) === false) return; $("veil").hidden = true; $("veil").innerHTML = ""; dlgDone = null; if (dlgBack && document.contains(dlgBack)) dlgBack.focus(); }
+  $("veil").addEventListener("mousedown", function (e) { if (e.target === $("veil")) closeDlg("esc"); });
+  $("veil").addEventListener("keydown", function (e) { if (e.key !== "Tab") return; var f = $("veil").querySelectorAll("button, input, select, textarea"); if (!f.length) return; if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); } });
+  function closeMenus() { document.querySelectorAll(".menu-p").forEach(function (m) { m.hidden = true; }); }
+  document.addEventListener("click", function (e) { if (!e.target.closest(".menu")) closeMenus(); });
 
   /* ---------- shell ---------- */
-  function visible() {
-    var q = ui.q.toLowerCase();
-    return S.leads.filter(function (L) { return (!ui.ev || L.ev === ui.ev) && (!q || (L.name + " " + L.email + " " + L.phone).toLowerCase().indexOf(q) >= 0); });
-  }
-  function paintSide() {
-    document.querySelectorAll(".nav-b").forEach(function (b) { if (b.dataset.v === ui.view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
-    var fresh = S.leads.filter(function (L) { return L.stage === "new"; }).length, dueN = S.leads.filter(function (L) { return due(L) && due(L) < NOW + DAY; }).length;
-    $("n-leads").textContent = fresh; $("n-leads").className = fresh ? "hot" : ""; $("n-follow").textContent = dueN; $("n-follow").className = dueN ? "hot" : "";
-    $("ev-list").innerHTML = '<button class="ev-b" data-ev="0" aria-pressed="' + (!ui.ev) + '"><span>All programmes</span><small>' + S.leads.length + "</small></button>" + EVENTS.map(function (e) { return '<button class="ev-b" data-ev="' + e.id + '" aria-pressed="' + (ui.ev === e.id) + '"><span>' + esc(e.name) + "</span><small>" + S.leads.filter(function (L) { return L.ev === e.id; }).length + "</small></button>"; }).join("");
-    document.querySelectorAll(".ev-b").forEach(function (b) { b.onclick = function () { ui.ev = +b.dataset.ev; if (ui.ev) ui.roomEv = ui.ev; render(); }; });
-  }
-  var TITLES = { leads: ["Enquiries", "Every request from the booking form, with its conversation."], board: ["Pipeline", "Where each guest stands, from first email to confirmed room."], rooms: ["Rooms", "What is confirmed, paid for, held and free, programme by programme."], follow: ["Follow-ups", "Who is waiting to hear from you, soonest first."], templates: ["Templates", "Replies and answers you send often. Edit them here."] };
+  var TITLES = { today: ["Today", "Who needs something from you, most urgent first."], guests: ["Guests", "Every enquiry and booking, with its conversation."], rooms: ["Rooms", "What is confirmed, paid for, held and free."], replies: ["Replies", "The messages you send often. Edit them here."] };
+  function go(view) { ui.view = view; if (view !== "guests") ui.lead = 0; render(); $("view").focus({ preventScroll: true }); }
+  function openGuest(id) { ui.from = ui.view === "guests" ? ui.from : ui.view; ui.view = "guests"; ui.lead = id; render(); focusNext(); }
+  function phone() { return window.innerWidth < 860; }
   function render() {
-    paintSide(); $("v-title").textContent = TITLES[ui.view][0]; $("v-sub").textContent = TITLES[ui.view][1] + (ui.ev ? " Showing " + ev(ui.ev).name + "." : "");
-    $("q").hidden = ui.view === "rooms" || ui.view === "templates";
-    ({ leads: vLeads, board: vBoard, rooms: vRooms, follow: vFollow, templates: vTemplates })[ui.view]();
+    var keep = document.activeElement && document.activeElement.id, T = todo();
+    document.querySelectorAll(".nav-b").forEach(function (b) { if (b.dataset.v === ui.view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+    $("n-today").textContent = T.n || ""; $("v-title").textContent = TITLES[ui.view][0]; $("v-sub").textContent = TITLES[ui.view][1];
+    $("undo-b").disabled = !hist.length; $("undo-b").title = hist.length ? "Undo: " + hist[hist.length - 1].label : "Nothing to undo";
+    $("app").classList.toggle("in-guest", ui.view === "guests" && !!ui.lead && phone()); $("view").className = "view" + (ui.view === "guests" ? "" : " free");
+    ({ today: vToday, guests: vGuests, rooms: vRooms, replies: vReplies })[ui.view](T);
+    if (keep && $(keep) && document.activeElement !== $(keep)) $(keep).focus({ preventScroll: true });
+  }
+  function chip(L) { var s = status(L); return '<span class="chip s-' + s + '">' + SNAME[s] + "</span>"; }
+
+  /* ---------- today ---------- */
+  function vToday(T) {
+    var grp = function (title, rows, label) { return rows.length ? '<section class="grp"><h2>' + title + "<small>" + rows.length + '</small></h2><div class="grp-b">' + rows.map(function (r) { var L = r[0]; return '<div class="t-row"><div><b>' + esc(L.name) + "</b> " + chip(L) + '<p><span class="why ' + r[2] + '">' + esc(r[1]) + "</span> " + esc(ev(L.ev).name) + " · " + type(L.type).name + '</p></div><button class="btn sec" data-open="' + L.id + '">' + label + "</button></div>"; }).join("") + "</div></section>" : ""; };
+    var h = grp("Reply now", T.reply, "Open and reply") + grp("Holds ending soon", T.holds, "Open") + grp("Follow up", T.follow, "Open and follow up");
+    $("view").innerHTML = '<div class="scroll">' + (h ? '<div class="today">' + h + "</div>" : '<div class="empty"><p>All caught up. Nobody is waiting on you.</p><button class="btn" data-go="guests">See all guests</button></div>') + "</div>";
+    wire();
+  }
+  function wire() {
+    $("view").querySelectorAll("[data-open]").forEach(function (b) { b.onclick = function () { openGuest(+b.dataset.open); }; });
+    $("view").querySelectorAll("[data-go]").forEach(function (b) { b.onclick = function () { go(b.dataset.go); }; });
   }
 
-  /* ---------- enquiries ---------- */
-  function rowHtml(L) {
-    var m = last(L), f = due(L);
-    return '<button class="row" data-lead="' + L.id + '"' + (ui.lead === L.id ? ' aria-current="true"' : "") + '><span class="row-h"><b>' + esc(L.name) + "</b><time>" + ago(m.at) + '</time></span><span class="row-m"><span class="chip s-' + L.stage + '">' + SNAME[L.stage] + '</span><span class="tag">' + esc(ev(L.ev).name) + "</span>" + (f ? '<span class="due' + (f > NOW ? " soon" : "") + '">' + (f < NOW ? "Follow-up overdue" : "Follow up " + when(f)) + "</span>" : "") + "</span><p>" + (m.dir === "out" ? "You: " : "") + esc(m.body.replace(/\s+/g, " ").slice(0, 120)) + "</p></button>";
-  }
-  function vLeads() {
-    var all = visible(), list = all.filter(function (L) { return ui.stage === "all" || L.stage === ui.stage; }).sort(function (a, b) { return last(b).at - last(a).at; });
-    if (!list.some(function (L) { return L.id === ui.lead; })) ui.lead = window.innerWidth > 860 && list[0] ? list[0].id : 0;
-    $("view").innerHTML = '<div class="split' + (ui.lead && window.innerWidth <= 860 ? " open" : "") + '" id="split"><div class="list"><div class="filters">' + [["all", "All"]].concat(STAGES).map(function (s) { var n = s[0] === "all" ? all.length : all.filter(function (L) { return L.stage === s[0]; }).length; return '<button data-st="' + s[0] + '" aria-pressed="' + (ui.stage === s[0]) + '">' + s[1].split(" · ")[0] + " " + n + "</button>"; }).join("") + "</div>" + (list.map(rowHtml).join("") || '<p class="empty">No enquiries match.</p>') + '</div><div class="detail" id="detail"></div></div>';
-    document.querySelectorAll("[data-st]").forEach(function (b) { b.onclick = function () { ui.stage = b.dataset.st; render(); }; });
-    document.querySelectorAll("[data-lead]").forEach(function (b) { b.onclick = function () { ui.lead = +b.dataset.lead; ui.inbound = false; render(); }; });
+  /* ---------- guests ---------- */
+  function matches(L) { var q = ui.q.trim().toLowerCase(); return (!ui.fEv || L.ev === ui.fEv) && (!ui.fSt || status(L) === ui.fSt) && (!q || (L.name + " " + L.email + " " + L.phone + " " + L.roomNo + " " + L.thread.map(function (m) { return m.body; }).join(" ")).toLowerCase().indexOf(q) >= 0); }
+  function vGuests() {
+    var list = S.leads.filter(matches).sort(function (a, b) { return last(b).at - last(a).at; }), cur = lead(ui.lead), stray = cur && list.indexOf(cur) < 0;
+    if (stray) list.unshift(cur);                                                         /* the open guest never vanishes or changes on its own */
+    var counts = {}; S.leads.forEach(function (L) { if (!ui.fEv || L.ev === ui.fEv) { var s = status(L); counts[s] = (counts[s] || 0) + 1; } });
+    var active = [ui.q.trim() ? ["q", "“" + ui.q.trim() + "”"] : 0, ui.fEv ? ["ev", ev(ui.fEv).name] : 0, ui.fSt ? ["st", SNAME[ui.fSt]] : 0].filter(Boolean);
+    var rowsScroll = $("rows") ? $("rows").scrollTop : 0;
+    $("view").innerHTML = '<div class="split' + (cur ? " open" : "") + '"><div class="listp"><div class="fbar"><input id="f-q" type="search" placeholder="Search name, phone, room or message" aria-label="Search guests" value="' + esc(ui.q) + '">' +
+      '<select id="f-ev" aria-label="Programme"><option value="0">All programmes</option>' + EVENTS.map(function (e) { return '<option value="' + e.id + '"' + (ui.fEv === e.id ? " selected" : "") + ">" + esc(e.name) + "</option>"; }).join("") + "</select>" +
+      '<select id="f-st" aria-label="Status"><option value="">Any status</option>' + SORDER.map(function (s) { return '<option value="' + s + '"' + (ui.fSt === s ? " selected" : "") + ">" + SNAME[s] + " (" + (counts[s] || 0) + ")</option>"; }).join("") + "</select>" +
+      (active.length ? '<div class="fchips">' + active.map(function (a) { return '<button type="button" data-clear="' + a[0] + '" aria-label="Remove filter ' + esc(a[1]) + '">' + esc(a[1]) + " ✕</button>"; }).join("") + "</div>" : "") + '</div><div class="rows" id="rows">' +
+      (list.map(function (L) { var m = last(L); return '<button class="row" data-open="' + L.id + '"' + (L === cur ? ' aria-current="true"' : "") + '><span class="row-h"><b>' + esc(L.name) + "</b><time>" + ago(m.at) + '</time></span><span class="row-m">' + chip(L) + '<span class="tag">' + esc(ev(L.ev).name) + "</span></span><p>" + (m.dir === "out" ? "You: " : "") + esc(m.body.replace(/\s+/g, " ").slice(0, 90)) + "</p>" + (L === cur && stray ? '<span class="note">Open, though it no longer matches the filters.</span>' : "") + "</button>"; }).join("") || '<div class="empty"><p>No guests match these filters.</p><button class="btn sec" data-clear="all">Clear filters</button></div>') +
+      '</div></div><div class="detail" id="detail"></div></div>';
+    $("rows").scrollTop = rowsScroll;
+    $("f-q").oninput = function () { ui.q = this.value; var pos = this.selectionStart; vGuests(); $("f-q").focus(); $("f-q").setSelectionRange(pos, pos); };
+    $("f-ev").onchange = function () { ui.fEv = +this.value; render(); }; $("f-st").onchange = function () { ui.fSt = this.value; render(); };
+    $("view").querySelectorAll("[data-clear]").forEach(function (b) { b.onclick = function () { var k = b.dataset.clear; if (k === "q" || k === "all") ui.q = ""; if (k === "ev" || k === "all") ui.fEv = 0; if (k === "st" || k === "all") ui.fSt = ""; render(); }; });
+    $("rows").querySelectorAll("[data-open]").forEach(function (b) { b.onclick = function () { ui.lead = +b.dataset.open; ui.from = "guests"; render(); if (!phone()) focusNext(); }; });
     paintDetail();
   }
-  function paintDetail() {
-    var box = $("detail"), L = S.leads.filter(function (x) { return x.id === ui.lead; })[0];
-    if (!L) { box.innerHTML = '<div class="empty">Choose an enquiry to see the conversation, the room and the next step.</div>'; return; }
-    var e = ev(L.ev), t = type(L.type), m = money(L), u = usage(L.ev, L.type, L), n = need(L), has = /hold|paid|conf/.test(L.stage) && (L.stage !== "hold" || holding(L)), short = !has && u.free < n, lapsed = L.stage === "hold" && !holding(L);
-    var st = L.stage, idx = { "new": 0, talk: 1, hold: 2, paid: 3, conf: 4 }[st]; if (idx == null) idx = -1;
-    var steps = [["Reply to the enquiry", st === "new" ? "Not answered yet" : "Answered"], ["Hold a room", has ? (st === "hold" ? "Held until " + when(L.holdUntil) : "Room secured") : lapsed ? "The hold lapsed on " + when(L.holdUntil) : u.free + " of " + u.total + " free in this category"], ["50% advance · " + inr(m.adv), L.shot ? "Payment screenshot received" : "Waiting for the payment screenshot"], ["ID document", L.idDoc ? L.idDoc + " on file" : "Aadhaar or passport not received"], ["Confirm and allot a room", L.roomNo ? "Room " + L.roomNo : "Not allotted"]];
-    var done = [st !== "new", has, L.shot, !!L.idDoc, st === "conf"];
-    var free = freeRooms(L);
-    var h = '<div class="d-head"><button class="d-back" id="d-back" aria-label="Back to the list">‹</button><div style="flex:1;min-width:0"><h2>' + esc(L.name) + "</h2><p>" + esc(L.email) + " · " + esc(L.phone) + '</p></div><span class="chip s-' + st + '">' + SNAME[st] + "</span></div>" +
-      '<div class="d-body"><div><div class="sec"><h4>Conversation</h4><div class="thread">' + L.thread.map(function (x) { return '<div class="msg ' + x.dir + '"><header><b>' + (x.dir === "out" ? "Buddha Pāda" : esc(L.name)) + " · " + esc(x.subj) + "</b><span>" + when(x.at) + "</span></header>" + esc(x.body) + "</div>"; }).join("") + "</div>" +
-      '<div class="compose"><div class="c-row"><label for="c-tpl">Template</label><select id="c-tpl"><option value="">Write from scratch</option>' + cats().map(function (c) { return '<optgroup label="' + esc(c) + '">' + S.tpl.filter(function (x) { return x.cat === c; }).map(function (x) { return '<option value="' + x.id + '">' + esc(x.name) + "</option>"; }).join("") + "</optgroup>"; }).join("") + '</select><label style="margin-left:auto"><input type="checkbox" id="c-in"' + (ui.inbound ? " checked" : "") + "> Log a reply from the guest instead</label></div>" +
-      '<input id="c-subj" placeholder="Subject" aria-label="Subject"><textarea id="c-body" placeholder="Write your reply, or pick a template above" aria-label="Message"></textarea>' +
-      '<div class="c-row"><label for="c-fu">Then follow up</label><select id="c-fu"><option value="0">No reminder</option><option value="1">Tomorrow</option><option value="2" selected>In 2 days</option><option value="4">In 4 days</option><option value="7">In a week</option></select><button class="btn" id="c-send" style="margin-left:auto">' + (ui.inbound ? "Add their reply" : "Send reply") + '</button></div><div id="c-warn"></div></div></div></div>' +
-      '<div><div class="sec"><h4>Next steps</h4><ol class="steps">' + steps.map(function (s, k) { return '<li class="' + (done[k] ? "done" : k === done.indexOf(false) ? "now" : "") + '"><i>' + (done[k] ? "✓" : k + 1) + "</i><span>" + s[0] + "<small>" + esc(s[1]) + "</small></span></li>"; }).join("") + "</ol>" +
-      (short ? '<p class="alert">Only ' + u.free + " " + t.name.toLowerCase() + (u.free === 1 ? " is" : "s are") + " free for this programme and this guest needs " + n + ". Offer another category or the waiting list before promising a room.</p>" : "") + (lapsed ? '<p class="alert warn">The 48-hour hold has lapsed, so this room counts as free again. Hold it again or release it.</p>' : "") +
-      '<div class="acts">' + (!has && st !== "conf" && st !== "lost" ? '<button class="btn sm" data-a="hold"' + (short ? " disabled" : "") + ">Hold room 48 h</button>" : "") + (st === "hold" && holding(L) ? '<button class="btn sm ghost" data-a="release">Release hold</button>' : "") +
-      (has && !L.shot ? '<button class="btn sm" data-a="shot">Advance screenshot received</button>' : "") + (L.shot && !L.idDoc ? '<button class="btn sm" data-a="id">ID received</button>' : "") +
-      (L.shot && L.idDoc && st !== "conf" ? '<select id="a-room" aria-label="Room number" style="height:28px;border-radius:99px;border:1px solid var(--line);padding:0 8px">' + free.map(function (r) { return "<option>" + r + "</option>"; }).join("") + '</select><button class="btn sm" data-a="confirm"' + (free.length ? "" : " disabled") + ">Confirm and allot</button>" : "") +
-      (st !== "wait" && st !== "conf" && st !== "lost" ? '<button class="btn sm ghost" data-a="wait">Waiting list</button>' : "") + (st !== "lost" ? '<button class="btn sm warn" data-a="lost">Cancel</button>' : '<button class="btn sm ghost" data-a="reopen">Reopen</button>') + "</div></div>" +
-      '<div class="sec"><h4>Request</h4><dl class="kv"><dt>Programme</dt><dd>' + esc(e.name) + "</dd><dt>Dates</dt><dd>" + range(e) + " · " + nights(e) + " nights</dd><dt>Guests</dt><dd>" + L.guests + '</dd><dt>Room</dt><dd><select id="a-type" aria-label="Room category" style="border:0;background:none;font-weight:500;text-align:right">' + TYPES.map(function (x) { return '<option value="' + x.id + '"' + (x.id === L.type ? " selected" : "") + ">" + x.name + "</option>"; }).join("") + "</select></dd><dt>Stay</dt><dd>" + inr(m.total) + "</dd><dt>Advance (50%)</dt><dd>" + inr(m.adv) + "</dd><dt>Balance</dt><dd>" + inr(m.bal) + "</dd><dt>Been here before</dt><dd>" + (L.before ? "Yes" : "First time") + "</dd><dt>Received</dt><dd>" + when(L.created) + "</dd></dl></div>" +
-      '<div class="sec"><h4>Free for ' + esc(e.name) + '</h4><div class="avail">' + TYPES.map(function (x) { var uu = usage(L.ev, x.id); return '<div class="' + (uu.free ? "" : "zero") + '"><span>' + x.name + " · " + inr(x.rate) + "</span><b>" + (uu.free ? uu.free + " of " + uu.total : "Full") + "</b></div>"; }).join("") + "</div></div>" +
-      '<div class="sec"><h4>Documents</h4><dl class="kv"><dt>Payment screenshot</dt><dd>' + (L.shot ? "Received" : "—") + "</dd><dt>ID</dt><dd>" + (L.idDoc || "—") + '</dd></dl><p style="margin:10px 0 0;font-size:11.500px;color:var(--ink3)">In the working system the files themselves are stored securely and only the last four digits are shown here.</p></div></div></div>';
-    box.innerHTML = h; box.scrollTop = 0;
-    $("d-back").onclick = function () { ui.lead = 0; render(); };
-    var subj = $("c-subj"), body = $("c-body");
-    function warn() { var w = $("c-warn"), id = $("c-tpl").value; w.innerHTML = id === "first" && short ? '<p class="alert">This template promises a ' + t.name.toLowerCase() + ", but that category is full. Use “First reply · that room is full”.</p>" : /\[Payment details go here\]/.test(body.value) ? '<p class="alert warn">Add your payment details before sending.</p>' : ""; }
-    $("c-tpl").onchange = function () { var x = S.tpl.filter(function (q) { return q.id === $("c-tpl").value; })[0]; if (x) { subj.value = fill(x.subj, L); body.value = fill(x.body, L); } warn(); };
-    body.oninput = warn;
-    if (st === "new") { $("c-tpl").value = short ? "soldout" : "first"; $("c-tpl").onchange(); }
-    $("c-in").onchange = function () { ui.inbound = this.checked; $("c-send").textContent = ui.inbound ? "Add their reply" : "Send reply"; };
-    $("c-send").onclick = function () {
-      if (!body.value.trim()) { toast("Write a message first."); body.focus(); return; }
-      var inbound = $("c-in").checked; L.thread.push({ dir: inbound ? "in" : "out", at: Date.now(), subj: subj.value.trim() || (inbound ? "Re: " : "") + (last(L).subj || e.name), body: body.value.trim() });
-      if (!inbound) { if (L.stage === "new") L.stage = "talk"; var fu = +$("c-fu").value; L.follow = fu ? Date.now() + fu * DAY : 0; toast("Added to the conversation. In this prototype no email is actually sent."); } else { L.follow = Date.now(); toast("Their reply is logged. It is your turn to answer."); }
-      NOW = Date.now(); ui.inbound = false; save(); render();
-    };
-    $("a-type").onchange = function () { L.type = this.value; L.roomNo = ""; if (L.stage === "hold" || L.stage === "paid") { var uu = usage(L.ev, L.type, L); if (uu.free < need(L)) { L.stage = "talk"; L.holdUntil = 0; toast("That category is full, so the hold was released."); } } save(); render(); };
-    box.querySelectorAll("[data-a]").forEach(function (b) { b.onclick = function () {
-      var a = b.dataset.a;
-      if (a === "hold") { L.stage = "hold"; L.holdUntil = Date.now() + 2 * DAY; L.follow = L.holdUntil - 12 * 36e5; toast("Room held for 48 hours. Send the advance request next."); }
-      else if (a === "release") { L.stage = "talk"; L.holdUntil = 0; toast("Hold released. The room is free again."); }
-      else if (a === "shot") { L.shot = true; L.stage = "paid"; L.follow = Date.now() + 2 * DAY; toast("Advance recorded. Ask for the ID next."); }
-      else if (a === "id") { L.idDoc = "Aadhaar ···· " + String(1000 + Math.floor(Math.random() * 8999)); toast("ID recorded. You can confirm and allot a room."); }
-      else if (a === "confirm") { L.roomNo = $("a-room").value; L.stage = "conf"; L.follow = 0; toast("Confirmed in room " + L.roomNo + ". Send the confirmation email."); }
-      else if (a === "wait") { L.stage = "wait"; L.holdUntil = 0; L.roomNo = ""; toast("Moved to the waiting list."); }
-      else if (a === "lost") { L.stage = "lost"; L.holdUntil = 0; L.roomNo = ""; L.follow = 0; toast("Cancelled. Any room is free again."); }
-      else if (a === "reopen") { L.stage = "talk"; toast("Reopened."); }
-      NOW = Date.now(); save(); render();
-      if (a === "hold" || a === "shot" || a === "confirm") { var pick = { hold: "advance", shot: "idreq", confirm: "confirm" }[a]; if ($("c-tpl")) { $("c-tpl").value = pick; $("c-tpl").onchange(); } }
-    }; });
-  }
-  function cats() { var c = []; S.tpl.forEach(function (x) { if (c.indexOf(x.cat) < 0) c.push(x.cat); }); return c; }
 
-  /* ---------- pipeline ---------- */
-  function vBoard() {
-    var all = visible();
-    $("view").innerHTML = '<div class="board">' + STAGES.map(function (s) { var ls = all.filter(function (L) { return L.stage === s[0]; }).sort(function (a, b) { return last(b).at - last(a).at; }); return '<div class="col"><h3>' + s[1] + "<small>" + ls.length + '</small></h3><div class="col-b">' + (ls.map(function (L) { return '<button class="kard" data-lead="' + L.id + '"><b>' + esc(L.name) + "</b><small>" + type(L.type).name + (L.roomNo ? " · room " + L.roomNo : "") + " · " + inr(money(L).total) + (L.stage === "hold" ? " · " + (holding(L) ? "held to " + when(L.holdUntil) : "hold lapsed") : "") + '</small><span class="tag">' + esc(ev(L.ev).name) + "</span></button>"; }).join("") || '<small style="color:var(--ink3);padding:6px">Nobody here.</small>') + "</div></div>"; }).join("") + "</div>";
-    document.querySelectorAll("[data-lead]").forEach(function (b) { b.onclick = function () { ui.lead = +b.dataset.lead; ui.view = "leads"; ui.stage = "all"; render(); }; });
+  /* the single next step for a guest: a sentence, one main button, at most two quieter ones */
+  function nextStep(L) {
+    var s = status(L), t = type(L.type), m = money(L), u = usage(L.ev, L.type, L), n = need(L), ok = u.free >= n, first = L.name.split(" ")[0], tl = t.name.toLowerCase(), a = alts(L);
+    var offer = function (verb) { return ok ? { say: verb, sub: u.free + " of " + u.total + " free in " + t.name + " for this programme.", main: ["hold", "Reply and hold a " + tl], more: [["nohold", "Reply without holding"]] } : { say: "The " + tl + " category is full", sub: a.length ? "Still free: " + a.map(function (x) { return x.name + " (" + usage(L.ev, x.id).free + ")"; }).join(", ") + "." : "Nothing else is free for this programme.", main: ["full", "Reply: that room is full"], more: s === "wait" ? [] : [["wait", "Add to the waiting list"]] }; };
+    if (s === "new") return offer("Reply to " + first);
+    if (s === "talk") return last(L).dir === "in" ? offer(first + " is waiting for an answer") : offer("Waiting to hear from " + first);
+    if (s === "wait") return ok ? offer("A room has opened for " + first) : { say: first + " is on the waiting list", sub: "The " + tl + " category is still full.", more: [["write", "Send a message"]] };
+    if (s === "hold") return { say: "Waiting for " + inr(m.adv) + " advance", sub: "Hold ends " + when(L.holdUntil) + " (in " + left(L.holdUntil) + ").", main: ["paid", "Advance received"], more: [["extend", "Extend hold 24 hours"], ["remind", "Send a reminder"]] };
+    if (s === "ended") return { say: "The hold ended", sub: "It ended " + when(L.holdUntil) + ". This room counts as free again.", main: ok ? ["rehold", "Hold again for 48 hours"] : null, more: [["letgo", "Let it go"]] };
+    if (s === "paid" && !L.idDoc) return { say: "Waiting for ID", sub: "Advance of " + inr(m.adv) + " is in. Aadhaar or passport still to come.", form: "id" };
+    if (s === "paid") return { say: "Allot a room", sub: "Advance and ID are both in. Choose a free " + tl + ".", form: "room" };
+    if (s === "conf") return { say: "Confirmed · Room " + L.roomNo, sub: "Balance on arrival: " + inr(m.bal) + ".", more: [["write", "Send a message"]] };
+    return { say: "Cancelled", sub: "This booking is closed and holds no room.", main: ["reopen", "Reopen"] };
+  }
+  function draft(L) { return ui.drafts[L.id] || (ui.drafts[L.id] = { open: false, subj: "", body: "", act: null, dirty: false, inbound: false, remind: 2, tpl: "" }); }
+  function compose(L, tplId, action, over) {
+    var D = draft(L), set = function () { var x = S.tpl.filter(function (q) { return q.id === tplId; })[0]; D.open = true; D.inbound = false; D.act = action || null; D.over = over || null; D.tpl = tplId || ""; D.subj = x ? fill(x.subj, L, over) : D.subj; D.body = x ? fill(x.body, L, over) : D.body; D.dirty = false; D.err = ""; render(); var b = $("c-body"); if (b) { b.focus(); b.setSelectionRange(0, 0); b.scrollTop = 0; } };
+    if (D.dirty && D.body.trim() && tplId) dialog("<h2>Replace your draft?</h2><p>You have started writing to " + esc(L.name.split(" ")[0]) + ". Choosing this reply will replace it.</p>", [["keep", "Keep my draft"], ["go", "Replace draft", ""]], function (v) { if (v === "go") setTimeout(set, 0); });
+    else set();
+  }
+  function apply(L, a) {                                                   /* the record changes that go with a message */
+    if (a.k === "hold") { L.stage = "hold"; L.holdUntil = a.until; L.follow = a.until - 12 * HR; }
+    else if (a.k === "paid") { L.shot = true; L.stage = "paid"; L.holdUntil = 0; L.follow = Date.now() + 2 * DAY; }
+    else if (a.k === "conf") { L.roomNo = a.room; L.stage = "conf"; L.follow = 0; }
+    else if (a.k === "wait") { L.stage = "wait"; L.holdUntil = 0; L.roomNo = ""; }
+  }
+  var ACTLABEL = { hold: "Send and hold the room", paid: "Send and record the advance", conf: "Send and confirm the room", wait: "Send and add to waiting list" }, ACTDONE = { hold: "Room held for ", paid: "Advance recorded for ", conf: "Room confirmed for ", wait: "Added to the waiting list: " };
+
+  function paintDetail() {
+    var box = $("detail"), L = lead(ui.lead); if (!box) return;
+    if (!L) { box.innerHTML = '<div class="empty"><p>Choose a guest to see the conversation and the next step.</p></div>'; box.dataset.lead = ""; return; }
+    var same = box.dataset.lead === String(L.id), keepScroll = same && $("thread") ? $("thread").scrollTop : -1, keepPanel = same && $("d-grid") ? $("d-grid").scrollTop : 0, foldOpen = same && box.querySelector(".fold") && box.querySelector(".fold").open;
+    var e = ev(L.ev), t = type(L.type), m = money(L), s = status(L), N = nextStep(L), D = draft(L), u = usage(L.ev, L.type, L), first = L.name.split(" ")[0], narrow = window.innerWidth < 1200;
+    var stepNames = ["Reply", "Hold", "Pay", "ID", "Room"], doneN = s === "new" ? 0 : s === "conf" ? 5 : s === "paid" ? (L.idDoc ? 4 : 3) : s === "hold" ? 2 : 1;
+    var dots = s === "lost" || s === "wait" ? "" : '<ol class="dots" aria-label="Booking progress">' + stepNames.map(function (x, k) { return '<li class="' + (k < doneN ? "done" : k === doneN ? "now" : "") + '"><span>' + x + "</span></li>"; }).join("") + "</ol>";
+    var form = "";
+    if (N.form === "id") { var I = ui.idForm[L.id] || (ui.idForm[L.id] = { kind: "Aadhaar", last: "" }); form = '<div class="mini"><label class="field"><span>Document</span><select id="id-kind"><option' + (I.kind === "Aadhaar" ? " selected" : "") + ">Aadhaar</option><option" + (I.kind === "Passport" ? " selected" : "") + '>Passport</option></select></label><label class="field"><span>Last 4 characters</span><input id="id-last" maxlength="4" autocomplete="off" value="' + esc(I.last) + '"></label><button class="btn" id="next-primary" data-n="idsave">ID received</button></div>'; }
+    if (N.form === "room") { var fr = freeRooms(L), pk = fr.indexOf(ui.pick[L.id]) >= 0 ? ui.pick[L.id] : ""; form = fr.length ? '<div class="pick" role="group" aria-label="Free rooms">' + fr.map(function (r) { return '<button type="button" data-room="' + r + '" aria-pressed="' + (r === pk) + '">' + r + "</button>"; }).join("") + '</div><div class="acts"><button class="btn" id="next-primary" data-n="confirm"' + (pk ? "" : " disabled") + ">" + (pk ? "Confirm room " + pk + " and send confirmation" : "Choose a room above") + "</button></div>" : '<p class="err" style="margin-top:12px">No ' + t.name.toLowerCase() + " is free to allot. Change the room type with Edit request.</p>"; }
+    var nextCard = '<section class="card next" aria-label="Next step">' + dots + '<p class="say">' + esc(N.say) + '</p><p class="sub">' + esc(N.sub) + "</p>" + form + (N.main || (N.more && N.more.length) ? '<div class="acts">' + (N.main ? '<button class="btn" id="next-primary" data-n="' + N.main[0] + '">' + N.main[1] + "</button>" : "") + (N.more || []).map(function (x) { return '<button class="btn sec" data-n="' + x[0] + '">' + x[1] + "</button>"; }).join("") + "</div>" : "") + "</section>";
+    var availCard = '<section class="card"><h3>Free for ' + esc(e.name) + '</h3><div class="avail">' + TYPES.map(function (x) { var uu = usage(L.ev, x.id, L); return '<div class="' + (uu.free ? "" : "zero ") + (x.id === L.type ? "mine" : "") + '"><span>' + x.name + " · " + inr(x.rate) + "</span><b>" + (uu.free ? uu.free + " of " + uu.total : "Full") + "</b></div>"; }).join("") + "</div></section>";
+    var factsCard = '<section class="card"><h3>Request</h3><dl class="kv"><dt>Programme</dt><dd>' + esc(e.name) + "</dd><dt>Dates</dt><dd>" + range(e) + " · " + nights(e) + " nights</dd><dt>Room</dt><dd>" + t.name + (L.roomNo ? " · " + L.roomNo : "") + "</dd><dt>Guests</dt><dd>" + L.guests + "</dd><dt>Stay</dt><dd>" + inr(m.total) + "</dd><dt>Advance (50%)</dt><dd>" + inr(m.adv) + (L.shot ? " · received" : "") + "</dd><dt>Balance</dt><dd>" + inr(m.bal) + "</dd><dt>ID</dt><dd>" + (L.idDoc || "Not received") + "</dd><dt>Been here before</dt><dd>" + (L.before ? "Yes" : "First time") + "</dd><dt>Email</dt><dd>" + esc(L.email) + "</dd><dt>Phone</dt><dd>" + esc(L.phone) + '</dd></dl><div style="margin-top:12px"><button class="btn sec block" data-n="edit">Edit request</button></div></section>' +
+      '<section class="card"><label class="field"><span>Private note</span><textarea id="d-note" placeholder="Only you see this">' + esc(L.note) + "</textarea></label></section>";
+    var th = L.thread, cut = Math.max(0, th.length - 3), msgs = th.map(function (x, k) { var who = x.dir === "out" ? "Buddha Pāda" : L.name; if (k < cut && !ui.openMsgs[L.id + ":" + k]) return '<button class="msg ' + x.dir + '" data-msg="' + k + '" title="Show the whole message"><b>' + esc(who.split(" ")[0]) + ":</b> " + esc(x.body.replace(/\s+/g, " ").slice(0, 80)) + "</button>"; return '<div class="msg ' + x.dir + '"><header><b>' + esc(who) + " · " + esc(x.subj) + "</b><span>" + when(x.at) + "</span></header>" + esc(x.body) + "</div>"; }).join("");
+    var cls = u.free === 0 ? "full" : u.free <= 2 ? "low" : "", strip = takes(L) || s === "lost" ? "" : '<div class="strip ' + cls + '">' + (u.free === 0 ? t.name + " is full for " + esc(e.name) + "." + (alts(L).length ? " Offer " + alts(L).map(function (x) { return '<button type="button" data-switch="' + x.id + '">' + x.name + " (" + usage(L.ev, x.id).free + " free)</button>"; }).join(" or ") : "") : t.name + ": " + u.free + " of " + u.total + " free" + (u.hold ? " · " + u.hold + " held" : "") + (u.paid ? " · " + u.paid + " paid" : "") + ".") + "</div>";
+    var dock = !D.open ? '<div class="dock-row"><button class="btn sec" id="c-open">Write a reply to ' + esc(first) + '…</button><button class="btn sec" id="c-in">Add ' + esc(first) + "’s message</button></div>" :
+      D.inbound ? '<div class="field"><span>What ' + esc(first) + ' wrote (from email, phone or WhatsApp)</span></div><textarea id="c-body" aria-label="Guest’s message" placeholder="Paste or type their message">' + esc(D.body) + "</textarea>" + (D.err ? '<div class="err" role="alert">' + esc(D.err) + "</div>" : "") + '<div class="dock-f"><span class="sp"></span><button class="btn quiet" id="c-close">Discard</button><button class="btn" id="c-send">Save their message</button></div>' :
+      strip + '<div class="dock-f"><button class="btn sec" id="c-pick">Reply with…</button>' + (D.act ? '<span class="tag">This reply will also ' + { hold: "hold the room for 48 hours", paid: "record the advance", conf: "confirm room " + esc(D.act.room || ""), wait: "move the guest to the waiting list" }[D.act.k] + ".</span>" : "") + '</div><input type="text" id="c-subj" aria-label="Subject" placeholder="Subject" value="' + esc(D.subj) + '"><textarea id="c-body" aria-label="Message" placeholder="Write your reply">' + esc(D.body) + "</textarea>" + (D.err ? '<div class="err" role="alert">' + esc(D.err) + "</div>" : "") +
+      '<div class="dock-f">' + (s === "hold" || (D.act && D.act.k === "hold") ? '<span class="tag">You will be reminded 12 hours before the hold ends.</span>' : D.act && D.act.k === "conf" ? "" : '<label for="c-fu">Remind me</label><select id="c-fu"><option value="0">Never</option><option value="1">Tomorrow</option><option value="2">In 2 days</option><option value="4">In 4 days</option><option value="7">In a week</option></select>') + '<span class="sp"></span><button class="btn quiet" id="c-close">Close</button>' + (D.act ? '<button class="btn sec" id="c-mark">Mark without sending</button>' : "") + '<button class="btn" id="c-send">' + (D.act ? ACTLABEL[D.act.k] : "Send to " + esc(first)) + "</button></div>";
+    box.dataset.lead = L.id;
+    box.innerHTML = '<header class="d-head"><button class="d-back" id="d-back" aria-label="Back">‹</button><div style="flex:1;min-width:0"><h2 id="d-title" tabindex="-1">' + esc(L.name) + "</h2><p>" + esc(facts(L)) + "</p></div>" + chip(L) + '<div class="menu"><button class="btn sec" id="d-more" aria-label="More actions for ' + esc(L.name) + '" aria-expanded="false">⋯</button><div class="menu-p" id="d-menu" hidden><button type="button" data-n="edit">Edit request</button>' + (s !== "wait" && s !== "conf" && s !== "lost" ? '<button type="button" data-n="wait">Move to waiting list</button>' : "") + (s === "hold" ? '<button type="button" data-n="release">Release the hold</button>' : "") + (s !== "lost" ? '<button type="button" class="bad" data-n="cancel">Cancel booking</button>' : "") + "</div></div></header>" +
+      '<div class="d-grid" id="d-grid">' + (narrow ? "" : '<div class="conv"><div class="thread" id="thread">' + msgs + '</div><div class="dock" id="dock">' + dock + "</div></div>") + '<aside class="panel" aria-label="Booking">' + nextCard + (narrow ? '<details class="fold card"' + (foldOpen ? " open" : "") + "><summary>Booking details</summary><div>" + availCard + factsCard + "</div></details>" : availCard + factsCard) + "</aside>" + (narrow ? '<div class="conv"><div class="thread" id="thread">' + msgs + '</div><div class="dock" id="dock">' + dock + "</div></div>" : "") + "</div>";
+    if (narrow) $("d-grid").scrollTop = keepPanel; else $("thread").scrollTop = keepScroll >= 0 ? keepScroll : 1e6;
+
+    /* wiring */
+    $("d-back").onclick = function () { ui.lead = 0; if (ui.from && ui.from !== "guests") { var f = ui.from; ui.from = "guests"; go(f); } else render(); };
+    $("d-more").onclick = function (e2) { e2.stopPropagation(); var p = $("d-menu"); p.hidden = !p.hidden; this.setAttribute("aria-expanded", String(!p.hidden)); };
+    box.querySelectorAll("[data-msg]").forEach(function (b) { b.onclick = function () { ui.openMsgs[L.id + ":" + b.dataset.msg] = 1; paintDetail(); }; });
+    box.querySelectorAll("[data-room]").forEach(function (b) { b.onclick = function () { ui.pick[L.id] = b.dataset.room; paintDetail(); $("next-primary").focus(); }; });
+    box.querySelectorAll("[data-switch]").forEach(function (b) { b.onclick = function () { var to = b.dataset.switch, DD = draft(L), was = DD.tpl; act(first + " moved to " + type(to).name, function () { L.type = to; L.roomNo = ""; }); var until = Date.now() + 2 * DAY; if (was === "soldout" || !was) { ui.drafts[L.id].dirty = false; compose(L, "firsthold", { k: "hold", until: until }, { holdUntil: until }); } }; });
+    if ($("d-note")) $("d-note").onchange = function () { var v = this.value; act("Note saved for " + first, function () { L.note = v; }); };
+    if ($("id-kind")) { $("id-kind").onchange = function () { ui.idForm[L.id].kind = this.value; }; $("id-last").oninput = function () { ui.idForm[L.id].last = this.value; }; }
+    box.querySelectorAll("[data-n]").forEach(function (b) { b.onclick = function () { closeMenus(); step(L, b.dataset.n); }; });
+    if ($("c-open")) { $("c-open").onclick = function () { var DD = draft(L); DD.open = true; DD.inbound = false; paintDetail(); $("c-body").focus(); }; $("c-in").onclick = function () { var DD = draft(L); DD.open = true; DD.inbound = true; DD.act = null; DD.body = ""; DD.subj = ""; DD.dirty = false; DD.err = ""; paintDetail(); $("c-body").focus(); }; }
+    if ($("c-body")) {
+      $("c-body").oninput = function () { D.body = this.value; D.dirty = true; }; if ($("c-subj")) $("c-subj").oninput = function () { D.subj = this.value; D.dirty = true; };
+      if ($("c-fu")) { $("c-fu").value = String(D.remind); $("c-fu").onchange = function () { D.remind = +this.value; }; }
+      if ($("c-pick")) $("c-pick").onclick = function () { picker(L); };
+      $("c-close").onclick = function () { var shut = function () { ui.drafts[L.id] = null; paintDetail(); var o = $("c-open"); if (o) o.focus(); }; if (D.dirty && D.body.trim()) dialog("<h2>Discard this draft?</h2><p>What you have written will be lost.</p>", [["keep", "Keep writing"], ["go", "Discard draft", "danger"]], function (v) { if (v === "go") setTimeout(shut, 0); }); else shut(); };
+      if ($("c-mark")) $("c-mark").onclick = function () { var a = D.act; act(ACTDONE[a.k] + first + " (no email)", function () { apply(L, a); ui.drafts[L.id] = null; }); focusNext(); };
+      $("c-send").onclick = function () { send(L); };
+    }
+  }
+  function focusNext() { var n = $("next-primary") || $("d-title"); if (n) n.focus({ preventScroll: true }); }
+  function send(L) {
+    var D = draft(L), first = L.name.split(" ")[0], body = D.body.trim();
+    if (!body) { D.err = "Write the message first."; paintDetail(); $("c-body").focus(); return; }
+    if (!D.inbound) { var ph = body.match(/\[[^\]\n]{3,}\]/); if (ph) { D.err = "Fill in " + ph[0] + " before sending. It is still a placeholder."; paintDetail(); var b = $("c-body"), i = b.value.indexOf(ph[0]); b.focus(); b.setSelectionRange(i, i + ph[0].length); return; }
+      if (D.act && D.act.k === "hold" && status(L) !== "hold" && usage(L.ev, L.type, L).free < need(L)) { D.err = "That room type has just filled up, so it cannot be held. Choose another reply."; D.act = null; paintDetail(); return; } }
+    var a = D.act, inbound = D.inbound, subj = D.subj.trim(), remind = D.remind;
+    act(inbound ? first + "’s message added" : a ? ACTDONE[a.k] + first + ", reply saved" : "Reply to " + first + " saved (prototype: not emailed)", function () {
+      L.thread.push({ dir: inbound ? "in" : "out", at: Date.now(), subj: subj || (inbound ? "Re: " + last(L).subj.replace(/^Re: /, "") : ev(L.ev).name), body: body });
+      if (inbound) { if (status(L) !== "hold") L.follow = 0; } else { if (L.stage === "new") L.stage = "talk"; if (a) apply(L, a); else if (status(L) !== "hold" && L.stage !== "conf") L.follow = remind ? Date.now() + remind * DAY : 0; }
+      ui.drafts[L.id] = null;
+    });
+    var th = $("thread"); if (th && window.innerWidth >= 1200) th.scrollTop = 1e6; focusNext();
+  }
+  function step(L, k) {
+    var first = L.name.split(" ")[0], until = Date.now() + 2 * DAY, s = status(L);
+    if (k === "hold") compose(L, "firsthold", { k: "hold", until: until }, { holdUntil: until });
+    else if (k === "nohold") compose(L, "first");
+    else if (k === "full") compose(L, "soldout");
+    else if (k === "write") compose(L, "");
+    else if (k === "remind") compose(L, "holdnudge");
+    else if (k === "paid") compose(L, "idreq", { k: "paid" });
+    else if (k === "extend") { act("Hold extended 24 hours for " + first, function () { L.holdUntil += DAY; L.follow = L.holdUntil - 12 * HR; }); focusNext(); }
+    else if (k === "rehold") { act("Room held again for " + first, function () { L.holdUntil = until; L.follow = until - 12 * HR; }); focusNext(); }
+    else if (k === "letgo") { act("Hold let go for " + first, function () { L.stage = "talk"; L.holdUntil = 0; L.follow = 0; }); focusNext(); }
+    else if (k === "idsave") { var I = ui.idForm[L.id], v = (I.last || "").trim(); if (v.length !== 4) { $("id-last").focus(); showUndo("Enter the last 4 characters of the document.", true); return; } act("ID recorded for " + first, function () { L.idDoc = I.kind + " ···· " + v.toUpperCase(); L.follow = 0; }); focusNext(); }
+    else if (k === "confirm") { var room = ui.pick[L.id]; compose(L, "confirm", { k: "conf", room: room }, { roomNo: room }); }
+    else if (k === "wait") { if (s === "talk" || s === "new") compose(L, "waitlist", { k: "wait" }); else dialog("<h2>Move " + esc(first) + " to the waiting list?</h2><p>" + (takes(L) ? "The room they hold becomes free for others." : "They will stay on file until a room opens.") + "</p>", [["keep", "Keep as it is"], ["go", "Move to waiting list", ""]], function (v) { if (v === "go") setTimeout(function () { act(first + " moved to the waiting list", function () { apply(L, { k: "wait" }); }); }, 0); }); }
+    else if (k === "release") dialog("<h2>Release " + esc(first) + "’s hold?</h2><p>The " + type(L.type).name.toLowerCase() + " becomes free for other guests straight away.</p>", [["keep", "Keep the hold"], ["go", "Release hold", ""]], function (v) { if (v === "go") setTimeout(function () { act("Hold released for " + first, function () { L.stage = "talk"; L.holdUntil = 0; L.follow = 0; }); }, 0); });
+    else if (k === "cancel") { var doIt = function () { act("Cancelled " + L.name, function () { L.stage = "lost"; L.holdUntil = 0; L.roomNo = ""; L.follow = 0; }); focusNext(); }; if (takes(L) || L.shot) dialog("<h2>Cancel " + esc(first) + "’s booking?</h2><p>" + (L.roomNo ? "Room " + L.roomNo + " becomes free. " : takes(L) ? "Their " + type(L.type).name.toLowerCase() + " becomes free. " : "") + (L.shot ? "An advance of " + inr(money(L).adv) + " is on record; cancelling here does not refund it." : "") + "</p>", [["keep", "Keep booking"], ["go", "Cancel booking", "danger"]], function (v) { if (v === "go") setTimeout(doIt, 0); }); else doIt(); }
+    else if (k === "reopen") dialog("<h2>Reopen " + esc(first) + "’s booking?</h2><p>It goes back to “In conversation” with no room held.</p>" + (L.shot || L.idDoc ? '<label style="display:flex;gap:10px;align-items:center;min-height:44px"><input type="checkbox" id="keep-docs" style="width:20px;height:20px"> Keep the payment and ID already on file</label>' : ""), [["keep", "Leave cancelled"], ["go", "Reopen", ""]], function (v, boxEl) { if (v === "go") { var kd = boxEl.querySelector("#keep-docs"), keepDocs = kd && kd.checked; setTimeout(function () { act("Reopened " + L.name, function () { L.stage = "talk"; if (!keepDocs) { L.shot = false; L.idDoc = ""; } }); focusNext(); }, 0); } });
+    else if (k === "edit") editReq(L);
+  }
+  function picker(L) {
+    var s = status(L), sug = s === "new" || s === "talk" || s === "wait" ? (usage(L.ev, L.type, L).free >= need(L) ? ["firsthold", "first"] : ["soldout", "waitlist"]) : s === "hold" ? ["holdnudge", "advance"] : s === "ended" ? ["nudge"] : s === "paid" ? ["idreq"] : s === "conf" ? ["confirm", "f-bring"] : [];
+    var row = function (x) { return '<button type="button" data-tp="' + x.id + '">' + esc(x.name) + "</button>"; }, cats = []; S.tpl.forEach(function (x) { if (cats.indexOf(x.cat) < 0) cats.push(x.cat); });
+    dialog('<h2>Reply with</h2><label class="field"><span>Search replies</span><input id="pk-q" type="search" autocomplete="off"></label><div class="pk-list" id="pk-list"></div>', [["esc", "Close"]], null, true);
+    var paint = function () { var q = $("pk-q").value.trim().toLowerCase(), hit = function (x) { return !q || (x.name + " " + x.cat + " " + x.body).toLowerCase().indexOf(q) >= 0; };
+      $("pk-list").innerHTML = (!q && sug.length ? "<h4>Suggested now</h4>" + sug.map(function (id) { return row(S.tpl.filter(function (x) { return x.id === id; })[0]); }).join("") : "") + cats.map(function (c) { var xs = S.tpl.filter(function (x) { return x.cat === c && hit(x); }); return xs.length ? "<h4>" + esc(c) + "</h4>" + xs.map(row).join("") : ""; }).join("") || "<p>No reply matches.</p>";
+      $("pk-list").querySelectorAll("[data-tp]").forEach(function (b) { b.onclick = function () { var id = b.dataset.tp; dlgBack = null; closeDlg("esc"); var until = Date.now() + 2 * DAY; if ((id === "firsthold" || id === "advance") && status(L) !== "hold" && status(L) !== "paid" && status(L) !== "conf") compose(L, id, { k: "hold", until: until }, { holdUntil: until }); else if (id === "waitlist" && !takes(L)) compose(L, id, { k: "wait" }); else compose(L, id); }; }); };
+    $("pk-q").oninput = paint; paint(); $("pk-q").focus();
+  }
+  function editReq(L) {
+    var first = L.name.split(" ")[0];
+    function check(ne, nt, ng) { var same = ne === L.ev && nt === L.type, free = usage(ne, nt, same ? L : null).free, nd = Math.ceil(ng / type(nt).per), msg, block = false;
+      if (takes(L) && free < nd) { msg = type(nt).name + " has " + free + " free for " + ev(ne).name + ", and this booking needs " + nd + ". It cannot move there while it holds a room."; block = true; }
+      else if (!same && L.roomNo) msg = "Room " + L.roomNo + " will be released and a new room must be allotted.";
+      else if (!same && takes(L)) msg = "Their place moves to " + type(nt).name + " (" + free + " free).";
+      else msg = "Stay amount: " + inr(type(nt).rate * nights(ev(ne)) * nd) + ".";
+      return { msg: msg, block: block }; }
+    dialog("<h2>Edit " + esc(first) + "’s request</h2>" + '<label class="field"><span>Programme</span><select id="e-ev">' + EVENTS.map(function (e) { return '<option value="' + e.id + '"' + (e.id === L.ev ? " selected" : "") + ">" + esc(e.name) + "</option>"; }).join("") + '</select></label><div class="two"><label class="field"><span>Room type</span><select id="e-type">' + TYPES.map(function (x) { return '<option value="' + x.id + '"' + (x.id === L.type ? " selected" : "") + ">" + x.name + "</option>"; }).join("") + '</select></label><label class="field"><span>Guests</span><select id="e-g">' + [1, 2, 3, 4].map(function (n) { return "<option" + (n === L.guests ? " selected" : "") + ">" + n + "</option>"; }).join("") + '</select></label></div><p id="e-out" role="status"></p>',
+      [["keep", "Leave unchanged"], ["go", "Save changes", ""]], function (v, boxEl) {
+        if (v !== "go") return; var ne = +boxEl.querySelector("#e-ev").value, nt = boxEl.querySelector("#e-type").value, ng = +boxEl.querySelector("#e-g").value; if (check(ne, nt, ng).block) return false;
+        setTimeout(function () { act("Request changed for " + first, function () { var moved = ne !== L.ev || nt !== L.type; L.ev = ne; L.type = nt; L.guests = ng; if (moved) L.roomNo = ""; if (moved && L.stage === "conf") L.stage = "paid"; }); }, 0);
+      });
+    var upd = function () { var c = check(+$("e-ev").value, $("e-type").value, +$("e-g").value); $("e-out").textContent = c.msg; $("e-out").className = c.block ? "err" : ""; $("veil").querySelector('[data-d="go"]').disabled = c.block; };
+    ["e-ev", "e-type", "e-g"].forEach(function (id) { $(id).onchange = upd; }); upd();
   }
 
   /* ---------- rooms ---------- */
   function vRooms() {
     var e = ev(ui.roomEv);
-    $("view").innerHTML = '<div class="ev-pick">' + EVENTS.map(function (x) { return '<button data-rev="' + x.id + '" aria-pressed="' + (x.id === ui.roomEv) + '">' + esc(x.name) + "</button>"; }).join("") + '</div><p style="margin:0 0 14px;color:var(--ink2)">' + esc(e.name) + " · " + range(e) + " · " + nights(e) + ' nights. A held room counts as taken until its 48 hours run out.</p><div class="rooms-grid">' + TYPES.map(function (t) {
-      var u = usage(e.id, t.id), pct = function (n) { return (n / u.total * 100).toFixed(1) + "%"; }, who = S.leads.filter(function (L) { return L.ev === e.id && L.type === t.id && (L.stage === "conf" || L.stage === "paid" || holding(L)); });
-      return '<div class="rm"><h3>' + t.name + "<small>" + inr(t.rate) + " a night · " + (u.free ? u.free + " free" : "full") + '</small></h3><div class="bar" role="img" aria-label="' + u.conf + " confirmed, " + u.paid + " advance paid, " + u.hold + " held, " + u.free + ' free"><i class="c" style="width:' + pct(u.conf) + '"></i><i class="p" style="width:' + pct(u.paid) + '"></i><i class="h" style="width:' + pct(u.hold) + '"></i></div><div class="legend"><span style="--k:var(--ok)">' + u.conf + ' confirmed</span><span style="--k:var(--gold)">' + u.paid + ' advance paid</span><span style="--k:#e3c383">' + u.hold + " held</span><span>" + u.free + ' free</span></div><div class="cells">' + t.rooms.map(function (n) { var o = S.leads.filter(function (L) { return L.ev === e.id && L.roomNo === n; })[0]; return o ? '<button class="cell c" data-lead="' + o.id + '" title="' + esc(o.name) + '">' + n + "</button>" : '<span class="cell">' + n + "</span>"; }).join("") + '</div><ul class="occ">' + (who.map(function (L) { return "<li>" + esc(L.name) + "<span>" + (L.stage === "conf" ? "Room " + L.roomNo : L.stage === "paid" ? "Advance paid, room not allotted" : "Held to " + when(L.holdUntil)) + "</span></li>"; }).join("") || "<li><span>No one yet.</span></li>") + "</ul></div>";
-    }).join("") + "</div>";
-    document.querySelectorAll("[data-rev]").forEach(function (b) { b.onclick = function () { ui.roomEv = +b.dataset.rev; render(); }; });
-    document.querySelectorAll("[data-lead]").forEach(function (b) { b.onclick = function () { ui.lead = +b.dataset.lead; ui.view = "leads"; ui.stage = "all"; ui.ev = 0; render(); }; });
+    $("view").innerHTML = '<div class="scroll"><div class="rbar"><select id="r-ev" aria-label="Programme">' + EVENTS.map(function (x) { return '<option value="' + x.id + '"' + (x.id === e.id ? " selected" : "") + ">" + esc(x.name) + " · " + range(x) + "</option>"; }).join("") + '</select><div class="legend" aria-hidden="true"><span><i class="k-free"></i>Free</span><span><i class="k-hold"></i>Held</span><span><i class="k-paid"></i>Advance paid</span><span><i class="k-conf"></i>Confirmed</span></div></div><div class="rgrid">' + TYPES.map(function (t) {
+      var u = usage(e.id, t.id), who = S.leads.filter(function (L) { return L.ev === e.id && L.type === t.id && takes(L); }), numbered = {}, loose = [];
+      who.forEach(function (L) { if (L.roomNo) numbered[L.roomNo] = L; else for (var i = 0; i < need(L); i++) loose.push(L); });
+      var cells = t.rooms.map(function (n) { var L = numbered[n]; if (L) return '<button class="cell k-conf" data-open="' + L.id + '" title="' + esc(L.name) + ', confirmed">' + n + "<small>" + esc(L.name.split(" ")[0]) + "</small></button>"; var o = loose.shift(); if (o) { var st = status(o); return '<button class="cell k-' + st + '" data-open="' + o.id + '" title="' + esc(o.name) + ", " + SNAME[st].toLowerCase() + ', room not yet allotted">' + (st === "hold" ? "Held" : "Paid") + "<small>" + esc(o.name.split(" ")[0]) + "</small></button>"; } return '<span class="cell k-free">' + n + "</span>"; }).join("");
+      return '<section class="card rm"><h3>' + t.name + '<small class="' + (u.free ? "" : "full") + '">' + (u.free ? u.free + " of " + u.total + " free" : "Full") + " · " + inr(t.rate) + '</small></h3><div class="cells">' + cells + '</div><ul class="occ">' + (who.map(function (L) { var st = status(L); return "<li>" + esc(L.name) + "<span>" + (st === "conf" ? "Room " + L.roomNo : st === "paid" ? "Advance paid, room not allotted" : "Held until " + when(L.holdUntil)) + "</span></li>"; }).join("") || "<li><span>All " + u.total + " free.</span></li>") + "</ul></section>";
+    }).join("") + '</div><p style="margin:12px 4px 0;font-size:12px;color:var(--ink2)">A held room counts as taken until its 48 hours run out. Guests who have a hold or have paid, but have no room number yet, are shown as “Held” or “Paid” in the first open cells, so the free count is always the true one.</p></div>';
+    $("r-ev").onchange = function () { ui.roomEv = +this.value; render(); }; wire();
   }
 
-  /* ---------- follow-ups ---------- */
-  function vFollow() {
-    var ls = visible().filter(due).sort(function (a, b) { return due(a) - due(b); });
-    $("view").innerHTML = '<div class="fu">' + (ls.map(function (L) { var f = due(L), tp = L.stage === "hold" ? "holdnudge" : "nudge"; return '<div class="fu-r"><div><b>' + esc(L.name) + '</b> <span class="chip s-' + L.stage + '">' + SNAME[L.stage] + '</span> <span class="tag">' + esc(ev(L.ev).name) + '</span><p><span class="due' + (f > NOW ? " soon" : "") + '">' + (f < NOW ? "Overdue since " + when(f) : "Due " + when(f)) + "</span> · last message " + ago(last(L).at) + (last(L).dir === "in" ? " from the guest" : " from you") + '</p></div><div class="acts" style="margin:0"><button class="btn sm" data-fu="' + L.id + '" data-tp="' + tp + '">Send follow-up</button><button class="btn sm ghost" data-lead="' + L.id + '">Open</button></div></div>'; }).join("") || '<p class="empty">Nobody is waiting on you.</p>') + "</div>";
-    document.querySelectorAll("[data-lead]").forEach(function (b) { b.onclick = function () { ui.lead = +b.dataset.lead; ui.view = "leads"; ui.stage = "all"; render(); }; });
-    document.querySelectorAll("[data-fu]").forEach(function (b) { b.onclick = function () { var L = S.leads.filter(function (x) { return x.id === +b.dataset.fu; })[0], x = S.tpl.filter(function (q) { return q.id === b.dataset.tp; })[0]; L.thread.push({ dir: "out", at: Date.now(), subj: fill(x.subj, L), body: fill(x.body, L) }); L.follow = Date.now() + 3 * DAY; NOW = Date.now(); save(); toast("Follow-up added to " + L.name.split(" ")[0] + "’s conversation. Next reminder in 3 days."); render(); }; });
+  /* ---------- replies ---------- */
+  function vReplies() {
+    var x = S.tpl.filter(function (q) { return q.id === ui.tpl; })[0] || S.tpl[0], T = ui.tDraft && ui.tDraft.id === x.id ? ui.tDraft : (ui.tDraft = { id: x.id, name: x.name, subj: x.subj, body: x.body, as: S.leads[0].id });
+    var dirty = T.name !== x.name || T.subj !== x.subj || T.body !== x.body, orig = TPL0.filter(function (q) { return q.id === x.id; })[0], changed = orig && (orig.subj !== x.subj || orig.body !== x.body || orig.name !== x.name), cats = []; S.tpl.forEach(function (q) { if (cats.indexOf(q.cat) < 0) cats.push(q.cat); });
+    $("view").innerHTML = '<div class="t-grid"><div class="t-list">' + cats.map(function (c) { return "<h4>" + esc(c) + "</h4>" + S.tpl.filter(function (q) { return q.cat === c; }).map(function (q) { return '<button data-tp="' + q.id + '"' + (q.id === x.id ? ' aria-current="true"' : "") + "><span>" + esc(q.name) + "</span>" + (q.id === x.id && dirty ? '<i class="dot" title="Unsaved changes"></i>' : "") + "</button>"; }).join(""); }).join("") +
+      '</div><div class="t-edit"><label class="field"><span>Name</span><input id="t-name" value="' + esc(T.name) + '"></label><label class="field"><span>Subject</span><input id="t-subj" value="' + esc(T.subj) + '"></label><label class="field"><span>Message</span><textarea id="t-body">' + esc(T.body) + '</textarea></label><div class="field"><span>Insert a detail that fills itself in for each guest</span><div class="ins">' + FIELDS.map(function (f) { return '<button type="button" data-ins="' + f[0] + '">' + f[1] + "</button>"; }).join("") + '</div></div><div class="dock-f"><button class="btn" id="t-save"' + (dirty ? "" : " disabled") + ">" + (dirty ? "Save changes" : "Saved") + '</button><button class="btn sec" id="t-undo"' + (dirty ? "" : " disabled") + '>Discard changes</button><span class="sp"></span><button class="btn quiet" id="t-orig"' + (changed ? "" : " disabled") + '>Restore original wording</button></div><label class="field"><span>Preview as</span><select id="t-as">' + S.leads.slice(0, 12).map(function (L) { return '<option value="' + L.id + '"' + (L.id === T.as ? " selected" : "") + ">" + esc(L.name) + " · " + esc(ev(L.ev).name) + "</option>"; }).join("") + '</select></label><div class="prev" id="t-prev"></div></div></div>';
+    var prev = function () { var L = lead(T.as) || S.leads[0]; $("t-prev").textContent = fill(T.subj, L) + "\n\n" + fill(T.body, L); }; prev();
+    var mark = function () { var was = dirty; dirty = T.name !== x.name || T.subj !== x.subj || T.body !== x.body; prev(); if (was !== dirty) { $("t-save").disabled = !dirty; $("t-save").textContent = dirty ? "Save changes" : "Saved"; $("t-undo").disabled = !dirty; } };
+    $("t-name").oninput = function () { T.name = this.value; mark(); }; $("t-subj").oninput = function () { T.subj = this.value; mark(); }; $("t-body").oninput = function () { T.body = this.value; mark(); }; $("t-as").onchange = function () { T.as = +this.value; prev(); };
+    $("view").querySelectorAll("[data-ins]").forEach(function (b) { b.onclick = function () { var ta = $("t-body"), a = ta.selectionStart, tok = "{{" + b.dataset.ins + "}}"; ta.value = ta.value.slice(0, a) + tok + ta.value.slice(ta.selectionEnd); T.body = ta.value; ta.focus(); ta.setSelectionRange(a + tok.length, a + tok.length); mark(); }; });
+    var doSave = function () { var nm = T.name, sj = T.subj, bd = T.body; act("Reply “" + x.name + "” saved", function () { var q = S.tpl.filter(function (z) { return z.id === x.id; })[0]; q.name = nm.trim() || q.name; q.subj = sj; q.body = bd; ui.tDraft = null; }); };
+    $("t-save").onclick = doSave;
+    $("t-undo").onclick = function () { ui.tDraft = null; render(); };
+    $("t-orig").onclick = function () { dialog("<h2>Restore the original wording?</h2><p>Your edits to “" + esc(x.name) + "” will be replaced. You can undo this.</p>", [["keep", "Keep my wording"], ["go", "Restore original", ""]], function (v) { if (v === "go") setTimeout(function () { act("Reply “" + x.name + "” restored", function () { var q = S.tpl.filter(function (z) { return z.id === x.id; })[0]; q.name = orig.name; q.subj = orig.subj; q.body = orig.body; ui.tDraft = null; }); }, 0); }); };
+    $("view").querySelectorAll("[data-tp]").forEach(function (b) { b.onclick = function () { var to = b.dataset.tp; if (to === x.id) return; var sw = function () { ui.tpl = to; ui.tDraft = null; render(); }; if (dirty) dialog("<h2>Save your changes first?</h2><p>You have edited “" + esc(x.name) + "” and not saved it.</p>", [["keep", "Keep editing"], ["drop", "Discard changes"], ["go", "Save changes", ""]], function (v) { if (v === "go") setTimeout(function () { doSave(); sw(); }, 0); else if (v === "drop") setTimeout(sw, 0); }); else sw(); }; });
   }
 
-  /* ---------- templates ---------- */
-  function vTemplates() {
-    var x = S.tpl.filter(function (q) { return q.id === ui.tpl; })[0] || S.tpl[0], sample = S.leads[0];
-    $("view").innerHTML = '<div class="t-grid"><div class="t-list">' + cats().map(function (c) { return "<h5>" + esc(c) + "</h5>" + S.tpl.filter(function (q) { return q.cat === c; }).map(function (q) { return '<button data-tp="' + q.id + '"' + (q.id === x.id ? ' aria-current="true"' : "") + ">" + esc(q.name) + "</button>"; }).join(""); }).join("") + '</div><div class="t-edit"><label for="t-name">Name</label><input id="t-name" value="' + esc(x.name) + '"><label for="t-subj">Subject</label><input id="t-subj" value="' + esc(x.subj) + '"><label for="t-body">Message</label><textarea id="t-body">' + esc(x.body) + '</textarea><div class="vars">' + ["first", "event", "dates", "room", "nights", "total", "advance", "balance", "available", "holdUntil", "roomNo", "alternatives"].map(function (v) { return "<code>{{" + v + "}}</code>"; }).join("") + '</div><p style="font-size:12px;color:var(--ink3)">The words in double braces are filled in for each guest when you use the template: their name, programme, room, amounts and what is free at that moment.</p><div class="acts"><button class="btn" id="t-save">Save template</button></div><div class="sec" style="margin-top:16px"><h4>Preview for ' + esc(sample.name) + '</h4><div class="msg out" style="max-width:100%" id="t-prev"></div></div></div></div>';
-    function prev() { $("t-prev").textContent = fill($("t-subj").value, sample) + "\n\n" + fill($("t-body").value, sample); } prev();
-    $("t-subj").oninput = prev; $("t-body").oninput = prev;
-    document.querySelectorAll("[data-tp]").forEach(function (b) { b.onclick = function () { ui.tpl = b.dataset.tp; render(); }; });
-    $("t-save").onclick = function () { x.name = $("t-name").value.trim() || x.name; x.subj = $("t-subj").value; x.body = $("t-body").value; save(); toast("Template saved."); render(); };
-  }
-
-  /* ---------- wiring ---------- */
-  document.querySelectorAll(".nav-b").forEach(function (b) { b.onclick = function () { ui.view = b.dataset.v; render(); }; });
-  $("q").oninput = function () { ui.q = this.value; render(); this.focus(); };
-  $("reset").onclick = function () { try { localStorage.removeItem(KEY); } catch (e) {} S = load(); ui.lead = 0; toast("Sample data restored."); render(); };
+  /* ---------- add a guest by hand, reset, navigation ---------- */
+  $("add-b").onclick = function () {
+    dialog('<h2>Add a guest</h2><p>For an enquiry that came by phone, WhatsApp or in person.</p><label class="field"><span>Name</span><input id="g-name" autocomplete="off"></label><div class="two"><label class="field"><span>Email</span><input id="g-email" type="email" autocomplete="off"></label><label class="field"><span>Phone</span><input id="g-phone" type="tel" autocomplete="off"></label></div><label class="field"><span>Programme</span><select id="g-ev">' + EVENTS.map(function (e) { return '<option value="' + e.id + '">' + esc(e.name) + "</option>"; }).join("") + '</select></label><div class="two"><label class="field"><span>Room type</span><select id="g-type">' + TYPES.map(function (x) { return '<option value="' + x.id + '"' + (x.id === "single" ? " selected" : "") + ">" + x.name + "</option>"; }).join("") + '</select></label><label class="field"><span>Guests</span><select id="g-g"><option>1</option><option>2</option><option>3</option><option>4</option></select></label></div><label class="field"><span>What they asked</span><textarea id="g-msg"></textarea></label><p id="g-err" class="err" hidden role="alert"></p>',
+      [["keep", "Close"], ["go", "Add guest", ""]], function (v, b) {
+        if (v !== "go") return; var name = b.querySelector("#g-name").value.trim(), email = b.querySelector("#g-email").value.trim(), ph = b.querySelector("#g-phone").value.trim();
+        if (!name || (!email && !ph)) { var er = b.querySelector("#g-err"); er.textContent = !name ? "Add the guest’s name." : "Add an email or a phone number so you can reach them."; er.hidden = false; b.querySelector(!name ? "#g-name" : "#g-email").focus(); return false; }
+        var evId = +b.querySelector("#g-ev").value, L = { id: Math.max.apply(null, S.leads.map(function (x) { return x.id; })) + 1, name: name, email: email || "No email", phone: ph || "No phone", ev: evId, type: b.querySelector("#g-type").value, guests: +b.querySelector("#g-g").value, before: false, note: "", stage: "new", created: Date.now(), shot: false, idDoc: "", roomNo: "", holdUntil: 0, follow: 0, thread: [{ dir: "in", at: Date.now(), subj: "Enquiry: " + ev(evId).name, body: b.querySelector("#g-msg").value.trim() || "Enquiry taken by hand." }] };
+        dlgBack = null; setTimeout(function () { act("Added " + name, function () { S.leads.push(L); }); openGuest(L.id); }, 0);
+      });
+  };
+  $("more-b").onclick = function (e) { e.stopPropagation(); var p = $("more-p"); p.hidden = !p.hidden; this.setAttribute("aria-expanded", String(!p.hidden)); };
+  $("reset").onclick = function () { closeMenus(); dialog("<h2>Reset the sample data?</h2><p>Every change you have made in this prototype, including edited replies, goes back to how it started. This cannot be undone.</p>", [["keep", "Keep my changes"], ["go", "Reset everything", "danger"]], function (v) { if (v === "go") setTimeout(function () { try { localStorage.removeItem(KEY); } catch (e) {} hist = []; S = load(); ui.lead = 0; ui.drafts = {}; ui.tDraft = null; NOW = Date.now(); render(); showUndo("Sample data restored.", true); }, 0); }); };
+  document.querySelectorAll(".nav-b").forEach(function (b) { b.onclick = function () { ui.from = b.dataset.v; go(b.dataset.v); }; });
+  var rz; window.addEventListener("resize", function () { clearTimeout(rz); rz = setTimeout(function () { var a = document.activeElement; if (!(a && /INPUT|TEXTAREA/.test(a.tagName))) render(); }, 150); });
+  setInterval(function () { NOW = Date.now(); var a = document.activeElement; if ($("veil").hidden && !(a && /INPUT|TEXTAREA|SELECT/.test(a.tagName))) render(); }, 60000);   /* holds lapse on the clock, not on a click */
   render();
 })();
 </script>
