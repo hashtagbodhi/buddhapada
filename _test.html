@@ -1,0 +1,360 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}[hidden]{display:none!important}</style></head><body><title>Buddha Pāda Shrine Room</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mukta:wght@400;500;600&display=swap">
+<style>
+/* Layout: the photograph is the room. One full-screen view; controls sit on the floor boards as a low lacquer dock. */
+:root {
+  color-scheme: dark;
+  --lapis: #17265f;        /* the blue behind the statues */
+  --gold: #e3b341;         /* gilding */
+  --gold-soft: #f3dc9c;
+  --plaster: #f4ecdc;      /* carved ceiling and walls */
+  --lacquer: #1c110b;      /* door maroon taken down to near-black */
+  --lacquer-glass: rgba(28, 17, 11, .72);
+  --line: rgba(227, 179, 65, .38);
+  --display: "Marcellus", "Mukta", Georgia, serif;
+  --body: "Mukta", "Noto Sans Devanagari", system-ui, sans-serif;
+}
+html, body { height: 100%; }
+body { background: var(--lacquer); color: var(--plaster); font-family: var(--body); font-size: 16px; overflow: hidden; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 3px; }
+
+.scene { position: fixed; inset: 0; overflow: hidden; background: var(--lacquer); }
+.scene img { position: absolute; left: 50%; top: 50%; max-width: none; user-select: none; -webkit-user-drag: none; will-change: transform; }
+.fade { transition: opacity 1.4s ease; }
+.gone { opacity: 0; pointer-events: none; }
+
+/* ---------- door ---------- */
+#door { z-index: 7; }
+#door img { transition: transform 2.2s cubic-bezier(.5, 0, .2, 1); }
+#door.entering img { transform: translate(-50%, -50%) scale(2.6) !important; }
+#door::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(28,17,11,.55), rgba(28,17,11,0) 28%, rgba(28,17,11,0) 52%, rgba(28,17,11,.88)); }
+.door-ui { position: fixed; inset: 0; z-index: 8; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; gap: 10px;
+  padding-block: calc(20px + env(safe-area-inset-top, 0px)) calc(34px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.door-ui h1 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 7vw, 58px); letter-spacing: .04em; margin: 0; line-height: 1.1; text-wrap: balance; }
+.door-ui p { margin: 0; color: var(--gold-soft); letter-spacing: .14em; text-transform: uppercase; font-size: 13px; }
+.enter { margin-top: 14px; padding: 13px 28px; border: 1px solid var(--gold); color: var(--lacquer); background: var(--gold); font-weight: 600; letter-spacing: .04em; border-radius: 2px; }
+.enter:hover { background: var(--gold-soft); }
+
+/* ---------- top bar ---------- */
+.top { position: fixed; inset: 0 0 auto; z-index: 9; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding-block: calc(10px + env(safe-area-inset-top, 0px)) 10px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.chip { background: var(--lacquer-glass); border: 1px solid var(--line); padding: 7px 12px; border-radius: 2px; font-size: 14px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.chip[aria-pressed="true"] { color: var(--gold); }
+.top .group { display: flex; gap: 8px; }
+
+/* ---------- room ---------- */
+#view { position: fixed; inset: 0; transform-origin: 50% 100%; }
+#view.bowing { animation: bow 3.4s cubic-bezier(.45, 0, .3, 1); }
+@keyframes bow { 0%, 100% { transform: none; filter: none; } 42%, 62% { transform: scale(1.7); filter: brightness(.3); } }
+#room, #shrine { cursor: grab; touch-action: none; }
+#room.dragging, #shrine.dragging { cursor: grabbing; }
+.breathe { position: absolute; inset: 0; animation: breathe 16s ease-in-out infinite; }
+@keyframes breathe { 50% { transform: scale(1.018); } }
+.floor-shade { position: fixed; inset: auto 0 0; height: 34%; pointer-events: none; background: linear-gradient(to top, rgba(28,17,11,.82), rgba(28,17,11,0)); transition: opacity 1.2s; }
+
+.dock { position: fixed; inset: auto 0 0; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding-block: 0 calc(14px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); transition: opacity .8s; }
+.status { min-height: 24px; font-size: 15px; color: var(--gold-soft); text-align: center; text-shadow: 0 1px 6px #000; }
+.acts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); width: min(100%, 520px); background: var(--lacquer-glass); border: 1px solid var(--line); border-radius: 3px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.acts button { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 11px 2px 9px; font-size: 13px; line-height: 1.2; min-width: 0; }
+.acts button + button { border-left: 1px solid rgba(227,179,65,.16); }
+.acts button:hover, .acts button[aria-expanded="true"] { color: var(--gold); }
+.acts svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- panels ---------- */
+.panel { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center;
+  background: radial-gradient(ellipse at center, rgba(23,38,95,.78), rgba(28,17,11,.93));
+  padding-block: calc(56px + env(safe-area-inset-top, 0px)) calc(24px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.panel h2 { font-family: var(--display); font-weight: 400; font-size: 26px; margin: 0; letter-spacing: .03em; }
+.panel .hint { margin: 0; color: var(--gold-soft); font-size: 15px; }
+.row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.btn { padding: 10px 18px; border: 1px solid var(--line); border-radius: 2px; background: rgba(28,17,11,.5); }
+.btn:hover { border-color: var(--gold); color: var(--gold); }
+#bead { width: min(78vw, 46vh, 380px); aspect-ratio: 1; max-width: 100%; border-radius: 50%; position: relative; }
+#bead svg { width: 100%; height: 100%; display: block; }
+#bead .n { position: absolute; inset: 0; display: grid; place-content: center; font-family: var(--display); font-size: clamp(44px, 12vw, 72px); font-variant-numeric: tabular-nums; pointer-events: none; }
+#bead .n small { display: block; font-family: var(--body); font-size: 14px; color: var(--gold-soft); letter-spacing: .1em; }
+.b { fill: rgba(244,236,220,.16); } .b.on { fill: var(--gold); } .b.guru { fill: #b3261e; }
+
+/* ---------- sitting ---------- */
+.sit-ui { position: fixed; inset: auto 0 0; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding-block: 0 calc(22px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+#clock { font-family: var(--display); font-size: 30px; font-variant-numeric: tabular-nums; letter-spacing: .06em; text-shadow: 0 1px 8px #000; }
+.sitting .dock, .sitting .top { opacity: 0; pointer-events: none; }
+.sitting .floor-shade { opacity: .55; }
+.ring { position: fixed; left: 50%; top: 42%; width: 40px; height: 40px; margin: -20px; border: 1.5px solid var(--gold-soft); border-radius: 50%; pointer-events: none; opacity: 0; z-index: 3; }
+.ring.go { animation: ring 3.2s ease-out; }
+@keyframes ring { 0% { opacity: .9; transform: scale(.4); } 100% { opacity: 0; transform: scale(14); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .breathe, .ring.go { animation: none; }
+  #view.bowing { animation: bowdim 3.4s; }
+  #door { z-index: 7; }
+#door img { transition: none; }
+  @keyframes bowdim { 42%, 62% { filter: brightness(.3); } }
+}
+</style>
+
+<div id="app">
+  <div id="view">
+    <div class="breathe">
+      <div class="scene" id="room" aria-label="The shrine room, seen from the back of the hall"><img src="img/room.jpg" alt="" draggable="false"></div>
+      <div class="scene fade gone" id="shrine" aria-label="The shrine, seen from close by"><img src="img/shrine.jpg" alt="" draggable="false"></div>
+    </div>
+  </div>
+  <div class="floor-shade"></div>
+  <div class="ring" id="ring"></div>
+
+  <div class="dock" id="dock">
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+    <div class="acts">
+      <button id="a-bow"><svg viewBox="0 0 24 24"><circle cx="7" cy="8" r="2.2"/><path d="M9 10c4 0 7 2 8 6M17 16h4M11 13l-2 6"/></svg><span data-t="bow"></span></button>
+      <button id="a-mala" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="11" r="7.5" stroke-dasharray=".1 3.8" stroke-width="2.4"/><path d="M12 18.5v3.5"/></svg><span data-t="mala"></span></button>
+      <button id="a-bell"><svg viewBox="0 0 24 24"><path d="M4 10c0 5 3.5 8 8 8s8-3 8-8zM9 21h6M17 4l4 3"/></svg><span data-t="bell"></span></button>
+      <button id="a-sit" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="2.2"/><path d="M12 8v6M5 18c2-3 4.5-4 7-4s5 1 7 4M4 20.5h16"/></svg><span data-t="sit"></span></button>
+      <button id="a-near"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><circle cx="12" cy="12" r="2.5"/></svg><span id="near-label"></span></button>
+    </div>
+  </div>
+
+  <div class="sit-ui" id="sit-ui" hidden>
+    <div id="clock">00:00</div>
+    <button class="btn" id="sit-end" data-t="endSit"></button>
+  </div>
+
+  <div class="panel" id="p-mala" hidden>
+    <h2 data-t="mala"></h2>
+    <button id="bead" aria-describedby="mala-hint"><svg viewBox="0 0 200 200" id="beads" aria-hidden="true"></svg><span class="n"><span id="count">0</span><small>/ 108</small></span></button>
+    <p class="hint" id="mala-hint" data-t="malaHint"></p>
+    <div class="row"><button class="btn" id="mala-reset" data-t="again"></button><button class="btn" data-close data-t="close"></button></div>
+  </div>
+
+  <div class="panel" id="p-sit" hidden>
+    <h2 data-t="sitAsk"></h2>
+    <div class="row" id="mins"></div>
+    <div class="row"><button class="btn" data-close data-t="close"></button></div>
+  </div>
+
+  <div class="scene fade" id="door"><img src="img/door.jpg" alt="" draggable="false"></div>
+  <div class="door-ui fade" id="door-ui">
+    <h1 data-t="name"></h1>
+    <p data-t="place"></p>
+    <button class="enter" id="enter" data-t="enter"></button>
+  </div>
+
+  <div class="top">
+    <div class="group"><button class="chip" id="leave" data-t="leave" hidden></button></div>
+    <div class="group">
+      <button class="chip" id="sound" aria-pressed="true" data-t="sound"></button>
+      <button class="chip" id="lang" aria-label="Language"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  /* ---------- words ---------- */
+  var T = {
+    en: { name: "Buddha Pāda", place: "Shrine room · Kalimpong", enter: "Enter the shrine room", leave: "Leave", sound: "Sound",
+      bow: "Bow", mala: "Mala", bell: "Bell", sit: "Sit", near: "Go closer", far: "Step back",
+      malaHint: "Tap the mala to count one bead.", again: "Start again", close: "Close",
+      bowN: "Bow {n} of 3", bowDone: "Three bows offered.", malaDone: "108 beads complete.",
+      sitAsk: "How long will you sit?", min: "{n} min", endSit: "End sitting", sitDone: "Sitting complete.", drag: "Drag to look around." },
+    ne: { name: "बुद्ध पाद", place: "गुम्बा कक्ष · कालिम्पोङ", enter: "भित्र प्रवेश गर्नुहोस्", leave: "बाहिर", sound: "आवाज",
+      bow: "ढोग", mala: "माला", bell: "घण्टी", sit: "ध्यान", near: "नजिक", far: "पछाडि",
+      malaHint: "एक दाना गन्न मालामा थिच्नुहोस्।", again: "फेरि सुरु", close: "बन्द",
+      bowN: "ढोग {n} / ३", bowDone: "तीन ढोग अर्पण भयो।", malaDone: "१०८ दाना पूरा भयो।",
+      sitAsk: "कति समय बस्नुहुन्छ?", min: "{n} मिनेट", endSit: "ध्यान समाप्त", sitDone: "ध्यान पूरा भयो।", drag: "वरिपरि हेर्न तान्नुहोस्।" }
+  };
+  var lang = store.get("bp-lang", "en") === "ne" ? "ne" : "en";
+  var near = false;
+  function t(k, n) { return T[lang][k].replace("{n}", n); }
+  function paint() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-t]").forEach(function (el) { el.textContent = t(el.dataset.t); });
+    $("lang").textContent = lang === "en" ? "नेपाली" : "English";
+    $("near-label").textContent = t(near ? "far" : "near");
+    document.querySelectorAll("#mins button").forEach(function (b) { b.textContent = t("min", b.dataset.m); });
+  }
+  $("lang").onclick = function () { lang = lang === "en" ? "ne" : "en"; store.set("bp-lang", lang); paint(); };
+
+  var statusTimer;
+  function say(msg, keep) {
+    $("status").textContent = msg; clearTimeout(statusTimer);
+    if (!keep) statusTimer = setTimeout(function () { $("status").textContent = ""; }, 5000);
+  }
+
+  /* ---------- sound: a synthesised singing bowl and a wooden bead ---------- */
+  var ctx = null, soundOn = store.get("bp-sound", "1") === "1";
+  function audio() {
+    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (ctx && ctx.state === "suspended") ctx.resume();
+    return ctx;
+  }
+  function bowl(vol) {
+    var a = audio(); if (!a || !soundOn) return;
+    var now = a.currentTime, out = a.createGain(); out.gain.value = vol || 0.5; out.connect(a.destination);
+    [[196, 1, 9], [197.6, .6, 9], [531, .45, 6], [1010, .22, 3.5], [1646, .1, 2]].forEach(function (p) {
+      var o = a.createOscillator(), g = a.createGain();
+      o.frequency.value = p[0]; g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(p[1] * .3, now + .012);
+      g.gain.exponentialRampToValueAtTime(.0001, now + p[2]);
+      o.connect(g); g.connect(out); o.start(now); o.stop(now + p[2] + .1);
+    });
+  }
+  function tick() {
+    var a = audio(); if (!a || !soundOn) return;
+    var now = a.currentTime, o = a.createOscillator(), g = a.createGain();
+    o.type = "triangle"; o.frequency.setValueAtTime(620, now); o.frequency.exponentialRampToValueAtTime(380, now + .07);
+    g.gain.setValueAtTime(.22, now); g.gain.exponentialRampToValueAtTime(.0001, now + .09);
+    o.connect(g); g.connect(a.destination); o.start(now); o.stop(now + .1);
+  }
+  function ringBell(vol) {
+    bowl(vol); var r = $("ring"); r.classList.remove("go"); void r.offsetWidth; r.classList.add("go");
+  }
+  function paintSound() { $("sound").setAttribute("aria-pressed", soundOn ? "true" : "false"); $("sound").style.textDecoration = soundOn ? "none" : "line-through"; }
+  $("sound").onclick = function () { soundOn = !soundOn; store.set("bp-sound", soundOn ? "1" : "0"); paintSound(); };
+
+  /* ---------- the photographs fill the screen; drag to look around ---------- */
+  var pans = [];
+  function Pan(scene, focusY) {
+    var img = scene.querySelector("img"), x = 0, max = 0, self = this;
+    this.layout = function () {
+      if (!img.naturalWidth) return;
+      var vw = scene.clientWidth, vh = scene.clientHeight, s = Math.max(vw / img.naturalWidth, vh / img.naturalHeight);
+      var w = img.naturalWidth * s, h = img.naturalHeight * s;
+      img.style.width = w + "px"; img.style.height = h + "px";
+      max = Math.max(0, (w - vw) / 2); x = Math.max(-max, Math.min(max, x));
+      var y = (h - vh) * (0.5 - focusY);
+      img.style.transform = "translate(calc(-50% + " + x + "px), calc(-50% + " + y + "px))";
+    };
+    this.canPan = function () { return max > 40; };
+    if (img.complete) this.layout(); img.addEventListener("load", this.layout);
+    var startX = null, startPan = 0;
+    scene.addEventListener("pointerdown", function (e) { if (!max) return; startX = e.clientX; startPan = x; scene.classList.add("dragging"); try { scene.setPointerCapture(e.pointerId); } catch (er) {} });
+    scene.addEventListener("pointermove", function (e) { if (startX === null) return; x = startPan + (e.clientX - startX); self.layout(); });
+    var end = function () { startX = null; scene.classList.remove("dragging"); };
+    scene.addEventListener("pointerup", end); scene.addEventListener("pointercancel", end);
+    this.nudge = function (d) { x += d; self.layout(); };
+    pans.push(this);
+  }
+  var doorPan = new Pan($("door"), 0.5), roomPan = new Pan($("room"), 0.5), shrinePan = new Pan($("shrine"), 0.5);
+  window.addEventListener("resize", function () { pans.forEach(function (p) { p.layout(); }); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    (near ? shrinePan : roomPan).nudge(e.key === "ArrowLeft" ? 60 : -60);
+  });
+
+  /* ---------- entering and leaving ---------- */
+  var inside = false;
+  $("enter").onclick = function () {
+    audio(); inside = true;
+    $("door").classList.add("entering", "gone"); $("door-ui").classList.add("gone");
+    $("leave").hidden = false;
+    setTimeout(function () { ringBell(.4); }, 900);
+    if (roomPan.canPan()) say(t("drag"));
+    $("a-bell").focus({ preventScroll: true });
+  };
+  $("leave").onclick = function () {
+    inside = false; closePanels(); endSit(true);
+    $("door").classList.remove("entering", "gone"); $("door-ui").classList.remove("gone");
+    $("leave").hidden = true; say("");
+  };
+
+  /* ---------- bow ---------- */
+  var bows = 0, bowing = false;
+  $("a-bow").onclick = function () {
+    if (bowing) return; bowing = true; bows += 1;
+    var v = $("view"); v.classList.remove("bowing"); void v.offsetWidth; v.classList.add("bowing");
+    say(t("bowN", bows), true);
+    setTimeout(function () {
+      bowing = false; v.classList.remove("bowing");
+      if (bows >= 3) { bows = 0; say(t("bowDone")); ringBell(.35); } else say(t("bowN", bows));
+    }, 3400);
+  };
+
+  /* ---------- bell ---------- */
+  $("a-bell").onclick = function () { ringBell(.55); };
+
+  /* ---------- closer / back ---------- */
+  $("a-near").onclick = function () {
+    near = !near; $("shrine").classList.toggle("gone", !near); paint();
+    if ((near ? shrinePan : roomPan).canPan()) say(t("drag"));
+  };
+
+  /* ---------- panels ---------- */
+  function closePanels() {
+    document.querySelectorAll(".panel").forEach(function (p) { p.hidden = true; });
+    $("a-mala").setAttribute("aria-expanded", "false"); $("a-sit").setAttribute("aria-expanded", "false");
+  }
+  function open(id, btn) { closePanels(); $(id).hidden = false; btn.setAttribute("aria-expanded", "true"); }
+  document.querySelectorAll("[data-close]").forEach(function (b) { b.onclick = closePanels; });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePanels(); });
+
+  /* ---------- mala: 108 beads and the guru bead ---------- */
+  var count = Math.min(108, parseInt(store.get("bp-mala", "0"), 10) || 0), NS = "http://www.w3.org/2000/svg";
+  (function build() {
+    var g = $("beads");
+    for (var i = 0; i < 108; i++) {
+      var a = (i + 1) / 109 * Math.PI * 2 - Math.PI / 2, c = document.createElementNS(NS, "circle");
+      c.setAttribute("cx", 100 + 92 * Math.cos(a)); c.setAttribute("cy", 100 + 92 * Math.sin(a)); c.setAttribute("r", 2.3); c.setAttribute("class", "b");
+      g.appendChild(c);
+    }
+    var guru = document.createElementNS(NS, "circle");
+    guru.setAttribute("cx", 100); guru.setAttribute("cy", 8); guru.setAttribute("r", 4); guru.setAttribute("class", "b guru"); g.appendChild(guru);
+  })();
+  function paintMala() {
+    $("count").textContent = count;
+    var bs = $("beads").children; for (var i = 0; i < 108; i++) bs[i].setAttribute("class", i < count ? "b on" : "b");
+  }
+  $("a-mala").onclick = function () { open("p-mala", this); $("bead").focus({ preventScroll: true }); };
+  $("bead").onclick = function () {
+    if (count >= 108) return;
+    count += 1; store.set("bp-mala", count); paintMala(); tick();
+    if (count === 108) { $("mala-hint").textContent = t("malaDone"); ringBell(.5); }
+  };
+  $("mala-reset").onclick = function () { count = 0; store.set("bp-mala", 0); paintMala(); $("mala-hint").textContent = t("malaHint"); };
+
+  /* ---------- sitting ---------- */
+  var sitEnd = 0, sitTick = null, wake = null;
+  [5, 10, 20, 30].forEach(function (m) {
+    var b = document.createElement("button"); b.className = "btn"; b.dataset.m = m; b.id = "min-" + m;
+    b.onclick = function () { startSit(m); }; $("mins").appendChild(b);
+  });
+  $("a-sit").onclick = function () { open("p-sit", this); };
+  function clock() {
+    var left = Math.max(0, Math.round((sitEnd - Date.now()) / 1000));
+    $("clock").textContent = String(Math.floor(left / 60)).padStart(2, "0") + ":" + String(left % 60).padStart(2, "0");
+    if (left <= 0) { endSit(false); }
+  }
+  function startSit(m) {
+    closePanels(); sitEnd = Date.now() + m * 60000;
+    $("app").classList.add("sitting"); $("sit-ui").hidden = false; clock(); ringBell(.55);
+    sitTick = setInterval(clock, 500);
+    try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(function (w) { wake = w; }, function () {}); } catch (e) {}
+  }
+  function endSit(quiet) {
+    if (!sitTick) return;
+    clearInterval(sitTick); sitTick = null;
+    $("app").classList.remove("sitting"); $("sit-ui").hidden = true;
+    if (wake) { try { wake.release(); } catch (e) {} wake = null; }
+    if (!quiet) { ringBell(.55); setTimeout(function () { ringBell(.5); }, 2600); setTimeout(function () { ringBell(.5); }, 5200); say(t("sitDone")); }
+  }
+  $("sit-end").onclick = function () { endSit(true); };
+
+  paint(); paintSound(); paintMala();
+})();
+</script>
+</body></html>
