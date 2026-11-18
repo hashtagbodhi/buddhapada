@@ -2042,15 +2042,24 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
         if (onMats(x, z)) { var c = { x: x, z: z }; if (MB.x - Math.abs(x) < Math.min(z - MB.z0, MB.z1 - z)) c.x = Math.sign(x || 1) * (MB.x + .3); else c.z = z - MB.z0 < MB.z1 - z ? MB.z0 - .3 : MB.z1 + .3; x = c.x; z = c.z; }
         if (crosses(p.x, p.z, x, z)) { if (Math.abs(p.x) < MB.x + .3 && !onMats(p.x, p.z)) pts.push([side, edge(p.z)]); pts.push([side, edge(z)]); }
       }
-      pts.push([x, z]); return pts;
+      pts.push([x, z]); var out = [], ax = p.x, az = p.z;
+      pts.forEach(function (q) { var d = detour(ax, az, q[0], q[1]); if (d && !onMats(d[0], d[1])) { out.push(d); var d2 = detour(d[0], d[1], q[0], q[1]); if (d2 && !onMats(d2[0], d2[1])) out.push(d2); } out.push(q); ax = q[0]; az = q[1]; });
+      return out;
+    }
+    function detour(ax, az, bx, bz) {                                 /* if something stands on the straight line, a point just beside it to pass by */
+      var best = null, bu = 2, all = solids.concat(sitters.map(function (q) { return [q.x, q.z, .68]; })), dx = bx - ax, dz = bz - az, L = dx * dx + dz * dz; if (L < .04) return null;
+      for (var i = 0; i < all.length; i++) { var c = all[i], u = ((c[0] - ax) * dx + (c[1] - az) * dz) / L; if (u <= .03 || u >= .97 || u >= bu) continue;
+        var ox = ax + dx * u - c[0], oz = az + dz * u - c[1], dd = Math.sqrt(ox * ox + oz * oz); if (dd >= c[2] - .03) continue; var ex = bx - c[0], ez = bz - c[1]; if (ex * ex + ez * ez < c[2] * c[2]) continue;
+        if (dd < .01) { var l = Math.sqrt(L); ox = -dz / l; oz = dx / l; dd = 1; } bu = u; best = [c[0] + ox / dd * (c[2] + .34), c[1] + oz / dd * (c[2] + .34)]; }
+      return best;
     }
     function walkPath(pts, then, onSeat) {
-      var go = function (i) { var q = pts[i], last = i === pts.length - 1; walkTo(q[0], q[1], last ? then : function () { go(i + 1); }, true, onSeat && last); if (last && !then) S.onArrive = null; };
+      var go = function (i) { var q = pts[i], last = i === pts.length - 1; walkTo(q[0], q[1], last ? then : function () { go(i + 1); }, true, onSeat && last); S.mid = !last; S.ign = !!then || !!onSeat; if (last && !then) S.onArrive = null; };
       go(0);
     }
     function walkTo(x, z, then, raw, toSeat) {
       if (!raw) { var pts = routeTo(x, z, false); if (pts.length > 1) { walkPath(pts, then); return; } x = pts[0][0]; z = pts[0][1]; }
-      var p = { x: x, z: z }; clampPos(p, !!then || toSeat); S.target = p; S.onArrive = then || (raw ? null : null);
+      var p = { x: x, z: z }; clampPos(p, !!then || toSeat); S.target = p; S.onArrive = then || (raw ? null : null); S.mid = false; S.ign = !!then || !!toSeat; S.stuck = 0;
       marker.position.set(p.x, .02, p.z); marker.material.opacity = then ? 0 : .9;
     }
     function face(dx, dz) { S.heading = Math.atan2(-dx, -dz); }
@@ -2065,7 +2074,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       r.mixer.update(dt);
     }
 
-    var clock = new THREE.Clock(), camPos = new THREE.Vector3(), look = new THREE.Vector3();
+    var clock = new THREE.Clock(), camPos = new THREE.Vector3(), look = new THREE.Vector3(), lookS = new THREE.Vector3();
     function frame() {
       if (!S.running) return;
       requestAnimationFrame(frame);
@@ -2088,9 +2097,10 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
           var was = onMats(p.x, p.z), ox2 = p.x, oz2 = p.z; p.x += mx / ml * speed * ease * dt; p.z += mz / ml * speed * ease * dt; if (!was && onMats(p.x, p.z)) { if (!onMats(p.x, oz2)) p.z = oz2; else if (!onMats(ox2, p.z)) p.x = ox2; else { p.x = ox2; p.z = oz2; } } face(mx, mz); cancelTrip(); S.target = null; S.onArrive = null; marker.material.opacity = 0; S.moving = true; clampPos(p); S.gx = mx / ml; S.gz = mz / ml; S.gl = ease;
         } else if (S.target) { S.gl = 0;
           var dx = S.target.x - p.x, dz = S.target.z - p.z, dl = Math.sqrt(dx * dx + dz * dz);
-          if (dl < .06) { var cb = S.onArrive; S.target = null; S.onArrive = null; if (cb) cb(); }
-          else { var step = Math.min(dl, speed * ease * Math.min(1, .16 + dl / 1.25) * dt), ox = p.x, oz = p.z; p.x += dx / dl * step; p.z += dz / dl * step; face(dx, dz); S.moving = true; clampPos(p, !!S.onArrive);
-            if (!S.onArrive && Math.abs(p.x - ox) + Math.abs(p.z - oz) < step * .25) S.target = null; }
+          if (dl < (S.mid ? .3 : .06)) { var cb = S.onArrive; S.target = null; S.onArrive = null; if (cb) cb(); }
+          else { var step = Math.min(dl, speed * ease * (S.mid ? 1 : Math.min(1, .16 + dl / 1.25)) * dt), ox = p.x, oz = p.z; p.x += dx / dl * step; p.z += dz / dl * step; face(dx, dz); S.moving = true; clampPos(p, S.ign);
+            S.stuck = Math.abs(p.x - ox) + Math.abs(p.z - oz) < step * .3 ? (S.stuck || 0) + dt : 0;
+            if (S.stuck > .45) { S.stuck = 0; if (S.mid && S.onArrive) { var nx = S.onArrive; S.target = null; S.onArrive = null; nx(); } else if (!S.onArrive) S.target = null; } }
         } else if (S.gl > .03) { /* let a keyboard walk settle to a stop instead of halting dead */
           S.gl *= Math.exp(-dt * 4.5); var gw = onMats(p.x, p.z), g0x = p.x, g0z = p.z; p.x += S.gx * speed * S.gl * dt; p.z += S.gz * speed * S.gl * dt; if (!gw && onMats(p.x, p.z)) { p.x = g0x; p.z = g0z; S.gl = 0; } clampPos(p); S.moving = S.gl > .2;
         }
@@ -2164,12 +2174,13 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       if (S.mode === "hall" && !fp) { camPos.x = Math.max(-W + .3, Math.min(W - .3, camPos.x)); camPos.z = Math.max(-D + .4, Math.min(D - .3, camPos.z)); }
       else if (S.mode === "porch") { camPos.x = Math.max(-PW + .3, Math.min(PW - .3, camPos.x)); camPos.z = Math.max(D + .35, Math.min(D + PD + (narrowPorch ? 3.2 : -.25), camPos.z)); }
       if (!fp && S.mode === "hall") {
-        var lift = function (x, z, r, y) { var ddx = camPos.x - x, ddz = camPos.z - z; if (ddx * ddx + ddz * ddz < r * r) camPos.y = Math.max(camPos.y, y); };
-        sitters.forEach(function (q) { lift(q.x, q.z, .8, 1.55); }); lift(GURU.x, GURU.z, 1.2, 1.95); lift(walkerHolder.position.x, walkerHolder.position.z, .8, 2.05);
-        var own = Math.sqrt((camPos.x - p.x) * (camPos.x - p.x) + (camPos.z - p.z) * (camPos.z - p.z)); if (own < 1.1) camPos.y = Math.max(camPos.y, ty + 1.15 - own * .75);   /* squeezed against a wall: rise above your own head */
+        var lift = function (x, z, r, y) { var ddx = camPos.x - x, ddz = camPos.z - z, dq = ddx * ddx + ddz * ddz; if (dq < r * r && y > camPos.y) { var u = 1 - Math.sqrt(dq) / r; u = Math.min(1, u * 1.6); camPos.y += (y - camPos.y) * u * u * (3 - 2 * u); } };
+        sitters.forEach(function (q) { lift(q.x, q.z, 1.35, 1.55); }); lift(GURU.x, GURU.z, 1.9, 1.95); lift(walkerHolder.position.x, walkerHolder.position.z, 1.4, 2.05);
+        var own = Math.sqrt((camPos.x - p.x) * (camPos.x - p.x) + (camPos.z - p.z) * (camPos.z - p.z)); if (own < 1.6) { var ou = 1 - own / 1.6; camPos.y += Math.max(0, ty + 1.15 - camPos.y) * ou * ou * (3 - 2 * ou); }   /* squeezed against a wall: rise above your own head */
       }
       camPos.y = Math.max(.75, Math.min(top - .25, camPos.y));
-      camera.position.lerp(camPos, Math.min(1, dt * (fp ? 14 : 8))); camera.lookAt(look);
+      var ck = 1 - Math.exp(-dt * (fp ? 14 : 7)), cky = 1 - Math.exp(-dt * (fp ? 14 : 3.2)); camera.position.x += (camPos.x - camera.position.x) * ck; camera.position.z += (camPos.z - camera.position.z) * ck; camera.position.y += (camPos.y - camera.position.y) * cky;
+      lookS.lerp(look, lookS.lengthSq() ? 1 - Math.exp(-dt * (fp ? 30 : 12)) : 1); camera.lookAt(lookS);
       if ((camera.near === .03) !== fp) { camera.near = fp ? .03 : .08; camera.updateProjectionMatrix(); if (!fp) { if (S.seated && meSit.children.length) { meSit.visible = true; meStand.visible = false; } else { meStand.visible = true; } } }
       S.off += ((S.mode === "porch" ? 1 : 0) - S.off) * Math.min(1, dt * 2.5);
       S.lift += ((S.seated && S.liftOn ? 1 : 0) - S.lift) * Math.min(1, dt * 1.5);   /* sitting with the breath guide: the shrine rises to make room below */
