@@ -722,6 +722,12 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
 .sect .full ul.tl li { grid-template-columns: 96px minmax(0, 1fr); } .sect details[open] summary { padding-bottom: 12px; }
 .sect .full p.t { margin: 10px 0 0; padding: 0; color: var(--ink-2); } .sect .full p.h4 { margin-top: 22px; color: var(--ink); } .sect .full p.h4 + p.t { margin-top: 4px; } .sect .full > p.t:first-child, .sect .full > ul.t:first-child { margin-top: 0; }
 .ios .bk-est b { white-space: nowrap; }
+.coach { position: fixed; z-index: 12; left: 0; right: 0; margin: 0 auto; bottom: calc(150px + env(safe-area-inset-bottom, 0px)); width: min(340px, calc(100% - 40px)); padding: 16px 18px 12px; border-radius: 22px; color: var(--ink); background: var(--veil); -webkit-backdrop-filter: var(--veil-filter); backdrop-filter: var(--veil-filter); box-shadow: var(--veil-rim), 0 18px 44px rgba(0, 0, 0, .28); animation: chipin .45s cubic-bezier(.2, .8, .2, 1.1); }
+.coach.top { bottom: calc(210px + env(safe-area-inset-bottom, 0px)); }
+.co-k { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); } .coach h3 { margin: 4px 0 0; font-size: 18px; line-height: 24px; font-weight: 700; } .coach p:not(.co-k) { margin: 4px 0 0; font-size: 14px; line-height: 20px; color: var(--ink-2); text-wrap: pretty; }
+.co-b { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; } .co-b button { min-height: 40px; padding: 0 6px; font-size: 14px; color: var(--ink-2); } #co-next { padding: 0 20px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 600; }
+.coach-on { box-shadow: 0 0 0 3px rgba(255, 255, 255, .95), 0 0 0 7px rgba(255, 255, 255, .35) !important; border-radius: 999px; transition: box-shadow .3s; }
+.sitting .coach, .veiled .coach { display: none; }
 </style>
 
 <div id="app" class="outside">
@@ -776,6 +782,7 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
     <p class="gd-x" id="gd-x"></p>
     <div class="gd-nav"><button type="button" id="gd-prev" aria-label="Previous step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></button><span class="gd-dots" id="gd-dots"></span><button type="button" id="gd-next" aria-label="Next step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></div>
   </div>
+  <div class="coach" id="coach" hidden role="dialog" aria-label="A short guide"><p class="co-k" id="co-k"></p><h3 id="co-t"></h3><p id="co-p"></p><div class="co-b"><button type="button" id="co-skip">Skip</button><button type="button" id="co-next">Next</button></div></div>
   <div class="sit-ui" id="sit-ui" hidden>
     <div class="pill glass"><span id="clock">00:00</span><button class="btn vbtn" id="sit-voice" aria-pressed="true" aria-label="Inhale and exhale voice"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l4 3.5v-11L7 10z"/><path class="wave" d="M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10"/><path class="mute" d="M15.5 9.5l5 5M20.5 9.5l-5 5"/></svg><span id="sit-voice-t">Voice</span></button><button class="btn" id="sit-pause">Pause</button><button class="btn" id="sit-end" data-t="endSit"></button></div>
   </div>
@@ -1186,7 +1193,7 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
     /* ---------- ceiling, as in the hall: plain plaster beams; each bay steps up through a carved frieze to a plain panel ---------- */
     plane(2 * W, 2 * D, plaster, 0, H + .02, 0, Math.PI / 2, 0, true);                    // unseen lid, keeps the sun out
     plane(2 * 5.9, 3.4, M(0xf4eee2, { emissive: col(0xfff2d8), emissiveIntensity: .5 }), 0, H, -D - 1.7, Math.PI / 2, 0, true);
-    var BWID = .5, EDGE = .26, INSET = .52, yB = H - BEAM, edgesX = [-W, -4.8, -1.6, 1.6, 4.8, W], edgesZ = [-D, -6, -2, 2, 6, D];
+    var BWID = .5, EDGE = .26, INSET = .16, yB = H - BEAM, edgesX = [-W, -4.8, -1.6, 1.6, 4.8, W], edgesZ = [-D, -6, -2, 2, 6, D];
     var beamMat = M(0xefe5d0, { roughness: .95, emissive: col(0xefe5d0), emissiveIntensity: .22 });
     [-4.8, -1.6, 1.6, 4.8].forEach(function (x) { box(BWID, BEAM, 2 * D, beamMat, x, H - BEAM / 2, 0); });
     [-4.2, -1.4, 1.4, 4.2].forEach(function (z) { box(2 * W, BEAM - .01, BWID, beamMat, 0, H - BEAM / 2, z); });
@@ -1353,8 +1360,6 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
     box(.52, .03, .2, M(0x1e1a16, { roughness: .6 }), -1.05, .015, -D + 1.1, true);                                           /* a small black step */
     /* along the cabinet's front edge: silver offering bowls, torma discs on a stand, a small white stupa, grass in a vase */
     [-1, 1].forEach(function (s) { for (var bw = 0; bw < 7; bw++) { var b = new THREE.Mesh(new THREE.CylinderGeometry(.06, .038, .06, 16), silver); b.position.set(s * (1.25 + bw * .19), .9, OZ + .04); b.castShadow = true; scene.add(b); } });
-    box(1.5, .09, .3, woodDark, 0, .915, OZ); box(1.3, .07, .2, wood, 0, .995, OZ - .03);
-    for (var tm = -3; tm <= 3; tm++) { var disc = new THREE.Mesh(new THREE.CylinderGeometry(.075, .075, .02, 20), red); disc.rotation.x = Math.PI / 2; disc.position.set(tm * .18, 1.11, OZ - .03); disc.castShadow = true; scene.add(disc); var rim = new THREE.Mesh(new THREE.TorusGeometry(.075, .01, 6, 20), gold); rim.position.copy(disc.position); scene.add(rim); }
     var stupa = new THREE.Group(); stupa.position.set(.98, .87, OZ + .02); scene.add(stupa);
     [[.2, .05, 0], [.15, .05, .05], [.1, .05, .1]].forEach(function (q) { var m = new THREE.Mesh(new THREE.BoxGeometry(q[0], q[1], q[0]), white); m.position.y = q[2] + .025; stupa.add(m); });
     var dome = new THREE.Mesh(new THREE.SphereGeometry(.06, 14, 10), white); dome.position.y = .2; stupa.add(dome); var spire = new THREE.Mesh(new THREE.ConeGeometry(.022, .14, 10), gold); spire.position.y = .32; stupa.add(spire);
@@ -1595,7 +1600,10 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
         var back = new THREE.Mesh(new THREE.CircleGeometry(1, 48), new THREE.MeshBasicMaterial({ color: 0x050a24 }));
         back.scale.set(1.5, 1.62, 1); back.position.set(x, y + height * .5, AZ + .03 + r.d * .13); back.receiveShadow = true; scene.add(back);
       } }); }
-    statue("models/statue_centre.json", 5.4, 0, .93); statue("models/statue_left.json", 4.19, -4.22, .93); statue("models/statue_right.json", 4.19, 4.22, .93);
+    statue("models/statue_centre.json", 5.4, 0, .93);
+    /* the altar's offerings, modelled in the round from the shrine photograph: tormas, clay figures and the eight auspicious symbols on their stepped stand; and an incense box by the censer */
+    loadModel("models/offerings.json", function (g) { fixMaterials(g.scene, false); var r = place(g.scene, 1.85, 0, 1.09, 0, -Math.PI / 2); r.holder.position.z = CF - .36 - r.d / 2; });
+    loadModel("models/incense_box.json", function (g) { fixMaterials(g.scene, true); place(g.scene, .09, CS.x - .36, .54, CS.z + .06, -Math.PI / 2 + .2); }); statue("models/statue_left.json", 4.19, -4.22, .93); statue("models/statue_right.json", 4.19, 4.22, .93);
 
     function cushion(x, z) {
       var m = new THREE.Mesh(new THREE.CylinderGeometry(.34, .37, .09, 24), maroon); m.position.set(x, .06, z); m.castShadow = true; m.receiveShadow = true; scene.add(m);
@@ -1778,28 +1786,30 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
 
     /* ---------- state ---------- */
     var PZ = D + 2.3;
-    var S = { yaw: 0, pitch: .1, dist: 2.8, heading: 0, target: null, seated: false, onArrive: null, bowT: -1, bowDur: 3.2, keys: {}, moving: false, running: false, mode: "porch", door: 0, doorTo: 0, off: 1, offOn: false, onCancel: null, lift: 0, liftOn: false };
+    var cy = 0, cp = .1, PMIN = -.32;                                   /* the eased view angles the camera actually uses */
+    var S = { vy: 0, vp: 0, ramp: 0, wasMoving: false, yaw: 0, pitch: .1, dist: 2.8, heading: 0, target: null, seated: false, onArrive: null, bowT: -1, bowDur: 3.2, keys: {}, moving: false, running: false, mode: "porch", door: 0, doorTo: 0, off: 1, offOn: false, onCancel: null, lift: 0, liftOn: false };
     me.position.set(0, 0, PZ); me.rotation.y = Math.PI; S.heading = Math.PI;
     var wideMQ = window.matchMedia("(min-width: 760px) and (min-aspect-ratio: 23/20)");
     function cancelTrip() { if (S.onCancel) { var c = S.onCancel; S.onCancel = null; c(); } }
     function resize() {
       var w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
-      renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = w < h ? 74 : 60; camera.updateProjectionMatrix();
+      renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = w < h ? 68 : 58; camera.updateProjectionMatrix();
     }
     window.addEventListener("resize", resize); resize();
 
     /* ---------- look and walk ---------- */
     var down = null, moved = false, ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
-    canvas.addEventListener("pointerdown", function (e) { down = { x: e.clientX, y: e.clientY, id: e.pointerId }; moved = false; try { canvas.setPointerCapture(e.pointerId); } catch (er) {} });
+    canvas.addEventListener("pointerdown", function (e) { down = { x: e.clientX, y: e.clientY, id: e.pointerId, t: performance.now() }; moved = false; S.vy = S.vp = 0; try { canvas.setPointerCapture(e.pointerId); } catch (er) {} });
     canvas.addEventListener("pointermove", function (e) {
       if (!down || e.pointerId !== down.id || S.mode === "entering") return;
       var dx = e.clientX - down.x, dy = e.clientY - down.y;
       if (!moved && Math.abs(dx) + Math.abs(dy) < 7) return;
       moved = true; canvas.classList.add("dragging");
-      S.yaw -= dx * .006; S.pitch = Math.max(-1, Math.min(1.05, S.pitch + dy * .005)); down.x = e.clientX; down.y = e.clientY;
+      var nt = performance.now(), el = Math.max(8, nt - down.t); S.vy = -dx * .0052 / el * 16; S.vp = dy * .0044 / el * 16; down.t = nt;
+      S.yaw -= dx * .0052; S.pitch = Math.max(PMIN, Math.min(1.05, S.pitch + dy * .0044)); down.x = e.clientX; down.y = e.clientY;
     });
     function up(e) {
-      if (!down) return; canvas.classList.remove("dragging");
+      if (!down) return; canvas.classList.remove("dragging"); if (!moved || performance.now() - down.t > 90) S.vy = S.vp = 0;
       if (!moved && S.mode === "hall" && !S.seated && S.bowT < 0) {
         var r = canvas.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
         ray.setFromCamera(ndc, camera); var o = ray.ray.origin, d = ray.ray.direction;
@@ -1818,7 +1828,8 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       p.x = Math.max(-W + .45, Math.min(W - .45, p.x)); p.z = Math.max(-D + 1.25, Math.min(D - .5, p.z));
       function push(cx, cz, r) { var dx = p.x - cx, dz = p.z - cz, d = Math.sqrt(dx * dx + dz * dz); if (d < r) { if (d < .001) { dx = 0; dz = 1; d = 1; } p.x = cx + dx / d * r; p.z = cz + dz / d * r; } }
       solids.forEach(function (q) { push(q[0], q[1], q[2]); });
-      if (!ignoreSeats) sitters.forEach(function (q) { push(q.x, q.z, .55); });
+      push(walkerHolder.position.x, walkerHolder.position.z, .62); if (hallCat.body) push(hallCat.x, hallCat.z, .34);
+      if (!ignoreSeats) sitters.forEach(function (q) { push(q.x, q.z, .68); });
     }
     /* the mats are not walked on: routes go round them by the side aisles; a cushion is reached from the floor gap behind its row */
     var MB = { x: 3.35, z0: 2.85, z1: 6.75 };
@@ -1868,7 +1879,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
 
       S.door += (S.doorTo - S.door) * Math.min(1, dt * 2.4); leafL.rotation.y = S.door * 1.5; leafR.rotation.y = -S.door * 1.5;
 
-      var kx = (S.keys.r ? 1 : 0) - (S.keys.l ? 1 : 0), kz = (S.keys.f ? 1 : 0) - (S.keys.b ? 1 : 0), speed = charKey === "cat" ? .85 : 1.3; S.moving = false;
+      var kx = (S.keys.r ? 1 : 0) - (S.keys.l ? 1 : 0), kz = (S.keys.f ? 1 : 0) - (S.keys.b ? 1 : 0), speed = charKey === "cat" ? .85 : 1.02; S.ramp = S.wasMoving ? Math.min(1, S.ramp + dt * 1.5) : 0; var ease = .3 + .7 * S.ramp * S.ramp * (3 - 2 * S.ramp); S.moving = false;
       if (S.mode === "entering") {
         if (S.target) {
           var ex = S.target.x - p.x, ez = S.target.z - p.z, el = Math.sqrt(ex * ex + ez * ez);
@@ -1880,14 +1891,17 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
         if (kx || kz) {
           var fx = -Math.sin(S.yaw), fz = -Math.cos(S.yaw), rx = Math.cos(S.yaw), rz = -Math.sin(S.yaw);
           var mx = fx * kz + rx * kx, mz = fz * kz + rz * kx, ml = Math.sqrt(mx * mx + mz * mz);
-          var was = onMats(p.x, p.z), ox2 = p.x, oz2 = p.z; p.x += mx / ml * speed * dt; p.z += mz / ml * speed * dt; if (!was && onMats(p.x, p.z)) { if (!onMats(p.x, oz2)) p.z = oz2; else if (!onMats(ox2, p.z)) p.x = ox2; else { p.x = ox2; p.z = oz2; } } face(mx, mz); cancelTrip(); S.target = null; S.onArrive = null; marker.material.opacity = 0; S.moving = true; clampPos(p);
+          var was = onMats(p.x, p.z), ox2 = p.x, oz2 = p.z; p.x += mx / ml * speed * ease * dt; p.z += mz / ml * speed * ease * dt; if (!was && onMats(p.x, p.z)) { if (!onMats(p.x, oz2)) p.z = oz2; else if (!onMats(ox2, p.z)) p.x = ox2; else { p.x = ox2; p.z = oz2; } } face(mx, mz); cancelTrip(); S.target = null; S.onArrive = null; marker.material.opacity = 0; S.moving = true; clampPos(p);
         } else if (S.target) {
           var dx = S.target.x - p.x, dz = S.target.z - p.z, dl = Math.sqrt(dx * dx + dz * dz);
           if (dl < .06) { var cb = S.onArrive; S.target = null; S.onArrive = null; if (cb) cb(); }
-          else { var step = Math.min(dl, speed * dt), ox = p.x, oz = p.z; p.x += dx / dl * step; p.z += dz / dl * step; face(dx, dz); S.moving = true; clampPos(p, !!S.onArrive);
+          else { var step = Math.min(dl, speed * ease * Math.min(1, .3 + dl / .8) * dt), ox = p.x, oz = p.z; p.x += dx / dl * step; p.z += dz / dl * step; face(dx, dz); S.moving = true; clampPos(p, !!S.onArrive);
             if (!S.onArrive && Math.abs(p.x - ox) + Math.abs(p.z - oz) < step * .25) S.target = null; }
         }
       }
+      S.wasMoving = S.moving;
+      if (!down && (S.vy || S.vp)) { S.yaw += S.vy; S.pitch = Math.max(PMIN, Math.min(1.05, S.pitch + S.vp)); var fr = Math.exp(-dt * 5); S.vy *= fr; S.vp *= fr; if (Math.abs(S.vy) + Math.abs(S.vp) < .0004) S.vy = S.vp = 0; }
+      var dcy = S.yaw - cy; dcy = Math.atan2(Math.sin(dcy), Math.cos(dcy)); var kk = 1 - Math.exp(-dt * 11); cy += dcy * kk; cp += (S.pitch - cp) * kk;
       if (marker.material.opacity > 0 && !S.target) marker.material.opacity = Math.max(0, marker.material.opacity - dt * 2);
       var dh = S.heading - me.rotation.y; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); me.rotation.y += dh * Math.min(1, dt * 9);
 
@@ -1933,18 +1947,18 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       var narrowPorch = S.mode === "porch";          /* phones: step back into the courtyard so the whole shrine front shows */
       if (narrowPorch) { ty = 2.2; dist = 6.2; }
       if (S.seated) {                                                   /* sitting: look past yourself to the whole shrine */
-        var sfx = -Math.sin(S.yaw), sfz = -Math.cos(S.yaw);
-        look.set(p.x + sfx * 4, 2.3 + (.16 - S.pitch) * 5, p.z + sfz * 4);
+        var sfx = -Math.sin(cy), sfz = -Math.cos(cy);
+        look.set(p.x + sfx * 4, 2.3 + (.16 - cp) * 5, p.z + sfz * 4);
         camPos.set(p.x - sfx * 2.1, 1.55, p.z - sfz * 2.1);
       } else {
-        look.set(p.x, ty + (S.pitch < 0 ? -S.pitch * 5.5 : 0), p.z);
-        camPos.set(p.x + Math.sin(S.yaw) * Math.cos(S.pitch) * dist, ty + Math.sin(S.pitch) * dist + .22, p.z + Math.cos(S.yaw) * Math.cos(S.pitch) * dist);
+        look.set(p.x, ty + (cp < 0 ? -cp * 5.5 : 0), p.z);
+        camPos.set(p.x + Math.sin(cy) * Math.cos(cp) * dist, ty + Math.sin(cp) * dist + .22, p.z + Math.cos(cy) * Math.cos(cp) * dist);
       }
       var fp = S.seated && S.mode === "hall";                           /* sitting in meditation: you see the shrine through your own eyes */
       if (fp) {                                                          /* through your own eyes: bowing tips the view to your feet */
-        var eyeH = S.seated ? .98 : ((CHARS[charKey] && CHARS[charKey].h) || 1.5) * .93, vx = -Math.sin(S.yaw), vz = -Math.cos(S.yaw), fwd = .12 + bend * .62;
+        var eyeH = S.seated ? .98 : ((CHARS[charKey] && CHARS[charKey].h) || 1.5) * .93, vx = -Math.sin(cy), vz = -Math.cos(cy), fwd = .12 + bend * .62;
         camPos.set(p.x + vx * fwd, eyeH - bend * .62, p.z + vz * fwd);
-        var lp = Math.min(bend > .05 ? 1.9 : 1.5, (S.pitch - (S.seated ? .3 : .1)) * 1.15 + bend * 1.9);   /* in a bow the gaze tips past straight down, back to your feet */
+        var lp = Math.min(bend > .05 ? 1.9 : 1.5, (cp - (S.seated ? .3 : .1)) * 1.15 + bend * 1.9);   /* in a bow the gaze tips past straight down, back to your feet */
         var showBody = lp > .55;                                         /* your own body only shows when you look down: your hands, your feet */
         if (S.seated) { meSit.visible = showBody && meSit.children.length > 0; } else meStand.visible = showBody;
         look.set(camPos.x + vx * Math.cos(lp), camPos.y - Math.sin(lp), camPos.z + vz * Math.cos(lp));
@@ -1953,7 +1967,12 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       }
       if (S.mode === "hall" && !fp) { camPos.x = Math.max(-W + .3, Math.min(W - .3, camPos.x)); camPos.z = Math.max(-D + .4, Math.min(D - .3, camPos.z)); }
       else if (S.mode === "porch") { camPos.x = Math.max(-PW + .3, Math.min(PW - .3, camPos.x)); camPos.z = Math.max(D + .35, Math.min(D + PD + (narrowPorch ? 3.2 : -.25), camPos.z)); }
-      camPos.y = Math.max(.35, Math.min(top - .25, camPos.y));
+      if (!fp && S.mode === "hall") {
+        var lift = function (x, z, r, y) { var ddx = camPos.x - x, ddz = camPos.z - z; if (ddx * ddx + ddz * ddz < r * r) camPos.y = Math.max(camPos.y, y); };
+        sitters.forEach(function (q) { lift(q.x, q.z, .8, 1.55); }); lift(GURU.x, GURU.z, 1.2, 1.95); lift(walkerHolder.position.x, walkerHolder.position.z, .8, 2.05);
+        var own = Math.sqrt((camPos.x - p.x) * (camPos.x - p.x) + (camPos.z - p.z) * (camPos.z - p.z)); if (own < 1.1) camPos.y = Math.max(camPos.y, ty + 1.15 - own * .75);   /* squeezed against a wall: rise above your own head */
+      }
+      camPos.y = Math.max(.75, Math.min(top - .25, camPos.y));
       camera.position.lerp(camPos, Math.min(1, dt * (fp ? 14 : 8))); camera.lookAt(look);
       if ((camera.near === .03) !== fp) { camera.near = fp ? .03 : .08; camera.updateProjectionMatrix(); if (!fp) { if (S.seated && meSit.children.length) { meSit.visible = true; meStand.visible = false; } else { meStand.visible = true; } } }
       S.off += ((S.mode === "porch" ? 1 : 0) - S.off) * Math.min(1, dt * 2.5);
@@ -2088,7 +2107,15 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   if (world) world.lamps(lamps);
   $("enter").onclick = function () {
     audio(); $("entry").classList.add("gone");
-    var inside = function () { insideHall = true; ambience(); play("door_close", .35); $("app").classList.remove("outside"); $("leave-pill").hidden = false; say(t("hint")); setTimeout(function () { ringBell(.4); }, 700); setTimeout(function () { meow(.7); }, 2200); };
+    var TOUR = [["Look around", "Drag anywhere to turn your view. It glides to a stop when you let go."], ["Walk", "Tap the floor and you walk there. On a keyboard, use the arrow keys."], ["Practise", "Bow, count a mala, ring the bell, sit or make an offering from the bar below.", "dock"], ["Meet", "Walk up to Rinpoche, or to Koili the cat, and a button appears to greet them."], ["Find out more", "Programmes, teachers and how to visit are in the menu, top right.", "menu-btn"]], tourK = 0;
+  function tour() {
+    if (!insideHall || $("app").classList.contains("sitting") || $("app").classList.contains("veiled")) return; tourK = 0; var c = $("coach"); c.hidden = false;
+    var paint = function () { var q = TOUR[tourK]; document.querySelectorAll(".coach-on").forEach(function (e) { e.classList.remove("coach-on"); }); if (q[2] && $(q[2])) $(q[2]).classList.add("coach-on");
+      $("co-k").textContent = (tourK + 1) + " of " + TOUR.length; $("co-t").textContent = q[0]; $("co-p").textContent = q[1]; $("co-next").textContent = tourK === TOUR.length - 1 ? "Begin" : "Next"; c.classList.toggle("top", q[2] === "dock"); };
+    var end = function () { c.hidden = true; document.querySelectorAll(".coach-on").forEach(function (e) { e.classList.remove("coach-on"); }); store.set("bp-tour", "1"); };
+    $("co-next").onclick = function () { SFX.tap(); if (++tourK >= TOUR.length) end(); else paint(); }; $("co-skip").onclick = function () { end(); }; paint();
+  }
+  var inside = function () { insideHall = true; ambience(); play("door_close", .35); $("app").classList.remove("outside"); $("leave-pill").hidden = false; say(t("hint")); setTimeout(function () { ringBell(.4); }, 700); if (store.get("bp-tour", "") !== "1") setTimeout(tour, 2600); setTimeout(function () { meow(.7); }, 2200); };
     if (world) world.enter(inside, function () { play("door_open", .4); }, function () { play("cloth", .5); }); else { play("door_open", .4); inside(); }
   };
   $("leave").onclick = function () {
@@ -2585,7 +2612,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     h += '<div class="grp" style="margin-top:12px"><button class="cell" data-go="quotes"><span class="ti gold">' + svg("quote") + '</span><span class="tx"><b>Words of Rinpoche</b><small>' + QUOTES.length + ' quotations from Dzongsar Khyentse Rinpoche</small></span>' + svg("chev", "chev") + "</button></div>";
     h += '<p class="grp-h">The centre</p><div class="grp">' + ["about", "teachers", "lineage", "facilities", "architecture", "patterns", "gallery"].map(function (k) { return '<button class="cell" data-go="' + k + '"><span class="ti">' + svg(PAGES[k].icon) + '</span><span class="tx"><b>' + PAGES[k].menu + "</b></span>" + svg("chev", "chev") + "</button>"; }).join("") + "</div>";
     h += '<p class="grp-h">Visit</p><div class="grp">' + ["visit", "faq", "partners", "contact"].map(function (k) { return '<button class="cell" data-go="' + k + '"><span class="ti">' + svg(PAGES[k].icon) + '</span><span class="tx"><b>' + PAGES[k].menu + "</b></span>" + svg("chev", "chev") + "</button>"; }).join("") + "</div>";
-    h += '<p class="foot">Buddha Pāda · 13th Mile, Kalimpong<br>' + MAIL + '<br><span style="opacity:.8">Guided meditations: “Three minute breathing” by Peter Morgan, Free Mindfulness Project (freemindfulness.org), <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-SA 3.0</a>; “Guided Meditation” by Gil Fronsdal, Insight Meditation Center (audiodharma.org), <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a>. Both are played whole and unedited. “5 Minute Mindfulness Meditation” by Venerable Lozang Yonten, Kunsang Yeshe Retreat Centre, public domain (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener" style="color:inherit">CC0</a>), via the Internet Archive.<br>The hall cat’s meow: Dcrosby, <a href="https://commons.wikimedia.org/wiki/File:Meow.ogg" target="_blank" rel="noopener" style="color:inherit">CC BY-SA 3.0</a></span></p>';
+    h += '<p class="foot">Buddha Pāda · 13th Mile, Kalimpong<br>' + MAIL + '<br><button type="button" id="tour-again" style="text-decoration:underline;text-underline-offset:3px;min-height:36px">Show the short guide again</button><br><span style="opacity:.8">Guided meditations: “Three minute breathing” by Peter Morgan, Free Mindfulness Project (freemindfulness.org), <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-SA 3.0</a>; “Guided Meditation” by Gil Fronsdal, Insight Meditation Center (audiodharma.org), <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a>. Both are played whole and unedited. “5 Minute Mindfulness Meditation” by Venerable Lozang Yonten, Kunsang Yeshe Retreat Centre, public domain (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener" style="color:inherit">CC0</a>), via the Internet Archive.<br>The hall cat’s meow: Dcrosby, <a href="https://commons.wikimedia.org/wiki/File:Meow.ogg" target="_blank" rel="noopener" style="color:inherit">CC BY-SA 3.0</a></span></p>';
     return { title: "Menu", html: h };
   }
   function programsView() {
@@ -2768,7 +2795,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     if (v.settings) el.querySelector(".nv-scroll").appendChild($("set-body"));
     el.querySelectorAll("[data-book]").forEach(function (b) { b.onclick = function () { pushView("book" + b.dataset.book); }; });
     if (v.after) v.after(el);
-    el.querySelector(".nv-x").onclick = closeNav;
+    el.querySelector(".nv-x").onclick = closeNav; var ta = el.querySelector("#tour-again"); if (ta) ta.onclick = function () { closeNav(); if (insideHall) setTimeout(tour, 500); else store.set("bp-tour", ""); };
     var bk = el.querySelector(".nv-back"); if (bk) bk.onclick = popView;
     el.querySelectorAll("[data-go]").forEach(function (b) { b.onclick = function () { pushView(b.dataset.go); }; });
     el.querySelectorAll("[data-ev]").forEach(function (b) { b.onclick = function () { pushView("ev" + b.dataset.ev); }; });
