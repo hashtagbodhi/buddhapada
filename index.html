@@ -760,7 +760,7 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
         <div class="sit-n"><output id="sit-num">10</output><small>minutes</small></div>
         <div class="chips" id="sit-chips"></div>
         <div class="sit-row"><span>Practice</span><div class="seg two" id="modes"></div></div>
-        <div class="sit-row" id="gd-row" hidden><span>Guide</span><div class="seg three" id="gd-pick"></div></div>
+        <div class="sit-row" id="gd-row" hidden><span>Guide</span><div class="seg two" id="gd-pick"></div></div>
         <div class="sit-row" id="breath-row"><span>Breath</span><div class="seg three" id="guides"></div></div>
         <p class="gd-about" id="gd-about" hidden></p>
         <button type="button" class="sit-go" id="sit-go">Begin</button>
@@ -2230,64 +2230,35 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   [["voice", "Voice"], ["lotus", "Silent"], ["off", "Off"]].forEach(function (q) { var b = document.createElement("button"); b.type = "button"; b.textContent = q[1]; b.dataset.g = q[0]; b.onclick = function () { guide = q[0]; store.set("bp-guide", guide); rhythm = guide === "off" ? "off" : "even"; paintSit(); if (guide === "voice") play("inhale", .2); }; $("guides").appendChild(b); });
   $("sit-go").onclick = function () { startSit(sitMin); };
   $("a-sit").onclick = function () { paintSit(); open("p-sit", this); };
-  /* guided sittings: a few spoken steps spread across the chosen time, each followed by silence; steps can be skipped or repeated */
-  var POSTURE = ["Posture", "Sit upright, and at ease. Let the spine be straight, the shoulders soft, the hands resting in your lap. Let the eyes rest, gazing gently downward.", "g0", 1];
+  /* guided sittings: a recorded teacher guides the opening minutes, played whole and unedited, then leaves you in silence */
   var GUIDES = {
-    calm: { name: "Calm", about: "Calm abiding: resting the mind on the breath. A quiet voice guides the first two minutes, then leaves you in silence.", steps: [POSTURE,
-      ["Arriving", "Take three slow breaths. With each breath out, let go of whatever you were doing before you sat down.", "g1", 1],
-      ["The breath", "Now let the breath be natural. Rest your attention on the feeling of the breath, as it comes in, and as it goes out.", "g2", 3],
-      ["Returning", "When you notice the mind has wandered, there is no need to judge. Simply recognise it, and gently return to the breath.", "g3", 3],
-      ["Resting", "Now let go of any effort. Rest in simple awareness, open and at ease, with nothing to do.", "g4", 2]] },
-    body: { name: "Body", about: "Body and breath: a quiet voice leads attention down through the body for the first two minutes, then leaves you in silence.", steps: [POSTURE,
-      ["Head and neck", "Bring your attention to the top of the head. Slowly let it move down, through the face, the jaw, the neck. Soften whatever you find.", "g6", 2],
-      ["Shoulders and hands", "Feel the shoulders, the arms, the hands. Let them be heavy and warm.", "g7", 2],
-      ["Chest and belly", "Feel the chest and the belly, rising and falling with the breath. Feel the weight of the body, held by the ground.", "g8", 2.5],
-      ["The whole body", "Now feel the whole body at once, sitting and breathing. Rest here.", "g9", 2.5]] },
-    kind: { name: "Kindness", about: "Loving-kindness: a quiet voice offers the wish to a friend, yourself, others and all beings in the first two minutes, then leaves you in silence.", steps: [POSTURE,
-      ["A kind friend", "Bring to mind someone who has been kind to you. Silently wish for them: may you be happy. May you be free from suffering.", "g10", 2.5],
-      ["Yourself", "Now offer the same wish to yourself. May I be happy. May I be free from suffering.", "g11", 2.5],
-      ["Others", "Think of someone you barely know, and someone you find difficult. They too wish to be happy. May you be happy. May you be free from suffering.", "g12", 2.5],
-      ["All beings", "Let this wish spread in all directions, to all beings everywhere, without exception. May all beings be happy. May all beings be free from suffering.", "g13", 2.5]] }
+    breath: { name: "Breathing", file: "audio/gm/breathing.mp3", dur: 216, by: "Peter Morgan", about: "Three minute breathing, guided by Peter Morgan. About three and a half minutes of guidance, then silence." },
+    sit: { name: "Sitting", file: "audio/gm/sitting.mp3", dur: 393, by: "Gil Fronsdal", about: "A guided meditation by Gil Fronsdal of the Insight Meditation Center. About six and a half minutes of guidance, then silence." }
   };
-  var sitMode = store.get("bp-sitmode", "open") === "guided" ? "guided" : "open", gdKey = store.get("bp-gd", "calm"); if (!GUIDES[gdKey]) gdKey = "calm";
-  var gdVoice = store.get("bp-gdvoice", "1") !== "0", gd = null, gdSrc = null, gdRest = 0, gdAsked = {};
-  function gdLoad(key) { GUIDES[key].steps.forEach(function (q) { var n = q[2]; if (gdAsked[n]) return; gdAsked[n] = 1; try { fetch("audio/g/" + n + ".mp3").then(function (r) { return r.ok ? r.arrayBuffer() : null; }).then(function (ab) { if (ab) { rawAudio[n] = ab; decode(n); } }).catch(function () {}); } catch (e) {} }); }
-  function gdHush() { if (gdSrc) { try { gdSrc.stop(); } catch (e) {} gdSrc = null; } }
-  function gdSay(n) {
-    gdHush(); var a = audio(); if (!a || !gdVoice || !soundOn) return 0; if (!bufs[n]) { decode(n); return 0; }
-    var src = a.createBufferSource(), g = a.createGain(); src.buffer = bufs[n]; g.gain.value = .2; var lp = a.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3400; lp.Q.value = .3; src.connect(lp); lp.connect(g); g.connect(master); src.start(a.currentTime + .9); gdSrc = src; return bufs[n].duration + .9;
-  }
-  function gdPaint() {
-    var st = gd.steps, k = gd.k; $("gd-k").textContent = k < 0 ? gd.title : st[k][0]; $("gd").classList.remove("over");
-    $("gd-dots").innerHTML = st.map(function (_, j) { return '<i class="' + (j === k ? "on" : j < k ? "was" : "") + '"></i>'; }).join("");
-    $("gd-prev").disabled = k <= 0; $("gd-next").disabled = k >= st.length - 1;
-  }
-  function gdStep(k) {
-    gd.k = k; gdPaint(); var q = gd.steps[k], x = $("gd-x"); x.classList.add("rest");
-    setTimeout(function () { if (!gd || gd.k !== k) return; x.textContent = gdVoice && soundOn ? "" : q[1]; x.classList.remove("rest"); }, 500);   /* the words are spoken; they are written out only when the voice is off */
-    if (k > 0) play("chime", .2); var len = gdSay(q[2]); clearTimeout(gdRest);
-    gdRest = setTimeout(function () { if (!gd || gd.k !== k) return; x.classList.add("rest"); if (k === gd.steps.length - 1) $("gd").classList.add("over"); }, Math.max(15000, (len + 5) * 1000));   /* the words fade and leave silence */
-  }
-  function gdGo(k) {
-    if (!gd || sitPausedAt) return; k = Math.max(0, Math.min(gd.steps.length - 1, k)); var done = sitTotal - (sitEnd - Date.now());
-    sitEnd += done - gd.starts[k]; gd.k = -2; SFX.tap(); clockPaint();
+  var sitMode = store.get("bp-sitmode", "open") === "guided" ? "guided" : "open", gdKey = store.get("bp-gd2", "breath"); if (!GUIDES[gdKey]) gdKey = "breath";
+  var gdVoice = true, gd = null, gdEl = {};
+  function gdLoad(key) { if (gdEl[key]) return gdEl[key]; var a = null; try { a = new Audio(GUIDES[key].file); a.preload = "auto"; } catch (e) {} gdEl[key] = a; return a; }
+  function gdVol() { if (gd && gd.el) { gd.el.volume = .5; gd.el.muted = !gdVoice || !soundOn; } }
+  function gdHush() { if (gd && gd.el) try { gd.el.pause(); } catch (e) {} }
+  function gdResume() { if (gd && gd.el && gd.started && !gd.el.ended) try { gdVol(); gd.el.play(); } catch (e) {} }
+  function gdStart() {
+    gd.started = true; var el = gd.el; if (!el) return; try { el.currentTime = 0; gdVol(); var pr = el.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {}
+    el.onended = function () { $("gd").classList.add("over"); };
   }
   function gdBegin() {
-    var G = GUIDES[gdKey], at = 0;                                    /* the guidance fills the first two minutes: each line, then a pause */
-    gd = { steps: G.steps, title: G.about.split(":")[0], k: -1, starts: G.steps.map(function (q) { var st = at; at += 24000; return st; }) };
-    gdLoad(gdKey); $("gd-x").textContent = ""; gdPaint(); $("gd").hidden = false;
+    var G = GUIDES[gdKey], me = gd = { el: gdLoad(gdKey), started: false };
+    $("gd-k").textContent = "Guided by " + G.by; $("gd-x").textContent = ""; $("gd").classList.remove("over"); $("gd").hidden = false;
+    setTimeout(function () { if (gd === me) $("gd").classList.add("over"); }, 26000);
   }
-  function gdEnd() { gdHush(); clearTimeout(gdRest); gd = null; $("gd").hidden = true; }
-  $("gd-prev").onclick = function () { if (!gd) return; var done = sitTotal - (sitEnd - Date.now()); gdGo(done - gd.starts[Math.max(0, gd.k)] > 8000 ? gd.k : gd.k - 1); };
-  $("gd-next").onclick = function () { if (gd) gdGo(gd.k + 1); };
+  function gdEnd() { if (gd && gd.el) { try { gd.el.pause(); gd.el.onended = null; } catch (e) {} } gd = null; $("gd").hidden = true; }
   [["open", "Open sitting"], ["guided", "Guided"]].forEach(function (q) { var b = document.createElement("button"); b.type = "button"; b.textContent = q[1]; b.dataset.m = q[0]; b.onclick = function () { sitMode = q[0]; store.set("bp-sitmode", sitMode); if (sitMode === "guided") gdLoad(gdKey); SFX.tap(); paintSit(); }; $("modes").appendChild(b); });
-  Object.keys(GUIDES).forEach(function (k) { var b = document.createElement("button"); b.type = "button"; b.textContent = GUIDES[k].name; b.dataset.g = k; b.onclick = function () { gdKey = k; store.set("bp-gd", k); gdLoad(k); SFX.tap(); paintSit(); }; $("gd-pick").appendChild(b); });
+  Object.keys(GUIDES).forEach(function (k) { var b = document.createElement("button"); b.type = "button"; b.textContent = GUIDES[k].name; b.dataset.g = k; b.onclick = function () { gdKey = k; store.set("bp-gd2", k); gdLoad(k); SFX.tap(); paintSit(); }; $("gd-pick").appendChild(b); });
   function clockPaint() {
     if (sitPausedAt) return;
     var leftMs = Math.max(0, sitEnd - Date.now()), left = Math.round(leftMs / 1000), done = sitTotal - leftMs;
     $("clock").textContent = String(Math.floor(left / 60)).padStart(2, "0") + ":" + String(left % 60).padStart(2, "0");
     $("bg-prog").style.strokeDashoffset = (603.2 * (1 - Math.min(1, done / sitTotal))).toFixed(1);           /* the ring is the whole sitting */
-    if (gd && done >= 0) { var gk = 0; while (gk + 1 < gd.starts.length && gd.starts[gk + 1] <= done) gk++; if (gk !== gd.k) gdStep(gk); }
+    if (gd && !gd.started && done >= 1500) gdStart();
     if (left <= 0) finishSit(false);
   }
   var EVENTS = [
@@ -2531,7 +2502,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     h += '<div class="grp" style="margin-top:12px"><button class="cell" data-go="quotes"><span class="ti gold">' + svg("quote") + '</span><span class="tx"><b>Words of Rinpoche</b><small>' + QUOTES.length + ' quotations from Dzongsar Khyentse Rinpoche</small></span>' + svg("chev", "chev") + "</button></div>";
     h += '<p class="grp-h">The centre</p><div class="grp">' + ["about", "teachers", "lineage", "facilities", "architecture", "patterns", "gallery"].map(function (k) { return '<button class="cell" data-go="' + k + '"><span class="ti">' + svg(PAGES[k].icon) + '</span><span class="tx"><b>' + PAGES[k].menu + "</b></span>" + svg("chev", "chev") + "</button>"; }).join("") + "</div>";
     h += '<p class="grp-h">Visit</p><div class="grp">' + ["visit", "faq", "partners", "contact"].map(function (k) { return '<button class="cell" data-go="' + k + '"><span class="ti">' + svg(PAGES[k].icon) + '</span><span class="tx"><b>' + PAGES[k].menu + "</b></span>" + svg("chev", "chev") + "</button>"; }).join("") + "</div>";
-    h += '<p class="foot">Buddha Pāda · 13th Mile, Kalimpong<br>' + MAIL + '<br><span style="opacity:.8">The hall cat’s meow: Dcrosby, <a href="https://commons.wikimedia.org/wiki/File:Meow.ogg" target="_blank" rel="noopener" style="color:inherit">CC BY-SA 3.0</a></span></p>';
+    h += '<p class="foot">Buddha Pāda · 13th Mile, Kalimpong<br>' + MAIL + '<br><span style="opacity:.8">Guided meditations: “Three minute breathing” by Peter Morgan, Free Mindfulness Project (freemindfulness.org), <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-SA 3.0</a>; “Guided Meditation” by Gil Fronsdal, Insight Meditation Center (audiodharma.org), <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a>. Both are played whole and unedited.<br>The hall cat’s meow: Dcrosby, <a href="https://commons.wikimedia.org/wiki/File:Meow.ogg" target="_blank" rel="noopener" style="color:inherit">CC BY-SA 3.0</a></span></p>';
     return { title: "Menu", html: h };
   }
   function programsView() {
@@ -2809,6 +2780,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   function breathStop() { cancelAnimationFrame(bRaf); bRaf = 0; if (world) world.lift(false); var g = $("bg"); g.classList.remove("on"); setTimeout(function () { if (!g.classList.contains("on")) g.hidden = true; }, 1200); }
   function startSit(m, again) {
     closePanels(true); $("sitdone").hidden = true; $("app").classList.add("sitting"); $("app").classList.remove("paused"); sitPausedAt = 0; $("sit-pause").textContent = "Pause";
+    if (sitMode === "guided") m = Math.max(m, Math.ceil(GUIDES[gdKey].dur / 60) + 1);   /* a sitting is never shorter than its guidance */
     var begin = function () {
       sitTotal = m * 60000; sitStart = Date.now(); sitEnd = sitStart + sitTotal + SETTLE; sitStart += SETTLE; nextBell = bellEvery * 60000; $("sit-ui").hidden = false; if (!again) play("cloth", .6);
       gdEnd(); if (sitMode === "guided") gdBegin(); breathStart(); paintVoice(); ambience();
@@ -2836,13 +2808,13 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   $("sit-pause").onclick = function () {
     if (!sitTick) return;
     if (!sitPausedAt) { sitPausedAt = Date.now(); sitPerfPause = performance.now(); cancelAnimationFrame(bRaf); gdHush(); $("app").classList.add("paused"); this.textContent = "Resume"; $("bg-w").textContent = "Paused"; $("bg-n").textContent = ""; }
-    else { var d = Date.now() - sitPausedAt; sitEnd += d; sitStart += d; bT0 += performance.now() - sitPerfPause; sitPausedAt = 0; $("app").classList.remove("paused"); this.textContent = "Pause"; bPhase = -1; bRaf = requestAnimationFrame(breathFrame); }
+    else { var d = Date.now() - sitPausedAt; sitEnd += d; sitStart += d; bT0 += performance.now() - sitPerfPause; sitPausedAt = 0; $("app").classList.remove("paused"); this.textContent = "Pause"; bPhase = -1; bRaf = requestAnimationFrame(breathFrame); gdResume(); }
   };
   function paintVoice() {
     var b = $("sit-voice"), on = gd ? gdVoice : guide === "voice"; b.hidden = !gd && guide === "off"; b.setAttribute("aria-pressed", on ? "true" : "false");
-    b.setAttribute("aria-label", gd ? (on ? "Mute the spoken guidance" : "Turn on the spoken guidance") : on ? "Mute the inhale and exhale voice" : "Turn on the inhale and exhale voice"); b.title = b.getAttribute("aria-label"); $("sit-voice-t").textContent = on ? "Voice on" : "Voice off";
+    b.setAttribute("aria-label", gd ? (on ? "Mute the guidance" : "Turn on the guidance") : on ? "Mute the inhale and exhale voice" : "Turn on the inhale and exhale voice"); b.title = b.getAttribute("aria-label"); $("sit-voice-t").textContent = on ? "Voice on" : "Voice off";
   }
-  $("sit-voice").onclick = function () { if (gd) { gdVoice = !gdVoice; store.set("bp-gdvoice", gdVoice ? "1" : "0"); if (!gdVoice) gdHush(); if (gd.k >= 0) $("gd-x").textContent = gdVoice && soundOn ? "" : gd.steps[gd.k][1]; } else { guide = guide === "voice" ? "lotus" : "voice"; store.set("bp-guide", guide); } paintVoice(); };
+  $("sit-voice").onclick = function () { if (gd) { gdVoice = !gdVoice; gdVol(); } else { guide = guide === "voice" ? "lotus" : "voice"; store.set("bp-guide", guide); } paintVoice(); };
   $("sd-done").onclick = function () { endSit(true); };
   $("sd-again").onclick = function () { startSit(sitMin, true); };
 
