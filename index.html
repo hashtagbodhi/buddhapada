@@ -802,6 +802,24 @@ html, body { overscroll-behavior: none; }
 .nav-card { top: calc(10px + env(safe-area-inset-top, 0px) + var(--vo, 0px)); bottom: calc(10px + env(safe-area-inset-bottom, 0px) + var(--kb, 0px)); }
 @media (min-width: 760px) { .nav-card { top: calc(16px + var(--vo, 0px)); bottom: calc(16px + var(--kb, 0px)); } }
 body.kb .ios .bk-bar { position: static; margin-bottom: 0; }
+/* practice cards on phones: everything on one screen. Shorter screens get tighter spacing and a smaller dial; if a card is ever still too tall it can be scrolled */
+.panel.full .sheet { touch-action: pan-y; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+@media (max-height: 800px) {
+  .panel.full { padding-top: max(12px, env(safe-area-inset-top, 0px)); padding-bottom: max(12px, env(safe-area-inset-bottom, 0px)); }
+  .panel.full .sheet { padding: 12px 20px 18px; border-radius: 34px; } .panel.full h2 { margin-top: 6px; font-size: 22px; line-height: 27px; } #p-sit.full .sitset h2 { margin-top: 6px; font-size: 22px; }
+  .sit-ring { width: min(150px, 20vh); height: min(150px, 20vh); margin-top: 12px; } #p-sit.full .sit-n output { font-size: min(56px, 7.6vh); } #p-sit.full .sit-n small { margin-top: 4px; font-size: 10px; }
+  #p-sit.full .chips { margin-top: 14px; } .panel.full .chip { min-height: 44px; } #p-sit.full .sit-row { margin-top: 12px; gap: 6px; } #p-sit.full #modes button { min-height: 56px; padding: 8px 14px; } #p-sit.full .seg button { min-height: 38px; }
+  #p-sit.full .gd-about { margin-top: 8px; font-size: 12.5px; line-height: 17px; } .panel.full .sit-go { margin-top: 16px; min-height: 52px; }
+  #p-mala.full .fs-k { display: none; } #p-mala.full .mantra { margin-top: 26px; } #p-mala.full .m-en, #p-mala.full .m-bo { font-size: 21px; } #p-mala.full .mantra.long .m-en, #p-mala.full .mantra.long .m-bo { font-size: 17px; }
+  #p-mala.full .enso { width: min(104px, 13vh); height: min(104px, 13vh); margin-top: 10px; } #p-mala.full .enso .n { font-size: min(36px, 4.8vh); } #p-mala.full #rounds { margin-top: 2px; min-height: 16px; } #p-mala.full #mala-cv { height: min(150px, 20vh); }
+  #p-mala.full .m-car { margin-top: 8px; } #p-mala.full .m-reset { margin-top: 2px; min-height: 34px; } #p-offer.full .tiles { margin-top: 16px; } #p-offer.full .tile { min-height: 80px; }
+}
+@media (max-height: 640px) {
+  .panel.full { padding-top: 6px; padding-bottom: 6px; } .panel.full .sheet { padding: 8px 18px 12px; } #p-sit.full .fs-k { display: none; } #p-sit.full .sitset h2 { margin-top: 26px; font-size: 20px; }
+  .sit-ring { width: min(112px, 18vh); height: min(112px, 18vh); margin-top: 8px; } #p-sit.full .sit-n output { font-size: min(42px, 6.6vh); } #p-sit.full .chips { margin-top: 10px; } .panel.full .chip { min-height: 40px; }
+  #p-sit.full .sit-row { margin-top: 8px; } #p-sit.full #modes button { min-height: 48px; } #p-sit.full #modes button::after { display: none; } #p-sit.full .gd-about { display: none; } .panel.full .sit-go { margin-top: 12px; min-height: 48px; }
+  #p-mala.full .enso { width: min(84px, 13vh); height: min(84px, 13vh); } #p-mala.full #mala-cv { height: min(120px, 19vh); } #p-mala.full .hint { font-size: 13px; line-height: 18px; } #p-mala.full .m-win .chip { min-height: 40px; }
+}
 </style>
 
 <div id="app" class="outside">
@@ -1227,6 +1245,13 @@ body.kb .ios .bk-bar { position: static; margin-bottom: 0; }
     if (vv) { vv.addEventListener("resize", fit); vv.addEventListener("scroll", fit); }
     document.addEventListener("focusin", function (e) { var t = e.target; if (!t || !t.closest || !t.closest(".nav-card") || !/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return; setTimeout(function () { fit(); try { t.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (er) {} }, 320); });
     document.addEventListener("focusout", function () { setTimeout(function () { var a = document.activeElement; if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return; window.scrollTo(0, 0); root.scrollTop = 0; document.body.scrollTop = 0; fit(); }, 120); });
+  })();
+  /* last resort for a practice card that is still taller than the screen: shrink it to fit rather than make anyone scroll */
+  (function () {
+    var t = 0; function fit() { ["p-sit", "p-mala", "p-offer"].forEach(function (id) { var P = $(id), sh = P && P.querySelector(".sheet"); if (!sh || P.hidden) return; sh.style.zoom = ""; var over = sh.scrollHeight - sh.clientHeight; if (over > 2) sh.style.zoom = Math.max(.72, sh.clientHeight / sh.scrollHeight).toFixed(3); }); }
+    function soon() { clearTimeout(t); t = setTimeout(fit, 60); }
+    window.addEventListener("resize", soon);
+    ["p-sit", "p-mala", "p-offer"].forEach(function (id) { var P = $(id); if (P && window.MutationObserver) new MutationObserver(soon).observe(P, { attributes: true, attributeFilter: ["hidden"], subtree: true, childList: true }); });
   })();
   var SFX = (function () {
     var ui = null, last = {};
@@ -2456,7 +2481,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     var dpr = Math.min(window.devicePixelRatio || 1, 2), w = c.clientWidth, h = c.clientHeight; if (!w || !h) return;
     if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
     var g = c.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
-    var d = Math.max(52, Math.min(88, w / 5.4)), R = Math.max(w * 1.15, 560), cx = w / 2, topY = d * 1.05 + 14, cy = topY + R, step = d * 1.07 / R, n = Math.ceil(w / 2 / (d * 1.07)) + 2;
+    var d = Math.max(40, Math.min(88, w / 5.4, (h - 14) / 2.35)), R = Math.max(w * 1.15, 560), cx = w / 2, topY = d * 1.05 + 14, cy = topY + R, step = d * 1.07 / R, n = Math.ceil(w / 2 / (d * 1.07)) + 2;
     g.strokeStyle = "rgba(255,255,255,.45)"; g.lineWidth = 1.2; g.beginPath(); g.arc(cx, cy, R, -Math.PI / 2 - (n + 1) * step, -Math.PI / 2 + (n + 1) * step); g.stroke();
     for (var i = -n; i <= n; i++) {
       var id = count + i, a = -Math.PI / 2 + (i + slide) * step, x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R;
@@ -2494,7 +2519,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   }
   function settle(from) { var t0 = performance.now(); cancelAnimationFrame(slideRaf); (function anim(now) { var u = Math.min(1, (now - t0) / 240); slide = from * (1 - (1 - Math.pow(1 - u, 3))); drawMala(); if (u < 1) slideRaf = requestAnimationFrame(anim); })(t0); }
   function pull() { commit(); settle(1); }
-  function beadGap() { var w = $("mala-cv").clientWidth; return Math.max(52, Math.min(88, w / 5.4)) * 1.07; }
+  function beadGap() { var c = $("mala-cv"), w = c.clientWidth; return Math.max(40, Math.min(88, w / 5.4, (c.clientHeight - 14) / 2.35)) * 1.07; }
   var drag = null;
   $("mala-cv").addEventListener("pointerdown", function (e) { cancelAnimationFrame(slideRaf); drag = { x: e.clientX, moved: 0, base: 0 }; this.classList.add("grab"); try { this.setPointerCapture(e.pointerId); } catch (er) {} });
   $("mala-cv").addEventListener("pointermove", function (e) {
