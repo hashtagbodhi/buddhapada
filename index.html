@@ -638,6 +638,42 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
 #p-mala .mantra.long.alt .m-bo { display: block; } #p-mala .mantra.long.alt .m-en { display: none; }
 .m-sw { min-height: 36px; margin-top: 2px; padding: 0 6px; font-size: 12px; color: rgba(255, 255, 255, .85); text-decoration: underline; text-underline-offset: 3px; }
 #p-mala .mantra { padding: 0 30px; box-sizing: border-box; width: 100%; }
+.bg-hint { white-space: pre-line; width: auto; max-width: 92vw; }
+/* the booking form, set out the way iOS sets out a grouped form */
+.ios { --tint: #007aff; --lab: #000; --lab2: rgba(60, 60, 67, .62); --lab3: rgba(60, 60, 67, .32); --sep: rgba(60, 60, 67, .22); --fill: rgba(118, 118, 128, .14); --cellbg: rgba(255, 255, 255, .8); color: var(--lab); }
+.ios-h { margin: 26px 16px 7px; font-size: 13px; line-height: 16px; font-weight: 400; letter-spacing: .01em; text-transform: uppercase; color: var(--lab2); text-wrap: balance; }
+.ios-f { margin: 7px 16px 0; font-size: 13px; line-height: 18px; color: var(--lab2); text-wrap: pretty; } .ios-f.bad, .ios .bk-err { color: #d70015; }
+.ios-g { border-radius: 14px; background: var(--cellbg); overflow: hidden; }
+.ios-r { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 16px; font-size: 17px; line-height: 22px; font-weight: 400; color: var(--lab); text-align: left; }
+.ios-r + .ios-r::before, .ios-g details + .ios-r::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--sep); transform: scaleY(.5); transform-origin: top; }
+.ios-r > span:first-child { flex: none; }
+.ios-r input[type="text"], .ios-r input[type="email"], .ios-r input[type="tel"] { flex: 1; min-width: 0; height: 44px; padding: 0; border: 0; background: none; outline: none; font: inherit; font-size: 17px; text-align: right; color: var(--lab); -webkit-appearance: none; appearance: none; -webkit-user-select: text; user-select: text; caret-color: var(--tint); }
+.ios-r input::placeholder, .ios textarea::placeholder { color: var(--lab3); }
+.ios-r:focus-within > span:first-child { color: var(--tint); }
+.ios-date { flex: none; margin-left: auto; height: 34px; min-width: 0; padding: 0 10px; border: 0; border-radius: 8px; background: var(--fill); font: inherit; font-size: 17px; color: var(--lab); color-scheme: light; -webkit-appearance: none; appearance: none; } .ios-date:focus { color: var(--tint); outline: none; }
+.ios-r output { margin-left: auto; min-width: 22px; text-align: right; color: var(--lab2); font-variant-numeric: tabular-nums; }
+.ios-step { flex: none; display: flex; align-items: center; width: 94px; height: 32px; border-radius: 8px; background: var(--fill); } .ios-step button { flex: 1; height: 100%; font-size: 21px; line-height: 1; color: var(--lab); border-radius: 8px; } .ios-step button:active { background: rgba(118, 118, 128, .2); } .ios-step i { width: 1px; height: 18px; background: var(--lab3); }
+.ios-r.pick { min-height: 60px; padding-top: 8px; padding-bottom: 8px; cursor: pointer; } .ios-r.pick input { position: absolute; opacity: 0; pointer-events: none; } .ios-r.pick + .ios-r.pick::before, .ios-r.pick + .ios-r.link::before { left: 72px; }
+.ios .bk-th { flex: none; width: 44px; height: 44px; border-radius: 9px; box-shadow: none; }
+.ios-tx { flex: 1; min-width: 0; } .ios-tx b { display: block; font-size: 17px; line-height: 22px; font-weight: 400; } .ios-tx small { display: block; font-size: 15px; line-height: 20px; color: var(--lab2); }
+.ios-v { flex: none; text-align: right; font-size: 17px; color: var(--lab2); font-variant-numeric: tabular-nums; } .ios-v small { display: block; font-size: 12px; line-height: 16px; }
+.ios-ck { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--tint); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; visibility: hidden; } .ios-r.pick:has(input:checked) .ios-ck { visibility: visible; }
+.ios-r.pick:has(input:focus-visible) { background: rgba(0, 122, 255, .08); } .ios-r.pick:active, .ios-r.link:active { background: rgba(60, 60, 67, .1); }
+.ios-r.link { color: var(--tint); cursor: pointer; } .ios-r.link span { flex: 1; } .ios-ch { flex: none; width: 14px; height: 14px; fill: none; stroke: var(--lab3); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.ios-val { margin-left: auto; font-weight: 400; color: var(--lab2); font-variant-numeric: tabular-nums; }
+.ios-seg { display: grid; grid-template-columns: 1fr 1fr; padding: 2px; border-radius: 9px; background: var(--fill); } .ios-seg label { position: relative; cursor: pointer; } .ios-seg input { position: absolute; opacity: 0; pointer-events: none; }
+.ios-seg span { display: flex; align-items: center; justify-content: center; height: 36px; border-radius: 7px; font-size: 15px; font-weight: 500; color: var(--lab); transition: background .2s, box-shadow .2s; } .ios-seg input:checked + span { background: #fff; font-weight: 600; box-shadow: 0 3px 8px rgba(0, 0, 0, .12), 0 3px 1px rgba(0, 0, 0, .04); } .ios-seg input:focus-visible + span { outline: 2px solid var(--tint); }
+.ios textarea { display: block; box-sizing: border-box; width: 100%; min-height: 88px; padding: 11px 16px; border: 0; background: none; outline: none; resize: vertical; font: inherit; font-size: 17px; line-height: 22px; color: var(--lab); -webkit-user-select: text; user-select: text; caret-color: var(--tint); }
+.ios-r.sum { align-items: flex-start; padding-top: 11px; padding-bottom: 11px; } .ios-r.sum span { color: var(--lab); } .ios-r.sum b { margin-left: auto; text-align: right; font-weight: 400; color: var(--lab2); } .ios-r.sum small { display: block; font-size: 13px; line-height: 18px; } .ios-r.sum em { font-style: normal; font-weight: 600; color: var(--lab); }
+.ios-r.num { align-items: flex-start; padding-top: 11px; padding-bottom: 11px; font-size: 15px; line-height: 20px; } .ios-r.num i { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--tint); color: #fff; font-style: normal; font-size: 13px; font-weight: 600; } .ios-r.num span { flex: 1; } .ios-r.num + .ios-r.num::before { left: 50px; }
+.ios .ios-g.faq { margin-top: 0; } .ios .faq summary { min-height: 44px; padding: 11px 16px; font-size: 17px; line-height: 22px; font-weight: 400; } .ios .faq summary svg { width: 14px; height: 14px; stroke: var(--lab3); stroke-width: 2.6; transition: transform .25s ease; } .ios .faq details[open] summary svg { transform: rotate(90deg); } .ios .faq details { border-top: 0; position: relative; } .ios .faq details + details::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; height: 1px; background: var(--sep); transform: scaleY(.5); transform-origin: top; } .ios .faq p { font-size: 15px; line-height: 20px; color: var(--lab2); }
+.ios .bk-prog button { font-size: 13px; } .ios .bk-prog button.on, .ios .bk-prog button.was { border-color: var(--tint); } .ios .bk-prog button.on { color: var(--lab); }
+.ios .bk-bar { border-radius: 22px; padding: 8px 8px 8px 16px; background: rgba(249, 249, 249, .94); } .ios .bk-est small { font-size: 12px; color: var(--lab2); } .ios .bk-est b { font-size: 20px; font-weight: 600; }
+.ios .cta-b { min-height: 50px; min-width: 128px; border-radius: 14px; background: var(--tint); font-size: 17px; font-weight: 600; letter-spacing: -.01em; transition: transform .12s, background .2s, opacity .2s; } .ios .cta-b:active { transform: scale(.97); opacity: .8; } .ios .cta-b:disabled { background: var(--fill); color: var(--lab3); }
+.ios .bk-back { font-size: 17px; font-weight: 400; color: var(--tint); min-height: 50px; padding: 0 12px; } .ios .bk-err { margin: 12px 16px 0; font-size: 13px; font-weight: 400; }
+.ios .sub { color: var(--lab2); }
+.ios-r.pick { gap: 10px; } .ios-tx b, .ios-tx small { text-wrap: wrap; } .ios-tx small { font-size: 14px; line-height: 19px; }
+.ios .bk-est small { white-space: nowrap; } .ios .cta-b { min-width: 118px; padding: 0 18px; } .ios .bk-back { padding: 0 8px; }
 </style>
 
 <div id="app" class="outside">
@@ -842,7 +878,7 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
       malaHint: "Say the mantra once, then draw a bead toward you. Tap or drag.", again: "Start Again", rounds: "Rounds {n}",
       bowN: "Bow {n} of 3", bowDone: "Three bows offered.", malaDone: "One mala complete. Draw the next bead to begin again.",
       sitAsk: "How long will you sit?", min: "min", endSit: "Stand Up", sitDone: "Sitting complete.", breathe: "Breathing guide", bin: "Inhale", bout: "Exhale", bhold: "Hold", btone: "A soft tone as the breath turns",
-      bhint: "Five seconds in as the lotus opens, five out as it closes.", r_calm: "Calm", r_even: "Even", r_box: "Box", r_off: "Off",
+      bhint: "Five seconds in as the lotus opens,\nfive out as it closes.", r_calm: "Calm", r_even: "Even", r_box: "Box", r_off: "Off",
       offerAsk: "Make an Offering", lamp: "Light a Butter Lamp", lampSub: "Offer light at the shrine", incense: "Offer Incense", incenseSub: "Fragrant smoke rises before the statues",
       kora: "Walk a Kora", koraSub: "One slow round of the hall, clockwise", lampDone: "Lamp {n} offered.", incenseDone: "Incense offered.", koraDone: "Kora {n} complete.", koraGo: "Walking the kora. Tap the floor to stop.",
       hint: "Drag to look around. Tap the floor to walk.", loading: "Preparing the hall  {n}%" }
@@ -2535,74 +2571,79 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   var MEAL_RATE = 150;                                              /* per meal, per person; settled at checkout, not at booking */
   function inr(n) { return "₹" + Math.round(n).toLocaleString("en-IN"); }
   function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
-  function bookView(id) {                                            /* three short steps: your stay, about you, review and send */
-    var e = EVENTS.filter(function (x) { return x.id === id; })[0], rooms = ROOMS.filter(function (r) { return !(r.day && e.res); });
+  function bookView(id) {                                            /* three short steps, set out as an iOS grouped form */
+    var e = EVENTS.filter(function (x) { return x.id === id; })[0], rooms = ROOMS;
     var faqs = []; PAGES.faq.blocks.forEach(function (b) { if (b[0] === "faq") faqs = faqs.concat(b[1]); });
     var pick = ["What does it cost?", "What is provided, and what should I bring?", "What are the meals like?", "How do I get there?"].map(function (q) { return faqs.filter(function (f) { return f[0] === q; })[0]; }).filter(Boolean);
-    var opt = function (name, value, title, small, price, checked, img) { return '<label class="bk-room' + (img ? " pic" : "") + '"><input type="radio" name="' + name + '" value="' + value + '"' + (checked ? " checked" : "") + '><span class="bk-dot"></span>' + (img ? '<button type="button" class="bk-th" data-go="rooms" aria-label="See photos of the rooms"><img src="img/rooms/t' + img + '.jpg" alt="" width="44" height="44" loading="lazy" decoding="async"></button>' : "") + '<span class="bk-tx"><b>' + title + "</b>" + (small ? "<small>" + small + "</small>" : "") + '</span><span class="bk-pr">' + (price || "") + "</span></label>"; };
-    var h = '<form class="bk bk2" id="bk" novalidate><p class="eyebrow">Reserve a place</p><h2 class="nv-title">' + esc(e.title) + '</h2><p class="sub">' + range(e, true) + '<br><span class="nb">' + esc(e.fac) + "</span></p>" +
-      '<ol class="bk-prog" aria-label="Steps"><li><button type="button" data-to="0"><i>1</i>Your stay</button></li><li><button type="button" data-to="1"><i>2</i>About you</button></li><li><button type="button" data-to="2"><i>3</i>Review</button></li></ol>' +
-      '<section class="bk-pane" data-s="0"><p class="grp-h">When</p><div class="bk-row2"><label class="fld"><span>Arrive</span><input type="date" name="in" value="' + e.start + '" required></label><label class="fld"><span>Leave</span><input type="date" name="out" value="' + e.end + '" required></label></div><p class="bk-hint" id="bk-n"></p>' +
-      '<div class="bk-step"><span>Guests</span><div><button type="button" data-step="-1" aria-label="Fewer guests">−</button><output id="bk-g">1</output><button type="button" data-step="1" aria-label="More guests">+</button></div></div>' +
-      '<p class="grp-h">Room</p><div class="bk-rooms" role="radiogroup" aria-label="Room">' + rooms.map(function (r) { return opt("room", r.id, r.name, r.detail, inr(r.rate) + "<small>per night</small>", r.id === "single", r.img); }).join("") + '</div><button type="button" class="bk-see" data-go="rooms">' + svg("img") + "See the room photos</button>" +
-      (e.res ? '<p class="note">This is a residential programme: staying at Buddha Pāda is part of it.</p>' : "") +
-      '<p class="grp-h">Meals</p><div class="bk-meal"><div class="bk-meal-h"><b>Pay as you eat</b><span>' + inr(MEAL_RATE) + ' <small>per meal</small></span></div>' +
-      '<p>Vegetarian meals, freshly cooked. There is nothing to book now: you pay only for the meals you take.</p>' +
-      '<ul><li><span>Breakfast</span>8 am</li><li><span>Lunch</span>12 noon</li><li><span>Dinner</span>6 pm</li></ul>' +
-      '<p>To join a meal, write your name in the meal register a few hours before.</p></div></section>' +
-      '<section class="bk-pane" data-s="1" hidden><p class="grp-h">Your details</p><label class="fld"><span>Full name</span><input type="text" name="name" autocomplete="name" required></label>' +
-      '<label class="fld"><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email" required></label>' +
-      '<label class="fld"><span>Phone or WhatsApp <i>(optional)</i></span><input type="tel" name="phone" autocomplete="tel" inputmode="tel"></label>' +
-      '<p class="grp-h">Have you attended a programme here before?</p><div class="bk-rooms two" role="radiogroup" aria-label="Attended before" id="bk-before">' + opt("before", "first", "First time", "", "") + opt("before", "yes", "Yes, I have", "", "") + "</div>" +
-      '<label class="fld" style="margin-top:22px"><span>Anything we should know <i>(optional)</i></span><textarea name="note" rows="3" placeholder="Arrival time, health or food needs, questions"></textarea></label></section>' +
-      '<section class="bk-pane" data-s="2" hidden><p class="grp-h">Your request</p><div class="bk-sum" id="bk-sum" aria-live="polite"></div>' +
-      '<div class="bk-what"><b>What happens next</b><ol><li>You send this request to ' + MAIL + " from your own email.</li><li>We reply to confirm your room and the amount for your stay.</li><li>Nothing is charged here. Meals are paid for as you take them.</li></ol></div>" +
-      '<p class="grp-h">Good to know</p><div class="grp faq">' + pick.map(function (q) { return "<details><summary><span>" + esc(q[0]) + "</span>" + svg("chev", "chev") + "</summary><p>" + esc(q[1]) + "</p></details>"; }).join("") + '</div><button type="button" class="cta-l" data-go="faq">All frequently asked questions</button></section>' +
+    var CK = '<svg class="ios-ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>', CH = '<svg class="ios-ch" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.500 6l6 6-6 6"/></svg>';
+    var h = '<form class="bk bk2 ios" id="bk" novalidate><p class="eyebrow">Reserve a place</p><h2 class="nv-title">' + esc(e.title) + '</h2><p class="sub">' + range(e, true) + '<br><span class="nb">' + esc(e.fac) + "</span></p>" +
+      '<ol class="bk-prog" aria-label="Steps"><li><button type="button" data-to="0"><i>1</i>Your Stay</button></li><li><button type="button" data-to="1"><i>2</i>About You</button></li><li><button type="button" data-to="2"><i>3</i>Review</button></li></ol>' +
+      '<section class="bk-pane" data-s="0"><p class="ios-h">Dates</p><div class="ios-g">' +
+      '<label class="ios-r"><span>Arrive</span><input class="ios-date" type="date" name="in" value="' + e.start + '" required></label>' +
+      '<label class="ios-r"><span>Leave</span><input class="ios-date" type="date" name="out" value="' + e.end + '" required></label>' +
+      '<div class="ios-r"><span>Guests</span><output id="bk-g">1</output><div class="ios-step"><button type="button" data-step="-1" aria-label="Fewer guests">−</button><i></i><button type="button" data-step="1" aria-label="More guests">+</button></div></div></div><p class="ios-f" id="bk-n"></p>' +
+      '<p class="ios-h">Room</p><div class="ios-g" role="radiogroup" aria-label="Room">' + rooms.map(function (r) {
+        return '<label class="ios-r pick"><input type="radio" name="room" value="' + r.id + '"' + (r.id === "single" ? " checked" : "") + '><button type="button" class="bk-th" data-go="rooms" aria-label="See photos of the rooms"><img src="img/rooms/t' + r.img + '.jpg" alt="" width="44" height="44" loading="lazy" decoding="async"></button><span class="ios-tx"><b>' + r.name + "</b><small>" + r.detail + '</small></span><span class="ios-v">' + inr(r.rate) + "</span>" + CK + "</label>"; }).join("") +
+      '<button type="button" class="ios-r link" data-go="rooms"><span>See Room Photos</span>' + CH + "</button></div>" +
+      '<p class="ios-f">Per room, per night. ' + (e.res ? "This is a residential programme: staying at Buddha Pāda is part of it. " : "") + "We confirm the amount by email.</p>" +
+      '<p class="ios-h">Meals</p><div class="ios-g"><div class="ios-r"><span>Each Meal</span><b class="ios-val">' + inr(MEAL_RATE) + '</b></div><div class="ios-r"><span>Breakfast</span><b class="ios-val">8 am</b></div><div class="ios-r"><span>Lunch</span><b class="ios-val">12 noon</b></div><div class="ios-r"><span>Dinner</span><b class="ios-val">6 pm</b></div></div>' +
+      '<p class="ios-f">Vegetarian, freshly cooked. Pay only for the meals you take. To join a meal, write your name in the meal register a few hours before.</p></section>' +
+      '<section class="bk-pane" data-s="1" hidden><p class="ios-h">Your Details</p><div class="ios-g">' +
+      '<label class="ios-r"><span>Name</span><input type="text" name="name" autocomplete="name" placeholder="Full name" required></label>' +
+      '<label class="ios-r"><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email" placeholder="name@example.com" required></label>' +
+      '<label class="ios-r"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder="Optional"></label></div><p class="ios-f" id="bk-ef">We reply to this address to confirm your room.</p>' +
+      '<p class="ios-h">Have You Been Here Before?</p><div class="ios-seg" role="radiogroup" aria-label="Attended a programme here before" id="bk-before"><label><input type="radio" name="before" value="first"><span>First Time</span></label><label><input type="radio" name="before" value="yes"><span>Yes, I Have</span></label></div>' +
+      '<p class="ios-h">Notes</p><div class="ios-g"><textarea name="note" rows="3" placeholder="Arrival time, health or food needs, questions"></textarea></div><p class="ios-f">Optional.</p></section>' +
+      '<section class="bk-pane" data-s="2" hidden><p class="ios-h">Your Request</p><div class="ios-g" id="bk-sum" aria-live="polite"></div>' +
+      '<p class="ios-h">What Happens Next</p><div class="ios-g"><div class="ios-r num"><i>1</i><span>You send this request to ' + MAIL + ' from your own email.</span></div><div class="ios-r num"><i>2</i><span>We reply to confirm your room and the amount for your stay.</span></div><div class="ios-r num"><i>3</i><span>Nothing is charged here. Meals are paid for as you take them.</span></div></div>' +
+      '<p class="ios-h">Good to Know</p><div class="ios-g faq">' + pick.map(function (q) { return "<details><summary><span>" + esc(q[0]) + "</span>" + CH + "</summary><p>" + esc(q[1]) + "</p></details>"; }).join("") + '<button type="button" class="ios-r link" data-go="faq"><span>All Questions</span>' + CH + "</button></div></section>" +
       '<p class="bk-err" id="bk-err" role="alert"></p>' +
       '<div class="bk-bar"><div class="bk-est"><small id="bk-el">Estimated stay</small><b id="bk-ev"></b></div><button type="button" class="bk-back" id="bk-back">Back</button><button class="cta-b" type="submit" id="bk-go">Continue</button></div></form>';
     return { title: "Reserve", html: h, after: function (el) {
       var f = el.querySelector("#bk"), guests = 1, step = 0, saved = {}, q = function (x) { return el.querySelector(x); }; try { saved = JSON.parse(store.get("bp-guest", "{}")) || {}; } catch (er) {}
       ["name", "email", "phone"].forEach(function (k) { if (saved[k]) f.elements[k].value = saved[k]; });
-      var v = function (k) { return f.elements[k].value.trim(); };
+      var v = function (k) { return f.elements[k].value.trim(); }, okMail = function () { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v("email")); };
       function nights() { var a = pd(v("in") || e.start), b = pd(v("out") || e.end); return Math.max(0, Math.round((b - a) / 864e5)); }
       function room() { var id = f.elements.room.value; return ROOMS.filter(function (r) { return r.id === id; })[0]; }
+      function check(k) {                                                /* the first thing missing on a step, and the field to fix */
+        if (k === 0 && (!v("in") || !v("out") || pd(v("out")) < pd(v("in")))) return ["Please check your arrival and leaving dates.", f.elements["in"]];
+        if (k === 1) {
+          if (!v("name")) return ["Please add your name.", f.elements.name];
+          if (!okMail()) return ["Please add an email address we can reply to.", f.elements.email];
+          if (!f.elements.before.value) return ["Please tell us whether you have been here before.", q("#bk-before input")];
+        }
+        return null;
+      }
       function sum() {
-        var r = room(), n = nights(), need = r.two ? Math.ceil(guests / 2) : guests, total = r.day ? 0 : r.rate * n * need, okDates = v("in") && v("out") && pd(v("out")) >= pd(v("in"));
-        var rows = [["Programme", esc(e.title)], ["Dates", okDates ? range({ start: v("in"), end: v("out") }) + (r.day ? "" : " · " + n + (n === 1 ? " night" : " nights")) : "—"], ["Guests", guests],
-          ["Room", r.name + (r.day ? "" : ", " + r.detail.split(" · ")[0].toLowerCase()) + (!r.day && need > 1 ? " × " + need : "")], ["Teachings", "By donation"],
-          ["Meals", inr(MEAL_RATE) + " per meal <small>pay only for the meals you take</small>"]];
-        if (!r.day) rows.push(["Estimated stay", "<em>" + inr(total) + "</em> <small>" + inr(r.rate) + " × " + n + (n === 1 ? " night" : " nights") + (need > 1 ? " × " + need + " rooms" : "") + "</small>"]);
-        q("#bk-sum").innerHTML = rows.map(function (x) { return "<div><span>" + x[0] + "</span><b>" + x[1] + "</b></div>"; }).join("");
+        var r = room(), n = nights(), need = r.two ? Math.ceil(guests / 2) : guests, total = r.rate * n * need, okDates = v("in") && v("out") && pd(v("out")) >= pd(v("in"));
+        var rows = [["Programme", esc(e.title)], ["Dates", okDates ? range({ start: v("in"), end: v("out") }) + " · " + n + (n === 1 ? " night" : " nights") : "—"], ["Guests", guests],
+          ["Room", r.name + (need > 1 ? " × " + need : "") + " <small>" + r.detail + "</small>"], ["Teachings", "By donation"],
+          ["Meals", inr(MEAL_RATE) + " per meal <small>pay only for the meals you take</small>"],
+          ["Estimated Stay", "<em>" + inr(total) + "</em> <small>" + inr(r.rate) + " × " + n + (n === 1 ? " night" : " nights") + (need > 1 ? " × " + need + " rooms" : "") + "</small>"]];
+        q("#bk-sum").innerHTML = rows.map(function (x) { return '<div class="ios-r sum"><span>' + x[0] + "</span><b>" + x[1] + "</b></div>"; }).join("");
         q("#bk-n").textContent = !okDates ? "Please check the dates." : n === 0 ? "A day visit, no night's stay." : n + (n === 1 ? " night" : " nights") + (v("in") === e.start && v("out") === e.end ? " · the whole programme" : "");
-        q("#bk-el").textContent = r.day ? "No room" : "Estimated stay"; q("#bk-ev").textContent = r.day ? "By donation" : inr(total);
+        q("#bk-n").classList.toggle("bad", !okDates); q("#bk-ev").textContent = inr(total);
+        q("#bk-go").disabled = !!check(step);                               /* the button wakes when the step is complete */
         return rows;
       }
       function show(k, quiet) {
         step = k; el.querySelectorAll(".bk-pane").forEach(function (p) { p.hidden = +p.dataset.s !== k; });
         el.querySelectorAll(".bk-prog button").forEach(function (b) { var n = +b.dataset.to; b.className = n === k ? "on" : n < k ? "was" : ""; b.disabled = n > k; if (n === k) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
-        q("#bk-back").hidden = k === 0; q("#bk-go").textContent = k === 2 ? "Send request" : k === 1 ? "Review" : "Continue"; q("#bk-err").textContent = ""; sum();
+        q("#bk-back").hidden = k === 0; q("#bk-go").textContent = k === 2 ? "Send Request" : k === 1 ? "Review" : "Continue"; q("#bk-err").textContent = ""; sum();
         if (!quiet) { el.querySelector(".nv-scroll").scrollTop = 0; SFX.page(); }
       }
-      function check(k) {                                                /* returns the first problem on a step, and the field to fix */
-        if (k === 0 && (!v("in") || !v("out") || pd(v("out")) < pd(v("in")))) return ["Please check your arrival and leaving dates.", f.elements["in"]];
-        if (k === 1) {
-          if (!v("name")) return ["Please add your name.", f.elements.name];
-          if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v("email"))) return ["Please add an email address we can reply to.", f.elements.email];
-          if (!f.elements.before.value) return ["Please tell us whether you have been here before.", q("#bk-before input")];
-        }
-        return null;
-      }
-      el.querySelectorAll("[data-step]").forEach(function (b) { b.onclick = function () { guests = Math.max(1, Math.min(12, guests + (+b.dataset.step))); q("#bk-g").textContent = guests; sum(); }; });
+      el.querySelectorAll("[data-step]").forEach(function (b) { b.onclick = function () { guests = Math.max(1, Math.min(12, guests + (+b.dataset.step))); q("#bk-g").textContent = guests; SFX.tap(); sum(); }; });
       el.querySelectorAll(".bk-prog button").forEach(function (b) { b.onclick = function () { if (+b.dataset.to < step) show(+b.dataset.to); }; });
       q("#bk-back").onclick = function () { if (step > 0) show(step - 1); };
-      f.addEventListener("input", function () { sum(); q("#bk-err").textContent = ""; el.querySelectorAll(".bad").forEach(function (x) { x.classList.remove("bad"); }); }); f.addEventListener("change", sum);
+      f.addEventListener("input", function () { sum(); q("#bk-err").textContent = ""; }); f.addEventListener("change", sum);
+      f.elements.email.addEventListener("blur", function () { var bad = v("email") && !okMail(), n = q("#bk-ef"); n.textContent = bad ? "This does not look like an email address." : "We reply to this address to confirm your room."; n.classList.toggle("bad", !!bad); });
       f.addEventListener("submit", function (ev) {
         ev.preventDefault(); var bad = check(step);
-        if (bad) { q("#bk-err").textContent = bad[0]; var fld = bad[1].closest(".fld") || bad[1].closest(".bk-rooms"); if (fld) fld.classList.add("bad"); try { bad[1].focus(); } catch (er) {} return; }
+        if (bad) { q("#bk-err").textContent = bad[0]; try { bad[1].focus(); } catch (er) {} return; }
         if (step < 2) { show(step + 1); return; }
         store.set("bp-guest", JSON.stringify({ name: v("name"), email: v("email"), phone: v("phone") }));
         var ref = "BP-" + e.start.slice(2).replace(/-/g, "") + "-" + Math.random().toString(36).slice(2, 6).toUpperCase(), rows = sum(), before = f.elements.before.value === "yes" ? "Yes" : "No, first time";
-        var body = "Booking request " + ref + "\n\n" + rows.map(function (x) { return x[0] + ": " + String(x[1]).replace(/<[^>]+>/g, "").replace(/&amp;/g, "&"); }).join("\n") + "\n\nName: " + v("name") + "\nEmail: " + v("email") + (v("phone") ? "\nPhone: " + v("phone") : "") + "\nAttended a programme here before: " + before + (v("note") ? "\n\nNote: " + v("note") : "") + "\n\nSent from the Buddha Pāda shrine room.";
+        var body = "Booking request " + ref + "\n\n" + rows.map(function (x) { return x[0] + ": " + String(x[1]).replace(/ <small>/g, ", ").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&"); }).join("\n") + "\n\nName: " + v("name") + "\nEmail: " + v("email") + (v("phone") ? "\nPhone: " + v("phone") : "") + "\nAttended a programme here before: " + before + (v("note") ? "\n\nNote: " + v("note") : "") + "\n\nSent from the Buddha Pāda shrine room.";
         bookDone(e, ref, rows.concat([["Been here before", before]]), body, v("email"));
       });
       show(0, true);
