@@ -760,7 +760,7 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
         <div class="sit-n"><output id="sit-num">10</output><small>minutes</small></div>
         <div class="chips" id="sit-chips"></div>
         <div class="sit-row"><span>Practice</span><div class="seg two" id="modes"></div></div>
-        <div class="sit-row" id="gd-row" hidden><span>Guide</span><div class="seg two" id="gd-pick"></div></div>
+        <div class="sit-row" id="gd-row" hidden><span>Guide</span><div class="seg three" id="gd-pick"></div></div>
         <div class="sit-row" id="breath-row"><span>Breath</span><div class="seg three" id="guides"></div></div>
         <p class="gd-about" id="gd-about" hidden></p>
         <button type="button" class="sit-go" id="sit-go">Begin</button>
@@ -2233,6 +2233,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   /* guided sittings: a recorded teacher guides the opening minutes, played whole and unedited, then leaves you in silence */
   var GUIDES = {
     breath: { name: "Breathing", file: "audio/gm/breathing.mp3", dur: 216, by: "Peter Morgan", about: "Three minute breathing, guided by Peter Morgan. About three and a half minutes of guidance, then silence." },
+    mind: { name: "Mindfulness", file: "audio/gm/mindfulness.mp3", dur: 740, by: "Venerable Lozang Yonten", about: "Mindfulness of the breath, guided by Venerable Lozang Yonten, a nun of the Tibetan tradition. About twelve minutes, with a short introduction and long silences." },
     sit: { name: "Sitting", file: "audio/gm/sitting.mp3", dur: 393, by: "Gil Fronsdal", about: "A guided meditation by Gil Fronsdal of the Insight Meditation Center. About six and a half minutes of guidance, then silence." }
   };
   var sitMode = store.get("bp-sitmode", "open") === "guided" ? "guided" : "open", gdKey = store.get("bp-gd2", "breath"); if (!GUIDES[gdKey]) gdKey = "breath";
@@ -2502,7 +2503,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     h += '<div class="grp" style="margin-top:12px"><button class="cell" data-go="quotes"><span class="ti gold">' + svg("quote") + '</span><span class="tx"><b>Words of Rinpoche</b><small>' + QUOTES.length + ' quotations from Dzongsar Khyentse Rinpoche</small></span>' + svg("chev", "chev") + "</button></div>";
     h += '<p class="grp-h">The centre</p><div class="grp">' + ["about", "teachers", "lineage", "facilities", "architecture", "patterns", "gallery"].map(function (k) { return '<button class="cell" data-go="' + k + '"><span class="ti">' + svg(PAGES[k].icon) + '</span><span class="tx"><b>' + PAGES[k].menu + "</b></span>" + svg("chev", "chev") + "</button>"; }).join("") + "</div>";
     h += '<p class="grp-h">Visit</p><div class="grp">' + ["visit", "faq", "partners", "contact"].map(function (k) { return '<button class="cell" data-go="' + k + '"><span class="ti">' + svg(PAGES[k].icon) + '</span><span class="tx"><b>' + PAGES[k].menu + "</b></span>" + svg("chev", "chev") + "</button>"; }).join("") + "</div>";
-    h += '<p class="foot">Buddha Pāda · 13th Mile, Kalimpong<br>' + MAIL + '<br><span style="opacity:.8">Guided meditations: “Three minute breathing” by Peter Morgan, Free Mindfulness Project (freemindfulness.org), <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-SA 3.0</a>; “Guided Meditation” by Gil Fronsdal, Insight Meditation Center (audiodharma.org), <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a>. Both are played whole and unedited.<br>The hall cat’s meow: Dcrosby, <a href="https://commons.wikimedia.org/wiki/File:Meow.ogg" target="_blank" rel="noopener" style="color:inherit">CC BY-SA 3.0</a></span></p>';
+    h += '<p class="foot">Buddha Pāda · 13th Mile, Kalimpong<br>' + MAIL + '<br><span style="opacity:.8">Guided meditations: “Three minute breathing” by Peter Morgan, Free Mindfulness Project (freemindfulness.org), <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-SA 3.0</a>; “Guided Meditation” by Gil Fronsdal, Insight Meditation Center (audiodharma.org), <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener" style="color:inherit">CC BY-NC-ND 4.0</a>. Both are played whole and unedited. “5 Minute Mindfulness Meditation” by Venerable Lozang Yonten, Kunsang Yeshe Retreat Centre, public domain (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener" style="color:inherit">CC0</a>), via the Internet Archive.<br>The hall cat’s meow: Dcrosby, <a href="https://commons.wikimedia.org/wiki/File:Meow.ogg" target="_blank" rel="noopener" style="color:inherit">CC BY-SA 3.0</a></span></p>';
     return { title: "Menu", html: h };
   }
   function programsView() {
