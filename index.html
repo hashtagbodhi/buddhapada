@@ -722,12 +722,16 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
 .sect .full ul.tl li { grid-template-columns: 96px minmax(0, 1fr); } .sect details[open] summary { padding-bottom: 12px; }
 .sect .full p.t { margin: 10px 0 0; padding: 0; color: var(--ink-2); } .sect .full p.h4 { margin-top: 22px; color: var(--ink); } .sect .full p.h4 + p.t { margin-top: 4px; } .sect .full > p.t:first-child, .sect .full > ul.t:first-child { margin-top: 0; }
 .ios .bk-est b { white-space: nowrap; }
-.coach { position: fixed; z-index: 12; left: 0; right: 0; margin: 0 auto; bottom: calc(150px + env(safe-area-inset-bottom, 0px)); width: min(340px, calc(100% - 40px)); padding: 16px 18px 12px; border-radius: 22px; color: var(--ink); background: var(--veil); -webkit-backdrop-filter: var(--veil-filter); backdrop-filter: var(--veil-filter); box-shadow: var(--veil-rim), 0 18px 44px rgba(0, 0, 0, .28); animation: chipin .45s cubic-bezier(.2, .8, .2, 1.1); }
-.coach.top { bottom: calc(210px + env(safe-area-inset-bottom, 0px)); }
-.co-k { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); } .coach h3 { margin: 4px 0 0; font-size: 18px; line-height: 24px; font-weight: 700; } .coach p:not(.co-k) { margin: 4px 0 0; font-size: 14px; line-height: 20px; color: var(--ink-2); text-wrap: pretty; }
-.co-b { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; } .co-b button { min-height: 40px; padding: 0 6px; font-size: 14px; color: var(--ink-2); } #co-next { padding: 0 20px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 600; }
-.coach-on { box-shadow: 0 0 0 3px rgba(255, 255, 255, .95), 0 0 0 7px rgba(255, 255, 255, .35) !important; border-radius: 999px; transition: box-shadow .3s; }
-.sitting .coach, .veiled .coach { display: none; }
+.hint { position: fixed; z-index: 6; left: 0; right: 0; top: 46%; display: grid; justify-items: center; gap: 10px; pointer-events: none; color: #fff; opacity: 0; transition: opacity .6s ease; text-shadow: 0 1px 14px rgba(0, 0, 0, .65), 0 0 2px rgba(0, 0, 0, .5); }
+.hint.in { opacity: 1; } .hint p { margin: 0; font-size: 16px; line-height: 22px; font-weight: 500; letter-spacing: .01em; }
+.hint-hand { width: 46px; height: 46px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 2px 8px rgba(0, 0, 0, .55)); } .hint-ring { stroke-width: 1.5; opacity: 0; }
+.h-look .hint-hand { animation: hLook 2.6s ease-in-out infinite; } @keyframes hLook { 0%, 100% { transform: translateX(-46px); } 50% { transform: translateX(46px); } }
+.h-walk { top: 58%; } .h-walk .hint-hand { animation: hTap 1.8s ease-in-out infinite; } .h-walk .hint-ring { animation: hRing 1.8s ease-out infinite; transform-origin: 24px 14px; }
+@keyframes hTap { 0%, 60%, 100% { transform: translateY(0) scale(1); } 30% { transform: translateY(5px) scale(.94); } } @keyframes hRing { 0%, 25% { opacity: 0; transform: scale(.5); } 35% { opacity: .9; } 100% { opacity: 0; transform: scale(1.7); } }
+.h-act { top: auto; bottom: calc(132px + env(safe-area-inset-bottom, 0px)); } .h-act .hint-hand, .h-menu .hint-hand { display: none; } .h-act p::after { content: ""; display: block; width: 10px; height: 10px; margin: 8px auto 0; border-right: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(45deg); animation: hBob 1.4s ease-in-out infinite; }
+.h-menu { top: calc(86px + env(safe-area-inset-top, 0px)); justify-items: end; padding-right: 22px; } .h-menu p::before { content: ""; display: block; width: 10px; height: 10px; margin: 0 14px 8px auto; border-left: 2px solid #fff; border-top: 2px solid #fff; transform: rotate(45deg); animation: hBob 1.4s ease-in-out infinite; }
+@keyframes hBob { 0%, 100% { translate: 0 0; } 50% { translate: 0 4px; } }
+@media (prefers-reduced-motion: reduce) { .hint-hand, .hint-ring, .hint p::after, .hint p::before { animation: none !important; } .hint-ring { opacity: .7; } }
 </style>
 
 <div id="app" class="outside">
@@ -782,7 +786,7 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
     <p class="gd-x" id="gd-x"></p>
     <div class="gd-nav"><button type="button" id="gd-prev" aria-label="Previous step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></button><span class="gd-dots" id="gd-dots"></span><button type="button" id="gd-next" aria-label="Next step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button></div>
   </div>
-  <div class="coach" id="coach" hidden role="dialog" aria-label="A short guide"><p class="co-k" id="co-k"></p><h3 id="co-t"></h3><p id="co-p"></p><div class="co-b"><button type="button" id="co-skip">Skip</button><button type="button" id="co-next">Next</button></div></div>
+  <div class="hint" id="hint" hidden aria-live="polite"><svg class="hint-hand" viewBox="0 0 48 48" aria-hidden="true"><circle class="hint-ring" cx="24" cy="14" r="9"/><path d="M24 14v16m0 0l-5.500-3.500c-1.800-1.100-3.900 1.200-2.500 2.900l8 9.600c1.500 1.800 3.700 2.800 6 2.800h3c4.400 0 8-3.600 8-8v-7c0-1.700-1.300-3-3-3s-3 1.300-3 3m0-1c0-1.700-1.300-3-3-3s-3 1.300-3 3m0-1.800c0-1.700-1.300-3-3-3"/></svg><p id="hint-t"></p></div>
   <div class="sit-ui" id="sit-ui" hidden>
     <div class="pill glass"><span id="clock">00:00</span><button class="btn vbtn" id="sit-voice" aria-pressed="true" aria-label="Inhale and exhale voice"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l4 3.5v-11L7 10z"/><path class="wave" d="M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10"/><path class="mute" d="M15.5 9.5l5 5M20.5 9.5l-5 5"/></svg><span id="sit-voice-t">Voice</span></button><button class="btn" id="sit-pause">Pause</button><button class="btn" id="sit-end" data-t="endSit"></button></div>
   </div>
@@ -2107,14 +2111,29 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   if (world) world.lamps(lamps);
   $("enter").onclick = function () {
     audio(); $("entry").classList.add("gone");
-    var TOUR = [["Look around", "Drag anywhere to turn your view. It glides to a stop when you let go."], ["Walk", "Tap the floor and you walk there. On a keyboard, use the arrow keys."], ["Practise", "Bow, count a mala, ring the bell, sit or make an offering from the bar below.", "dock"], ["Meet", "Walk up to Rinpoche, or to Koili the cat, and a button appears to greet them."], ["Find out more", "Programmes, teachers and how to visit are in the menu, top right.", "menu-btn"]], tourK = 0;
+    /* first visit: no cards and no buttons. One quiet hint at a time, drawn over the hall, and each one leaves the moment you do the thing it shows. */
+  var HINTS = [
+    { k: "look", text: "Drag to look around", done: function (st) { return st.dragged; } },
+    { k: "walk", text: "Tap the floor to walk there", done: function (st) { return st.walked; } },
+    { k: "act", text: "Bow, count a mala, sit or offer", done: function (st) { return st.acted; } },
+    { k: "menu", text: "Programmes and visiting", done: function (st) { return st.menued; } }
+  ], hintSt = null, hintT = 0;
   function tour() {
-    if (!insideHall || $("app").classList.contains("sitting") || $("app").classList.contains("veiled")) return; tourK = 0; var c = $("coach"); c.hidden = false;
-    var paint = function () { var q = TOUR[tourK]; document.querySelectorAll(".coach-on").forEach(function (e) { e.classList.remove("coach-on"); }); if (q[2] && $(q[2])) $(q[2]).classList.add("coach-on");
-      $("co-k").textContent = (tourK + 1) + " of " + TOUR.length; $("co-t").textContent = q[0]; $("co-p").textContent = q[1]; $("co-next").textContent = tourK === TOUR.length - 1 ? "Begin" : "Next"; c.classList.toggle("top", q[2] === "dock"); };
-    var end = function () { c.hidden = true; document.querySelectorAll(".coach-on").forEach(function (e) { e.classList.remove("coach-on"); }); store.set("bp-tour", "1"); };
-    $("co-next").onclick = function () { SFX.tap(); if (++tourK >= TOUR.length) end(); else paint(); }; $("co-skip").onclick = function () { end(); }; paint();
+    if (!insideHall) return; var el = $("hint"), st = hintSt = { i: -1, dragged: false, walked: false, acted: false, menued: false, since: 0 };
+    var show = function (i) { st.i = i; st.since = Date.now(); if (i >= HINTS.length) { el.hidden = true; hintSt = null; clearInterval(hintT); store.set("bp-tour", "1"); return; } el.className = "hint h-" + HINTS[i].k; $("hint-t").textContent = HINTS[i].text; el.hidden = false; void el.offsetWidth; el.classList.add("in"); };
+    var next = function () { var i = st.i; $("hint").classList.remove("in"); st.i = i + .5; setTimeout(function () { if (hintSt === st && st.i === i + .5) show(i + 1); }, 650); };
+    clearInterval(hintT); hintT = setInterval(function () {
+      if (hintSt !== st) return; var busy = $("app").classList.contains("sitting") || $("app").classList.contains("veiled"); el.style.visibility = busy ? "hidden" : "";
+      if (st.i % 1 || busy) { if (busy) st.since = Date.now(); return; }
+      if (world && world.state().moving) st.walked = true;
+      var h = HINTS[st.i], waited = Date.now() - st.since; if ((h.done(st) && waited > 900) || waited > (st.i < 2 ? 14000 : 7000)) next();
+    }, 250);
+    show(0);
   }
+  (function () { var d0 = null, cv = $("gl");
+    cv.addEventListener("pointerdown", function (e) { d0 = [e.clientX, e.clientY]; }); cv.addEventListener("pointermove", function (e) { if (d0 && hintSt && Math.abs(e.clientX - d0[0]) + Math.abs(e.clientY - d0[1]) > 24) hintSt.dragged = true; }); cv.addEventListener("pointerup", function () { d0 = null; });
+    $("dock").addEventListener("click", function () { if (hintSt) hintSt.acted = true; }); $("menu-btn").addEventListener("click", function () { if (hintSt) hintSt.menued = true; });
+  })();
   var inside = function () { insideHall = true; ambience(); play("door_close", .35); $("app").classList.remove("outside"); $("leave-pill").hidden = false; say(t("hint")); setTimeout(function () { ringBell(.4); }, 700); if (store.get("bp-tour", "") !== "1") setTimeout(tour, 2600); setTimeout(function () { meow(.7); }, 2200); };
     if (world) world.enter(inside, function () { play("door_open", .4); }, function () { play("cloth", .5); }); else { play("door_open", .4); inside(); }
   };
