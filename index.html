@@ -1113,6 +1113,7 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
     if (!breeze) return; var sitting = $("app").classList.contains("sitting");
     breeze.gain.setTargetAtTime(sitting ? .005 : insideHall ? .028 : .01, actx.currentTime, sitting ? 3 : 4);
     if (sitPad) sitPad.gain.setTargetAtTime(sitting ? .036 : 0, actx.currentTime, sitting ? 5 : 3);
+    try { MUSIC.level(); } catch (e) {}
     if (air) { air.gain.setTargetAtTime(sitting ? .05 : insideHall ? .2 : 1, actx.currentTime, 1.6); airLP.frequency.setTargetAtTime(insideHall ? 850 : 16000, actx.currentTime, .9); }
   }
   /* birds of the hillside, each a few sine sweeps: chips, a two-note whistle, a trill, the rising call of the koel; crickets after dark */
@@ -1151,7 +1152,7 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
     function (a) { var at = 0; for (var i = 0; i < 3 + Math.floor(Math.random() * 3); i++) { var o = a.createOscillator(), g = a.createGain(), t0 = a.currentTime + at, f = 2600 + Math.random() * 1200; o.frequency.setValueAtTime(f, t0); o.frequency.exponentialRampToValueAtTime(f * 1.35, t0 + .07); o.frequency.exponentialRampToValueAtTime(f * .9, t0 + .16); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(.0035, t0 + .02); g.gain.linearRampToValueAtTime(0, t0 + .18); o.connect(g); g.connect(master); g.connect(wet); o.start(t0); o.stop(t0 + .2); at += .22 + Math.random() * .5; } },   /* a bird outside */
     function () { tone(118, .006, .5, 0, .004); tone(92, .005, .7, .9 + Math.random() * .6, .004); },                              /* the old wood settling */
     function (a) { nz(a, a.currentTime, 3.5 + Math.random() * 2, "highpass", 900, 1500, .011, 7 + Math.random() * 3); },          /* prayer flags in the wind */
-    function () { tone(98, .013, 10, 0, 3); tone(147, .005, 9, 0, 3.5); },                                                        /* a long horn, far down the valley */
+    function () { tone(108, .011, 10, 0, 3); tone(162, .005, 9, 0, 3.5); },                                                        /* a long horn, far down the valley */
     function () { tone(2093, .005, 4, 0, .003); tone(4186, .0015, 2, 0, .003); }                                                  /* a small hand bell */
   ], ambBag = [], ambLast = -1;
   function ambNext() {
@@ -1170,6 +1171,52 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
     tone(940 * k, .03, .05, 0, .001); tone(1380 * k, .012, .03, 0, .001); tone(900 * k, .014, .04, .03, .001);
   }
   /* ---------- small sounds: quiet, dry, never twice the same ---------- */
+  /* ---------- the hall's music: a slow generative score in pure intervals over the pad's own root (A at 216 Hz) ----------
+     Arrival: two bell notes and a chord that opens as the door closes.  Staying: single soft bell notes that wander a
+     five-note scale, sometimes answering themselves, over long glassy chords that swell and fade; every few minutes the
+     harmony moves (home, a brighter fourth, a quieter relative minor) and returns.  Morning is fuller, night is sparse.
+     Sitting: the score withdraws to almost nothing.  Rising: one chord opens again.  Leaving: two notes come home. */
+  var MUSIC = (function () {
+    var bus = null, hall = null, on = false, timer = 0, mood = 0, idx = 2, nextNote = 0, nextSwell = 0, nextMood = 0, ROOT = 432;
+    var MOODS = [[1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2, 9 / 4], [1, 4 / 3, 3 / 2, 5 / 3, 2, 8 / 3, 3], [5 / 6, 1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2]], BASS = [1, 4 / 3, 5 / 6];
+    function ready() {
+      var a = actx; if (!a || !master) return null; if (bus) return a;
+      bus = a.createGain(); bus.gain.value = 0; bus.connect(master);
+      var cv = a.createConvolver(); cv.buffer = noise(a, 5.5, 2.1); var lp = a.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3200; hall = a.createGain(); hall.gain.value = .5; bus.connect(hall); hall.connect(lp); lp.connect(cv); cv.connect(master);
+      return a;
+    }
+    function pan(a, node, p) { if (!a.createStereoPanner) { node.connect(bus); return; } var s = a.createStereoPanner(); s.pan.value = p; node.connect(s); s.connect(bus); }
+    function bell(f, vol, when, len) {                                /* a small soft bell: the note, a faint octave and a high partial that dies at once; two close tunings beat slowly */
+      var a = ready(); if (!a) return; var t0 = a.currentTime + (when || 0), d = len || 7, g = a.createGain();
+      g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + .035); g.gain.exponentialRampToValueAtTime(vol * .32, t0 + d * .22); g.gain.exponentialRampToValueAtTime(.00008, t0 + d);
+      [[1, 1, 1], [1.0022, .5, 1], [2, .16, .55], [2.76, .07, .16]].forEach(function (v) { var o = a.createOscillator(), og = a.createGain(); o.frequency.value = f * v[0]; og.gain.setValueAtTime(v[1], t0); og.gain.exponentialRampToValueAtTime(.0005, t0 + d * v[2]); o.connect(og); og.connect(g); o.start(t0); o.stop(t0 + d + .1); });
+      pan(a, g, Math.random() * 1.1 - .55);
+    }
+    function swell(fs, vol, when, len) {                              /* a glassy chord that rises out of the room and sinks back */
+      var a = ready(); if (!a) return; var t0 = a.currentTime + (when || 0), d = len || 14;
+      fs.forEach(function (f, i) { var o = a.createOscillator(), o2 = a.createOscillator(), g = a.createGain(); o.frequency.value = f; o2.frequency.value = f * 1.0018; g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol / (1 + i * .35), t0 + d * .45); g.gain.linearRampToValueAtTime(0, t0 + d); o.connect(g); o2.connect(g); o.start(t0); o2.start(t0); o.stop(t0 + d + .1); o2.stop(t0 + d + .1); pan(a, g, i % 2 ? .4 : -.4); });
+    }
+    function pace() { var p = typeof lastPhase === "string" ? lastPhase : "day"; return p === "morning" ? .8 : p === "day" ? 1 : p === "golden" ? 1.1 : p === "evening" ? 1.35 : 1.75; }
+    function tick() {
+      if (!on || !actx || actx.state !== "running" || document.hidden) return; var now = actx.currentTime, sc = MOODS[mood], R = Math.random, k = pace();
+      if (now >= nextNote) {
+        var step = R() < .7 ? (R() < .5 ? -1 : 1) : (R() < .5 ? -2 : 2); idx = Math.max(0, Math.min(sc.length - 1, idx + step)); var f = ROOT * sc[idx], v = .0105 + R() * .005;
+        bell(f, v, 0, 6.5 + R() * 3); var r = R();
+        if (r < .3) { var j = Math.max(0, Math.min(sc.length - 1, idx + (R() < .6 ? -1 : 2))); bell(ROOT * sc[j], v * .7, 1.5 + R() * 1.1, 6); idx = j; }
+        else if (r < .4 && k < 1.3) { [0, 1, 2].forEach(function (n) { var q = Math.min(sc.length - 1, Math.max(0, idx - 2 + n * 2)); bell(ROOT * sc[q], v * .6, .9 + n * .85, 5.5); }); }
+        else if (r < .47) bell(f / 2, v * .8, 2.4, 9);
+        nextNote = now + (6 + R() * 9) * k;
+      }
+      if (now >= nextSwell) { var a0 = Math.floor(R() * 3), b0 = ROOT / 2 * BASS[mood]; swell([b0, ROOT / 2 * sc[a0 + 2], ROOT * sc[a0]], .0052, 0, 13 + R() * 6); nextSwell = now + (30 + R() * 24) * k; }
+      if (now >= nextMood) { mood = mood === 0 ? (R() < .5 ? 1 : 2) : 0; idx = 2; bell(ROOT / 2 * BASS[mood], .012, .4, 11); nextMood = now + (mood === 0 ? 170 + R() * 80 : 80 + R() * 50); }
+    }
+    return {
+      level: function () { var a = ready(); if (!a) return; var sitting = $("app").classList.contains("sitting"), want = insideHall && !sitting; bus.gain.setTargetAtTime(want ? 1 : 0, a.currentTime, want ? 2.5 : 2); if (want && !on) { on = true; nextNote = Math.max(nextNote, a.currentTime + 5); nextSwell = Math.max(nextSwell, a.currentTime + 16); } else if (!want) on = false; if (!timer) timer = setInterval(tick, 700); },
+      arrive: function () { var a = ready(); if (!a) return; bus.gain.cancelScheduledValues(a.currentTime); bus.gain.setTargetAtTime(1, a.currentTime, .6); mood = 0; idx = 2; bell(ROOT, .014, 1.6, 9); bell(ROOT * 1.5, .011, 3.3, 9); swell([ROOT / 2, ROOT * .75, ROOT * 1.25], .006, 4.6, 16); nextNote = a.currentTime + 15; nextSwell = a.currentTime + 34; nextMood = a.currentTime + 190; },
+      leave: function () { var a = ready(); if (!a) return; bell(ROOT * 1.5, .012, .1, 6); bell(ROOT, .013, 1.5, 8); on = false; bus.gain.setTargetAtTime(0, a.currentTime + 3.5, 1.6); },
+      rise: function () { var a = ready(); if (!a) return; swell([ROOT / 2, ROOT * .75, ROOT * 1.25, ROOT * 1.5], .0058, 1.2, 15); bell(ROOT * 2, .009, 3, 8); }
+    };
+  })();
   var SFX = (function () {
     var ui = null, last = {};
     function bus() { var a = audio(); if (!a) return null; if (!ui) { ui = a.createGain(); ui.gain.value = .55; ui.connect(master); } return a; }
@@ -1255,7 +1302,7 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
     renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .86;
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     var scene = new THREE.Scene(); scene.background = new THREE.Color(0xdde5de).convertSRGBToLinear();
-    var camera = new THREE.PerspectiveCamera(62, 1, 0.08, 700);
+    var camera = new THREE.PerspectiveCamera(62, 1, 0.08, 80);
     var manager = new THREE.LoadingManager(); manager.onProgress = function (u, n, total) { onProgress(n / total); }; manager.onLoad = function () { onProgress(1); };
     var texLoader = new THREE.TextureLoader(manager), gltfLoader = THREE.GLTFLoader ? new THREE.GLTFLoader(manager) : null;
     if (gltfLoader && window.MeshoptDecoder) gltfLoader.setMeshoptDecoder(window.MeshoptDecoder);      /* models ship meshopt-compressed: about a third of their old size */
@@ -1339,9 +1386,9 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
     ao(2 * W, 0, D - .45, Math.PI); ao(2 * D, W - .45, 0, Math.PI / 2); ao(D + WZ0, -W + .45, (WZ0 - D) / 2, -Math.PI / 2); ao(W - AX, -(W + AX) / 2, -D + .45, 0); ao(W - AX, (W + AX) / 2, -D + .45, 0);
 
     /* ---------- lattice window with the forest outside ---------- */
-    var outs = [], forests = [], forestTex = T("tex/forest.jpg"), bar = M(0x3a2a22, { roughness: .7 }), wz = (WZ0 + WZ1) / 2, ww = WZ1 - WZ0;
+    var forests = [], forestTex = T("tex/forest.jpg"), bar = M(0x3a2a22, { roughness: .7 }), wz = (WZ0 + WZ1) / 2, ww = WZ1 - WZ0;
     [-1, 1].forEach(function (s) {
-      var fo = new THREE.Mesh(new THREE.PlaneGeometry(10, 12), new THREE.MeshBasicMaterial({ map: forestTex, toneMapped: false })); fo.position.set(s * (W + 3), 3.6, wz); fo.rotation.y = -s * Math.PI / 2; scene.add(fo); forests.push(fo);
+      var fo = new THREE.Mesh(new THREE.PlaneGeometry(18, 12), new THREE.MeshBasicMaterial({ map: forestTex, toneMapped: false })); fo.position.set(s * (W + 3), 3.6, wz); fo.rotation.y = -s * Math.PI / 2; scene.add(fo); forests.push(fo);
       var X = s * W;
       for (var i = 0; i <= 14; i++) box(.06, WH, .045, bar, X, WH / 2, WZ0 + ww * i / 14);
       for (var j = 0; j <= 10; j++) box(.045, .045, ww, bar, X, WH * j / 10, wz);
@@ -1357,8 +1404,10 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
     var PH = 6.8, PD = 5.6, PW = 4;
     plane(W - DW, H, plaster, -(W + DW) / 2, H / 2, D, 0, Math.PI, true); plane(W - DW, H, plaster, (W + DW) / 2, H / 2, D, 0, Math.PI, true); plane(2 * DW, H - DH, plaster, 0, (H + DH) / 2, D, 0, Math.PI, true);
     plane(2 * PW, PD, M(0xd9d9d6, { map: T("tex/slate.jpg", 4, 2.5), roughness: .85 }), 0, .003, D + PD / 2, -Math.PI / 2, 0);
-    var brickSide = M(0xffffff, { map: T("tex/brick.jpg", 2.6, 1.9), roughness: .95, side: THREE.DoubleSide }), brickFront = M(0xf1ece0, { roughness: 1 });
+    var brickSide = M(0xffffff, { map: T("tex/brick.jpg", 2.6, 1.9), roughness: .95, side: THREE.DoubleSide }), brickFront = M(0xffffff, { map: T("tex/brick.jpg", 1.55, 1.9), roughness: .95 });
+    plane(PD, PH, brickSide, -PW, PH / 2, D + PD / 2, 0, Math.PI / 2); plane(PD, PH, brickSide, PW, PH / 2, D + PD / 2, 0, -Math.PI / 2);
     plane(PW - DW, PH, brickFront, -(PW + DW) / 2, PH / 2, D + .02, 0, 0); plane(PW - DW, PH, brickFront, (PW + DW) / 2, PH / 2, D + .02, 0, 0); plane(2 * DW, PH - DH, plaster, 0, (PH + DH) / 2, D + .02, 0, 0);
+    plane(2 * PW, PD, M(0xf4f0e8, { roughness: 1 }), 0, PH, D + PD / 2, Math.PI / 2, 0);
     [[.16, .05], [.28, .1], [.4, .15]].forEach(function (s) {
       box(2 * DW + s[0] * 2, .09, .05, plaster, 0, DH + s[0] - .045, D + s[1], true); box(.09, DH + s[0], .05, plaster, -DW - s[0] + .045, (DH + s[0]) / 2, D + s[1], true); box(.09, DH + s[0], .05, plaster, DW + s[0] - .045, (DH + s[0]) / 2, D + s[1], true);
     });
@@ -1372,8 +1421,9 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
     var leafL = leaf(-1), leafR = leaf(1);
     box(2 * DW, .04, .2, gold, 0, .02, D, true);
     var portal = M(0x4a1c18, { roughness: .5 });
+    box(.08, 2.3, 1.5, portal, -PW + .04, 1.15, D + 2.3, true); box(.08, 2.3, 1.5, portal, PW - .04, 1.15, D + 2.3, true);
     function bench(x, z, len) { box(len, .05, .42, wood, x, .45, z); [-1, 1].forEach(function (s) { box(.06, .45, .38, wood, x + s * (len / 2 - .12), .225, z); }); box(len - .3, .05, .05, wood, x, .2, z); }
-    bench(-3.25, D + .42, 1.2); bench(3.25, D + .42, 1.2); bench(-PW - 1.6, D + .42, 1.5); bench(PW + 1.6, D + .42, 1.5);
+    bench(-3.25, D + .42, 1.2); bench(3.25, D + .42, 1.2); bench(-PW + .9, D + 4.2, 1.5); bench(PW - .9, D + 4.2, 1.5);
     /* as in the photograph: two small light boxes with Om and Ah beside the door, a portrait above it, a framed photograph on the left wall */
     [[-3.2, "img/lamp_om.jpg"], [3.2, "img/lamp_ah.jpg"]].forEach(function (q) { box(.26, .26, .1, M(0x8a6a44, { roughness: .6 }), q[0], 4.6, D + .07, true);
       var lt = T(q[1]); lt.anisotropy = 4; var lb = new THREE.Mesh(new THREE.PlaneGeometry(.2, .2), new THREE.MeshBasicMaterial({ map: lt, color: 0xfff4e0 })); lb.position.set(q[0], 4.6, D + .123); scene.add(lb); });
@@ -1382,6 +1432,7 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
     var ph = T("img/porch_photo.jpg"); ph.anisotropy = 8; box(1.48, 1.04, .04, M(0x2a1d16, { roughness: .6 }), -3.05, 3.05, D + .04, true);
     var pf = new THREE.Mesh(new THREE.PlaneGeometry(1.44, 1.0), M(0xffffff, { map: ph, roughness: .35 })); pf.position.set(-3.05, 3.05, D + .062); scene.add(pf);
     [-1, 1].forEach(function (sg) { var w = new THREE.Mesh(new THREE.CylinderGeometry(.006, .006, .48, 6), M(0x3a3a3a)); w.position.set(-3.05 + sg * .34, 3.69, D + .05); w.rotation.z = sg * 1.1; scene.add(w); });
+    box(2 * PW, .1, .1, woodDark, 0, .95, D + PD, true); box(2 * PW, .06, .06, woodDark, 0, .5, D + PD, true); for (var rp = -4; rp <= 4; rp++) box(.08, .95, .08, woodDark, rp * (PW / 4) * .98, .475, D + PD, true);
     var RK = { x: 3.05, z: D + 1.25 }, rackWood = M(0x6b4a2e, { roughness: .7 });
     box(1.3, .04, .36, rackWood, RK.x, .2, RK.z); box(1.3, .04, .36, rackWood, RK.x, .02, RK.z, true);
     [-.62, .62].forEach(function (o) { box(.04, .22, .36, rackWood, RK.x + o, .11, RK.z); });
@@ -1389,10 +1440,11 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
     sandal(RK.x + .38, RK.z, .22, 0x3b2a1c, .1); sandal(RK.x - .1, RK.z, .04, 0x8a6a48, -.08);
     /* the rack lantern glows; the porch light (below) does the lighting */   /* a small lantern so the shoes are seen even at night */
     var lantern = new THREE.Mesh(new THREE.CylinderGeometry(.09, .11, .22, 16), new THREE.MeshBasicMaterial({ color: 0xffd9a0 })); lantern.position.set(RK.x - .35, 1.92, RK.z + .1); scene.add(lantern);
-    lantern.visible = false;
+    box(.015, .5, .015, rackWood, RK.x - .35, 2.28, RK.z + .1, true);
     var seekerBoots = new THREE.Group(), bootMat = M(0x4a3020, { roughness: .62 });
     [-.07, .07].forEach(function (o) { var sole = new THREE.Mesh(new THREE.BoxGeometry(.1, .035, .28), M(0x1e1611)); sole.position.set(o, .018, .02); var shaft = new THREE.Mesh(new THREE.CylinderGeometry(.052, .058, .2, 14), bootMat); shaft.position.set(o, .135, -.03); var toe = new THREE.Mesh(new THREE.BoxGeometry(.095, .08, .16), bootMat); toe.position.set(o, .07, .07); [sole, shaft, toe].forEach(function (m) { m.castShadow = true; seekerBoots.add(m); }); });
     seekerBoots.position.set(RK.x + .32, .22, RK.z); seekerBoots.rotation.y = Math.PI; seekerBoots.visible = false; scene.add(seekerBoots);
+    var far = new THREE.Mesh(new THREE.PlaneGeometry(26, 14), new THREE.MeshBasicMaterial({ map: T("tex/forest.jpg"), toneMapped: false })); forests.push(far); far.position.set(0, 3.5, D + PD + 7); far.rotation.y = Math.PI; scene.add(far);
 
     /* ---------- thangkas ---------- */
     var th1 = M(0xffffff, { map: T("tex/thangka1.jpg"), roughness: 1 }), th2 = M(0xffffff, { map: T("tex/thangka2.jpg"), roughness: 1 });
@@ -1626,7 +1678,7 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
       hemi.color.copy(cur.sky); hemi.groundColor.copy(cur.gnd); hemi.intensity = cur.hemi; amb.intensity = cur.amb; fill.intensity = cur.fill;
       renderer.toneMappingExposure = cur.exp; roomLights.forEach(function (l) { l.intensity = cur.room * 2.3; l.color.copy(cur.rc); }); lanternLight.color.copy(cur.rc);
       lanternLight.intensity = 0; lantern.material.emissiveIntensity = .5 + cur.lan * .5; glowBase = cur.glow;
-      forests.forEach(function (f) { f.material.color.copy(cur.out); }); outs.forEach(function (o) { if (o.e) o.m.emissive.copy(o.c).multiply(cur.out).multiplyScalar(o.e); else o.m.color.copy(o.c).multiply(cur.out); });
+      forests.forEach(function (f) { f.material.color.copy(cur.out); });
       emissives.forEach(function (m) { m.emissiveIntensity = m.userData.e0 * cur.ceil; });
       haze.color.copy(cur.fogC); haze.density = cur.fog; atmos(cur);
       nearLight.intensity = cur.near; porchLights.forEach(function (l) { l.intensity = .55 + cur.porch * 1.4; });
@@ -1698,113 +1750,6 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
         back.scale.set(1.5, 1.62, 1); back.position.set(x, y + height * .5, AZ + .03 + r.d * .13); back.receiveShadow = true; scene.add(back);
       } }); }
     statue("models/statue_centre.json", 5.4, 0, .93);
-    /* ================= the world outside: the stupa garden below the monastery =================
-       A hillside falls away from the terrace. A flagstone path winds down it past a row of white and gold stupas,
-       tall prayer flags stand along the other side, trees and rocks hold the slope, and far ridges fade into the sky. */
-    var OUT = new THREE.Group(); scene.add(OUT);
-    var Z0 = D + PD, sr = (function () { var s = 11; return function () { s = (s * 16807) % 2147483647; return s / 2147483647; }; })();
-    function sm(v, a, b) { var u = Math.max(0, Math.min(1, (v - a) / (b - a))); return u * u * (3 - 2 * u); }
-    function pathX(z) { var d = z - Z0; return Math.sin(d * .085) * 1.5 * sm(d, 3, 14); }
-    function gh(x, z) {
-      if (z <= Z0) return 0; var d = z - Z0, y = d < 1.2 ? -.45 * d / 1.2 : -.45 - (d - 1.2) * .15, ax = Math.abs(x - pathX(z));
-      y += sm(ax, 2.6, 9) * sm(d, 0, 6) * (Math.sin(x * .45 + 1.3) * .35 + Math.sin(z * .31 + x * .2) * .3);
-      y += sm(-x, 5, 20) * sm(d, -1, 6) * 3.2 - sm(x, 6, 22) * sm(d, 0, 8) * 4; return y;
-    }
-    function lit(m, e) { if (m.map && e && !m.emissiveMap) m.emissiveMap = m.map; outs.push({ m: m, c: m.map ? new THREE.Color(1, 1, 1) : m.color.clone(), e: e || 0 }); return m; }
-    function oadd(geo, mat, x, y, z) { var m = new THREE.Mesh(geo, mat); m.position.set(x || 0, y || 0, z || 0); OUT.add(m); return m; }
-    function rod(a, b, r, mat) { var d = new THREE.Vector3().subVectors(b, a), m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, d.length(), 6), mat); m.position.copy(a).addScaledVector(d, .5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.clone().normalize()); OUT.add(m); return m; }
-
-    /* sky: a deep dome that pales to the horizon, with slow clouds; it takes the colour of the hour */
-    var skyTex = canvasTex(256, function (g, s) { var gr = g.createLinearGradient(0, 0, 0, s); gr.addColorStop(0, "#3f78c2"); gr.addColorStop(.32, "#7fb0e2"); gr.addColorStop(.5, "#dfeaf0"); gr.addColorStop(1, "#dfeaf0"); g.fillStyle = gr; g.fillRect(0, 0, s, s); });
-    var dome = oadd(new THREE.SphereGeometry(320, 24, 16), lit(new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide, fog: false, depthWrite: false, toneMapped: false })), 0, 0, Z0); dome.renderOrder = -2;
-    var cloudTex = canvasTex(256, function (g, s) { g.clearRect(0, 0, s, s); for (var i = 0; i < 26; i++) { var cx = s * (.18 + Math.random() * .64), cy = s * (.38 + Math.random() * .26), r = s * (.07 + Math.random() * .13), rg = g.createRadialGradient(cx, cy, 0, cx, cy, r); rg.addColorStop(0, "rgba(255,255,255,.55)"); rg.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = rg; g.fillRect(0, 0, s, s); } });
-    var clouds = new THREE.Group(); clouds.position.set(0, 0, Z0); OUT.add(clouds);
-    var cloudMat = lit(new THREE.MeshBasicMaterial({ map: cloudTex, transparent: true, depthWrite: false, fog: false, toneMapped: false }));
-    for (var cl = 0; cl < 11; cl++) { var ca = sr() * Math.PI * 2, ce = .16 + sr() * .5, cr = 250, cm = new THREE.Mesh(new THREE.PlaneGeometry(150 + sr() * 110, 60 + sr() * 40), cloudMat); cm.position.set(Math.sin(ca) * Math.cos(ce) * cr, Math.sin(ce) * cr, Math.cos(ca) * Math.cos(ce) * cr); cm.lookAt(0, 0, 0); cm.renderOrder = -1; clouds.add(cm); }
-
-    /* far ridges across the valley */
-    [[0x4f6e58, 95, 3, 9], [0x7e9aa2, 130, 9, 14], [0xa9bcc6, 170, 16, 18]].forEach(function (q, k) {
-      var P = [], N = 64; for (var i = 0; i <= N; i++) { var a = -.5 + i / N * (Math.PI + 1), hx = Math.sin(a - Math.PI / 2) * -q[1], hz = Z0 + Math.cos(a - Math.PI / 2) * q[1] * .0 + Math.sin(a) * q[1], xx = Math.cos(a) * q[1], top = q[2] + (Math.sin(i * .7 + k * 2) * .5 + Math.sin(i * .23 + k) * .5 + sr() * .25) * q[3]; P.push(xx, -30, hz, xx, top, hz); }
-      var I = []; for (i = 0; i < N; i++) { var b = i * 2; I.push(b, b + 1, b + 2, b + 1, b + 3, b + 2); }
-      var G = new THREE.BufferGeometry(); G.setAttribute("position", new THREE.Float32BufferAttribute(P, 3)); G.setIndex(I);
-      oadd(G, lit(new THREE.MeshBasicMaterial({ color: col(q[0]), side: THREE.DoubleSide })));
-    });
-
-    /* the ground: grass and leaf litter over the slope */
-    var grassTex = canvasTex(512, function (g, s) { g.fillStyle = "#4a5330"; g.fillRect(0, 0, s, s); var i; for (i = 0; i < 9000; i++) { g.fillStyle = "hsl(" + (54 + Math.random() * 44) + "," + (20 + Math.random() * 20) + "%," + (14 + Math.random() * 20) + "%)"; g.fillRect(Math.random() * s, Math.random() * s, 1 + Math.random() * 2, 2 + Math.random() * 6); } for (i = 0; i < 1500; i++) { g.fillStyle = "hsl(" + (26 + Math.random() * 24) + ",34%," + (28 + Math.random() * 24) + "%)"; g.save(); g.translate(Math.random() * s, Math.random() * s); g.rotate(Math.random() * 3); g.beginPath(); g.ellipse(0, 0, 4, 1.6, 0, 0, 7); g.fill(); g.restore(); } }, 36, 27);
-    grassTex.anisotropy = aniso;
-    var tg = new THREE.PlaneGeometry(140, 100, 70, 50); tg.rotateX(-Math.PI / 2); tg.translate(0, 0, D + 50);
-    (function () { var p = tg.attributes.position; for (var i = 0; i < p.count; i++) p.setY(i, gh(p.getX(i), p.getZ(i)) - .02); tg.computeVertexNormals(); })();
-    var ground = oadd(tg, lit(M(0xffffff, { map: grassTex, roughness: 1 }), .1)); ground.receiveShadow = true;
-
-    /* the terrace widens, and three stone steps lead down to the path */
-    var slateMat = M(0xd9d9d6, { map: T("tex/slate.jpg", 3, 2.5), roughness: .85 });
-    [-1, 1].forEach(function (s) { var t = oadd(new THREE.PlaneGeometry(6, PD), slateMat, s * (PW + 3), .003, D + PD / 2); t.rotation.x = -Math.PI / 2; t.receiveShadow = true; });
-    var stoneMat = lit(M(0x8f8d86, { roughness: .95 }), .16);
-    for (var stp = 0; stp < 3; stp++) oadd(new THREE.BoxGeometry(3.4, .3, .42), stoneMat, 0, -.15 * (stp + 1) - .15, Z0 + .2 + stp * .4);
-    oadd(new THREE.BoxGeometry(2 * PW + 12, .5, .3), stoneMat, 0, -.25, Z0 + .13).scale.set(1, 1, .6);
-
-    /* the flagstone path */
-    var flagTex = canvasTex(512, function (g, s) { g.fillStyle = "#4c4b47"; g.fillRect(0, 0, s, s); var n = 6, c = s / n; for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) { var x = i * c, y = j * c, k = function () { return 5 + Math.random() * 14; }, v = 118 + Math.random() * 46; g.fillStyle = "rgb(" + (v + 4) + "," + (v + 2) + "," + (v - 6) + ")"; g.beginPath(); g.moveTo(x + k(), y + k()); g.lineTo(x + c - k(), y + k() * .8); g.lineTo(x + c - k() * .8, y + c - k()); g.lineTo(x + k() * .9, y + c - k() * .8); g.closePath(); g.fill(); } for (var d2 = 0; d2 < 2500; d2++) { g.fillStyle = "rgba(0,0,0," + (Math.random() * .08) + ")"; g.fillRect(Math.random() * s, Math.random() * s, 2, 2); } });
-    flagTex.anisotropy = aniso;
-    (function () { var P = [], U = [], I = [], N = 96, L = 44; for (var i = 0; i <= N; i++) { var z = Z0 + 1.15 + i / N * L, xc = pathX(z), y = gh(xc, z) + .035; P.push(xc - .95, y, z, xc + .95, y, z); U.push(0, i / N * L / 1.9, 1, i / N * L / 1.9); if (i < N) { var b = i * 2; I.push(b, b + 2, b + 1, b + 1, b + 2, b + 3); } }
-      var G = new THREE.BufferGeometry(); G.setAttribute("position", new THREE.Float32BufferAttribute(P, 3)); G.setAttribute("uv", new THREE.Float32BufferAttribute(U, 2)); G.setIndex(I); G.computeVertexNormals(); oadd(G, lit(M(0xffffff, { map: flagTex, roughness: .9 }), .2)).receiveShadow = true; })();
-
-    /* the row of stupas, each on its white plinth, with the white rail between them and the path */
-    var white = lit(M(0xf3efe6, { roughness: .8 }), .3), stupaSpots = [], railMat = lit(M(0xf5f3ee, { roughness: .6 }), .32);
-    for (var su = 0; su < 8; su++) { var sz = Z0 + 3.4 + su * 2.75, sx = pathX(sz) + 2.75, sy = gh(pathX(sz), sz); stupaSpots.push([sx, sy, sz, 3.05 - su * .02]); oadd(new THREE.BoxGeometry(2.25, 1.3, 2.25), white, sx, sy - .55, sz); oadd(new THREE.BoxGeometry(2.35, .08, 2.35), lit(M(0xd9a42c, { roughness: .4, metalness: .3 }), .3), sx, sy + .06, sz); blob(1.6, OUT, sx, sz).position.y = sy + .012; }
-    [[-6.6, 0, D + 3.4, 3.3], [6.6, 0, D + 3.4, 3.3]].forEach(function (q) { stupaSpots.push(q); oadd(new THREE.BoxGeometry(2.35, .5, 2.35), white, q[0], .25, q[2]); q[1] = .5; });
-    loadModel("models/stupa.json", function (g) { fixMaterials(g.scene, false); g.scene.traverse(function (o) { if (o.isMesh && o.material) lit(o.material, .26); });
-      stupaSpots.forEach(function (q) { place(g.scene.clone(true), q[3], q[0], q[1] + .1, q[2], -Math.PI / 2, OUT); }); });
-    (function () { var prev = null; for (var i = 0; i <= 18; i++) { var z = Z0 + 1.6 + i * 1.3, x = pathX(z) + 1.12, y = gh(pathX(z), z), top = new THREE.Vector3(x, y + .98, z), mid = new THREE.Vector3(x, y + .52, z); rod(new THREE.Vector3(x, y - .1, z), top, .022, railMat); if (prev) { rod(prev[0], top, .02, railMat); rod(prev[1], mid, .016, railMat); } prev = [top, mid]; } })();
-
-    /* tall prayer flags on bamboo poles: blue, white, red, green, yellow, moving in the wind */
-    var FLAGC = [0x2f5fb8, 0xf2f0ea, 0xd9502a, 0x4f9a3a, 0xe8c21c], flags = [], bamboo = lit(M(0x9a8a5c, { roughness: .8 }), .2);
-    function flag(x, z, hgt, ci) {
-      var y = gh(x, z), lean = (sr() - .5) * .1, top = new THREE.Vector3(x + lean * hgt, y + hgt, z + (sr() - .5) * .1 * hgt); rod(new THREE.Vector3(x, y - .2, z), top, .024, bamboo);
-      var fw = .5 + sr() * .12, fh = hgt * .62, geo = new THREE.PlaneGeometry(fw, fh, 4, 14); geo.translate(fw / 2, -fh / 2, 0);
-      var mat = lit(new THREE.MeshLambertMaterial({ color: col(FLAGC[ci % 5]), side: THREE.DoubleSide }), .34), m = new THREE.Mesh(geo, mat); m.position.copy(top); m.position.y -= .05; m.rotation.y = -.5 + sr() * .5; OUT.add(m);
-      flags.push({ g: geo, base: geo.attributes.position.array.slice(), w: fw, ph: sr() * 6, sp: .8 + sr() * .5 });
-    }
-    for (var fl = 0; fl < 14; fl++) { var fz = Z0 + 1.6 + fl * 1.7 + sr() * .5; flag(pathX(fz) - 1.55 - sr() * .7, fz, 3 + sr() * .8, fl); }
-    [[-5, Z0 - .5], [-5.7, Z0 - 1.3], [-4.6, Z0 + .9], [5, Z0 - .5], [5.8, Z0 - 1.2], [4.5, Z0 + 1.2], [9.2, Z0 - 2.2], [-9.4, Z0 - 2.6]].forEach(function (q, i) { flag(q[0], q[1], 3.3 + sr() * .7, i + 2); });
-    function outTick(t) {
-      clouds.rotation.y = t * .0035;
-      for (var i = 0; i < flags.length; i++) { var f = flags[i], a = f.g.attributes.position.array, b = f.base, gust = .65 + .35 * Math.sin(t * .31 + f.ph);
-        for (var j = 0; j < a.length; j += 3) { var u = b[j] / f.w, yy = b[j + 1], w = Math.sin(t * 2.3 * f.sp + yy * 2.2 + f.ph) * .13 + Math.sin(t * 4.1 * f.sp + yy * 5 + u * 3) * .04; a[j + 2] = w * u * gust * (1 + -yy * .25); a[j] = b[j] * (1 - Math.abs(w) * .35 * u); }
-        f.g.attributes.position.needsUpdate = true; }
-    }
-
-    /* trees: a dark trunk and a crown of leaf sprays; three kinds, some with the red new leaf of the hills */
-    function leafTex(h0, h1) { return canvasTex(256, function (g, s) { g.clearRect(0, 0, s, s); for (var i = 0; i < 620; i++) { var a = Math.random() * 6.28, r = Math.pow(Math.random(), .62) * s * .46; g.save(); g.translate(s / 2 + Math.cos(a) * r, s / 2 + Math.sin(a) * r); g.rotate(Math.random() * 6.28); g.fillStyle = "hsl(" + (h0 + Math.random() * (h1 - h0)) + "," + (24 + Math.random() * 20) + "%," + (9 + Math.random() * 21) + "%)"; g.beginPath(); g.ellipse(0, 0, 7 + Math.random() * 4, 2.8 + Math.random() * 1.6, 0, 0, 6.3); g.fill(); g.restore(); } }); }
-    function crown(n, spread, tall) { var P = [], U = [], I = [], v = 0; for (var c = 0; c < n; c++) { var a = sr() * 6.28, r = Math.sqrt(sr()) * spread, cx = Math.cos(a) * r, cz = Math.sin(a) * r, cyy = sr() * tall, q = new THREE.Quaternion(), e = new THREE.Euler();
-        for (var k = 0; k < 5; k++) { e.set((sr() - .5) * 2.2, sr() * 6.28, (sr() - .5) * 1.2); q.setFromEuler(e); var sz2 = .75 + sr() * .55; [[-1, -1, 0, 0], [1, -1, 1, 0], [1, 1, 1, 1], [-1, 1, 0, 1]].forEach(function (cn) { var p = new THREE.Vector3(cn[0] * sz2 * .5, cn[1] * sz2 * .5, 0).applyQuaternion(q); P.push(cx + p.x, cyy + p.y, cz + p.z); U.push(cn[2], cn[3]); }); I.push(v, v + 1, v + 2, v, v + 2, v + 3); v += 4; } }
-      var G = new THREE.BufferGeometry(); G.setAttribute("position", new THREE.Float32BufferAttribute(P, 3)); G.setAttribute("uv", new THREE.Float32BufferAttribute(U, 2)); G.setIndex(I); G.computeVertexNormals(); return G; }
-    var crowns = [crown(11, .9, 1.5), crown(14, 1.15, .9), crown(8, .7, 1.1)], leafG = leafTex(72, 118), leafR = leafTex(6, 30);
-    var leafMats = [0xffffff, 0xdfe6b0, 0xc8d8c0].map(function (c) { return lit(new THREE.MeshLambertMaterial({ map: leafG, color: col(c), alphaTest: .42, side: THREE.DoubleSide }), .16); }).concat([lit(new THREE.MeshLambertMaterial({ map: leafR, alphaTest: .42, side: THREE.DoubleSide }), .18)]);
-    var bark = lit(M(0x2e231b, { roughness: 1 }), .12);
-    function tree(x, z, th, kind, mi) {
-      var y = gh(x, z) - .15, r = .1 + th * .018, tr = oadd(new THREE.CylinderGeometry(r * .55, r, th, 7), bark, x, y + th / 2, z); tr.rotation.z = (sr() - .5) * .08;
-      var s = th * (kind === 1 ? .36 : .29), c = oadd(crowns[kind], leafMats[mi], x, y + th * (kind === 0 ? .62 : .8), z); c.scale.set(s, s * 1.1, s); c.rotation.y = sr() * 6.28;
-      if (kind === 0 && th > 6) { var c2 = oadd(crowns[2], leafMats[mi], x + .3, y + th * .42, z - .2); c2.scale.setScalar(s * .7); c2.rotation.y = sr() * 6.28; }
-      blob(th * .32, OUT, x, z).position.y = y + .17;
-    }
-    [[-3.6, Z0 + 4.6, 8.5, 0, 0], [-4.8, Z0 + 9, 7.2, 0, 1], [-3.1, Z0 + 14.5, 9, 0, 0], [5.6, Z0 + 2.2, 4.2, 1, 3], [6.4, Z0 + 8, 7.8, 0, 2], [-7.8, Z0 + 1.6, 5.2, 1, 0], [-8.6, D + 2.2, 6.5, 0, 1], [9.6, D + 1.6, 6.8, 0, 0], [11.4, D + 4.4, 4, 1, 3], [-11.5, D + 4.6, 4.4, 1, 3], [-2.6, Z0 + 20, 6.4, 1, 0], [6.9, Z0 + 14.6, 8.4, 0, 0], [7.4, Z0 + 21, 5, 1, 3]].forEach(function (q) { tree(q[0], q[1], q[2], q[3], q[4]); });
-    for (var tn = 0; tn < 34; tn++) { var tx2 = (sr() - .5) * 62, tz2 = D + 1.5 + sr() * 50, off = tx2 - pathX(tz2); if ((off > -3.4 && off < 5.6) || (tz2 < Z0 + 2 && Math.abs(tx2) < 13)) continue; tree(tx2, tz2, 5.5 + sr() * 5.5, sr() < .6 ? 0 : 1, sr() < .16 ? 3 : Math.floor(sr() * 3)); }
-
-    /* rocks: big weathered boulders beside the path */
-    var rockTex = canvasTex(256, function (g, s) { g.fillStyle = "#77756f"; g.fillRect(0, 0, s, s); for (var i = 0; i < 2600; i++) { var v = 70 + Math.random() * 90; g.fillStyle = "rgba(" + v + "," + v + "," + (v - 6) + ",.35)"; g.fillRect(Math.random() * s, Math.random() * s, 2 + Math.random() * 7, 1 + Math.random() * 3); } }, 2, 2), rockMat = lit(M(0xffffff, { map: rockTex, roughness: 1 }), .1);
-    [[-2.9, Z0 + 2.6, 1.5], [1.9, Z0 + 1.7, .8], [-3.4, Z0 + 11.4, 1.9], [4.9, Z0 + 5.2, 1.1], [-6.5, Z0 + 6, 1.3], [5.4, Z0 + 12.5, 1.6], [-2.4, Z0 + 17.3, 1], [8.6, Z0 + 1, .9]].forEach(function (q) {
-      var G = new THREE.SphereGeometry(1, 18, 12), p = G.attributes.position; for (var i = 0; i < p.count; i++) { var k = 1 + Math.sin(p.getX(i) * 3.1 + q[0]) * Math.sin(p.getY(i) * 2.7) * Math.sin(p.getZ(i) * 3.3 + q[1]) * .3 + Math.sin(p.getX(i) * 9 + p.getZ(i) * 7) * .05; p.setXYZ(i, p.getX(i) * k, p.getY(i) * k, p.getZ(i) * k); } G.computeVertexNormals();
-      var m = oadd(G, rockMat, q[0], gh(q[0], q[1]) + q[2] * .22, q[1]); m.scale.set(q[2] * .95, q[2] * .55, q[2] * .75); m.rotation.y = sr() * 6.28; });
-
-    /* the monastery front: white walls, dark windows, and the deep red band with gold discs under the roof */
-    var FH = 8.6, wall = lit(M(0xf1ece0, { roughness: 1 }), .2), redBand = lit(M(0x7c2420, { roughness: .9 }), .22), dark = M(0x1c1714, { roughness: .8 }), paneMat = lit(M(0x2c3a44, { roughness: .3, metalness: .2 }), .1);
-    [-1, 1].forEach(function (s) { oadd(new THREE.PlaneGeometry(10.4, FH), wall, s * (PW + 5.2), FH / 2, D + .02); oadd(new THREE.BoxGeometry(10.2, .5, .22), stoneMat, s * (PW + 5.1), .25, D + .12);
-      [5.9, 8.6, 11.3].forEach(function (wx) { [2.7, 6].forEach(function (wy) { oadd(new THREE.BoxGeometry(1.5, 2, .06), dark, s * wx, wy, D + .05); oadd(new THREE.BoxGeometry(1.08, 1.5, .08), paneMat, s * wx, wy - .06, D + .06); oadd(new THREE.BoxGeometry(.05, 1.5, .1), wall, s * wx, wy - .06, D + .07); oadd(new THREE.BoxGeometry(1.72, .16, .24), redBand, s * wx, wy + 1.1, D + .12); oadd(new THREE.BoxGeometry(1.8, .05, .3), wall, s * wx, wy + 1.2, D + .14); }); }); });
-    oadd(new THREE.PlaneGeometry(2 * PW, FH - PH), wall, 0, (FH + PH) / 2, D + .02);
-    oadd(new THREE.BoxGeometry(29.2, .95, .36), redBand, 0, FH + .475, D + .14); oadd(new THREE.BoxGeometry(29.4, .12, .52), wall, 0, FH - .02, D + .2); oadd(new THREE.BoxGeometry(29.4, .12, .56), wall, 0, FH + 1.0, D + .22); oadd(new THREE.BoxGeometry(29.8, .16, 1.3), M(0x3a3632, { roughness: .9 }), 0, FH + 1.14, D + .3);
-    (function () { var n = 22, im = new THREE.InstancedMesh(new THREE.CylinderGeometry(.17, .17, .04, 20), lit(M(0xd9a42c, { roughness: .35, metalness: .4 }), .3), n), o = new THREE.Object3D(); for (var i = 0; i < n; i++) { o.position.set((i - (n - 1) / 2) * 1.32, FH + .475, D + .33); o.rotation.set(Math.PI / 2, 0, 0); o.updateMatrix(); im.setMatrixAt(i, o.matrix); } OUT.add(im); })();
     /* the altar's offerings, modelled in the round from the shrine photograph: tormas, clay figures and the eight auspicious symbols on their stepped stand; and an incense box by the censer */
     /* the offering stand: three cloth-covered tiers on the upper step, water bowls in front, tormas rising behind */
     (function () {
@@ -1998,9 +1943,9 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     var marker = new THREE.Mesh(new THREE.RingGeometry(.16, .2, 32), new THREE.MeshBasicMaterial({ color: 0xf3dc9c, transparent: true, opacity: 0, depthWrite: false })); marker.rotation.x = -Math.PI / 2; marker.position.y = .02; scene.add(marker);
 
     /* ---------- state ---------- */
-    var PZ = D + 4.7, PYAW = 3.34;                                     /* you arrive at the edge of the terrace, looking out over the stupa garden */
-    var cy = PYAW, cp = .1, PMIN = -.32;                                   /* the eased view angles the camera actually uses */
-    var S = { vy: 0, vp: 0, ramp: 0, wasMoving: false, yaw: PYAW, pitch: .1, dist: 2.8, heading: 0, target: null, seated: false, onArrive: null, bowT: -1, bowDur: 3.2, keys: {}, moving: false, running: false, mode: "porch", door: 0, doorTo: 0, off: 1, offOn: false, onCancel: null, lift: 0, liftOn: false };
+    var PZ = D + 2.3;
+    var cy = 0, cp = .1, PMIN = -.32;                                   /* the eased view angles the camera actually uses */
+    var S = { vy: 0, vp: 0, ramp: 0, wasMoving: false, yaw: 0, pitch: .1, dist: 2.8, heading: 0, target: null, seated: false, onArrive: null, bowT: -1, bowDur: 3.2, keys: {}, moving: false, running: false, mode: "porch", door: 0, doorTo: 0, off: 1, offOn: false, onCancel: null, lift: 0, liftOn: false };
     me.position.set(0, 0, PZ); me.rotation.y = Math.PI; S.heading = Math.PI;
     var wideMQ = window.matchMedia("(min-width: 760px) and (min-aspect-ratio: 23/20)");
     function cancelTrip() { if (S.onCancel) { var c = S.onCancel; S.onCancel = null; c(); } }
@@ -2132,7 +2077,6 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
         if (catRig) poseCat(catRig, catAmp, catT, catTail);
       }
 
-      OUT.visible = S.mode !== "hall" || S.door > .01; if (OUT.visible) outTick(time);
       sitters.forEach(function (q) { if (q.holder) q.holder.scale.y = 1 + Math.sin(time * .9 + q.phase) * .008; });
       if (GURU.holder) GURU.holder.scale.y = 1 + Math.sin(time * .7) * .007;
       var a = loop[seg], b2 = loop[(seg + 1) % 4], sl2 = Math.abs(b2[0] - a[0]) + Math.abs(b2[1] - a[1]); segT += dt * .6 / sl2; if (segT >= 1) { segT = 0; seg = (seg + 1) % 4; a = loop[seg]; b2 = loop[(seg + 1) % 4]; }
@@ -2182,7 +2126,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
         else if (!S.seated && S.bowT < 0 && !S.target) S.heading = S.yaw;
       }
       if (S.mode === "hall" && !fp) { camPos.x = Math.max(-W + .3, Math.min(W - .3, camPos.x)); camPos.z = Math.max(-D + .4, Math.min(D - .3, camPos.z)); }
-      else if (S.mode === "porch") { camPos.x = Math.max(-11, Math.min(11, camPos.x)); camPos.z = Math.max(D + .6, Math.min(Z0 + 12, camPos.z)); camPos.y = Math.max(camPos.y, gh(camPos.x, camPos.z) + .7); }
+      else if (S.mode === "porch") { camPos.x = Math.max(-PW + .3, Math.min(PW - .3, camPos.x)); camPos.z = Math.max(D + .35, Math.min(D + PD + (narrowPorch ? 3.2 : -.25), camPos.z)); }
       if (!fp && S.mode === "hall") {
         var lift = function (x, z, r, y) { var ddx = camPos.x - x, ddz = camPos.z - z; if (ddx * ddx + ddz * ddz < r * r) camPos.y = Math.max(camPos.y, y); };
         sitters.forEach(function (q) { lift(q.x, q.z, .8, 1.55); }); lift(GURU.x, GURU.z, 1.2, 1.95); lift(walkerHolder.position.x, walkerHolder.position.z, .8, 2.05);
@@ -2201,7 +2145,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       renderer.render(scene, camera);
     }
 
-    function toPorch() { S.mode = "porch"; S.seated = false; meStand.visible = true; meSit.visible = false; S.target = null; S.onArrive = null; S.bowT = -1; me.position.set(0, 0, PZ); S.heading = Math.PI; me.rotation.y = Math.PI; S.yaw = PYAW; S.pitch = .1; S.doorTo = 0; S.bowMid = null; bootsOff(false); cancelTrip(); }
+    function toPorch() { S.mode = "porch"; S.seated = false; meStand.visible = true; meSit.visible = false; S.target = null; S.onArrive = null; S.bowT = -1; me.position.set(0, 0, PZ); S.heading = Math.PI; me.rotation.y = Math.PI; S.yaw = 0; S.pitch = .1; S.doorTo = 0; S.bowMid = null; bootsOff(false); cancelTrip(); }
     return {
       start: function () { if (S.running) return; collectEmissives(); S.running = true; clock.getDelta(); resize(); camera.position.set(0, 1.7, PZ + 1.7); frame(); },
       enter: function (cb, onDoor, shoeSound) {
@@ -2352,11 +2296,11 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     cv.addEventListener("pointerdown", function (e) { d0 = [e.clientX, e.clientY]; }); cv.addEventListener("pointermove", function (e) { if (d0 && hintSt && Math.abs(e.clientX - d0[0]) + Math.abs(e.clientY - d0[1]) > 24) hintSt.dragged = true; }); cv.addEventListener("pointerup", function () { d0 = null; });
     ["dock", "menu-btn", "clock-btn"].forEach(function (id) { $(id).addEventListener("click", function () { if (hintSt) hintSt.tapped = id; }); });
   })();
-  var inside = function () { insideHall = true; ambience(); play("door_close", .35); $("app").classList.remove("outside"); $("leave-pill").hidden = false; say(t("hint")); setTimeout(function () { ringBell(.4); }, 700); if (store.get("bp-tour", "") !== "1") setTimeout(tour, 2600); setTimeout(function () { meow(.7); }, 2200); };
+  var inside = function () { insideHall = true; ambience(); try { MUSIC.arrive(); } catch (e) {} play("door_close", .35); $("app").classList.remove("outside"); $("leave-pill").hidden = false; say(t("hint")); setTimeout(function () { ringBell(.4); }, 700); if (store.get("bp-tour", "") !== "1") setTimeout(tour, 2600); setTimeout(function () { meow(.7); }, 2200); };
     if (world) world.enter(inside, function () { play("door_open", .4); }, function () { play("cloth", .5); }); else { play("door_open", .4); inside(); }
   };
   $("leave").onclick = function () {
-    closePanels(true); endSit(true); say(""); insideHall = false; ambience(); play("door_close", .3);
+    closePanels(true); endSit(true); say(""); try { MUSIC.leave(); } catch (e) {} insideHall = false; ambience(); play("door_close", .3);
     $("app").classList.add("outside"); $("leave-pill").hidden = true; $("entry").classList.remove("gone");
     if (world) world.leave();
   };
@@ -3161,7 +3105,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   function stopSession() { clearInterval(sitTick); sitTick = null; gdEnd(); breathStop(); $("sit-ui").hidden = true; if (wake) { try { wake.release(); } catch (e) {} wake = null; } }
   function endSit(quiet) {                                           /* stand up at once */
     var was = !!sitTick; $("app").classList.remove("sitting", "paused"); $("sitdone").hidden = true; stopSession(); try { ambience(); } catch (e) {}
-    if (world) world.stand(); if (was) play("cloth", .5);
+    if (world) world.stand(); if (was) { play("cloth", .5); if (insideHall) try { MUSIC.rise(); } catch (e) {} }
   }
   function finishSit(early) {                                        /* the closing: bells, a quiet tally, a dedication */
     if (!sitTick) return; var now = sitPausedAt || Date.now(), satMs = Math.max(0, Math.min(sitTotal, now - sitStart)), mins = Math.round(satMs / 60000), breaths = bCycles;
