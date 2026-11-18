@@ -1,6 +1,6 @@
 <title>Buddha Pāda Bookings</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
 /* layout: the shrine photograph fills the screen; one glass sheet floats over it. Everything that carries text sits on solid panels inside the sheet,
    so the photo shows only around the sheet and through its gutters. Sidebar at 1200 and up, an icon rail from 860, a bottom tab bar below that. */
@@ -133,6 +133,62 @@ button.msg { text-align: left; white-space: nowrap; overflow: hidden; text-overf
 }
 @media (max-height: 520px) and (max-width: 959px) { .app { grid-template-columns: 64px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); } .side { order: 0; flex-direction: column; border-top: 0; border-right: 1px solid var(--line); padding: 4px; } .nav-b { flex: none; } .app.in-guest { grid-template-columns: minmax(0, 1fr); } .dock textarea { min-height: 90px; } }
 @media (prefers-reduced-motion: no-preference) { .row, .nav-b, .btn { transition: background .15s, opacity .15s; } .undo, .dlg { animation: up .18s ease-out; } @keyframes up { from { opacity: 0; translate: 0 8px; } } }
+
+/* ---------- Apple look: system type, system greys and blue, a translucent sidebar, Mail-style list and bezel buttons ---------- */
+:root {
+  --sheet: rgba(246, 246, 248, .8); --panel: #ffffff; --panel-2: #f5f5f7; --well: #ececf0;
+  --ink: #1d1d1f; --ink2: #515154; --ink3: #6e6e73; --line: #dcdce1; --accent: #0071e3; --accent-soft: #e6f0fd; --gold: #b97a00;
+  --ok: #1d7a36; --ok-soft: #e3f4e7; --warn: #a14a00; --warn-soft: #fdefd9; --bad: #c5000f; --bad-soft: #fde8e8; --info: #0064c8; --info-soft: #e6f0fd;
+  --f-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Inter", "Segoe UI", Roboto, sans-serif; --f-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "Inter", "Segoe UI", Roboto, sans-serif;
+  --tap: 32px;
+}
+body { font: 13px/1.45 var(--f-text); -webkit-font-smoothing: antialiased; letter-spacing: -.003em; }
+:focus-visible { outline: 3px solid rgba(0, 113, 227, .45); outline-offset: 1px; }
+.app { border-radius: 14px; box-shadow: inset 0 0 0 .5px rgba(255, 255, 255, .9), 0 0 0 .5px rgba(0, 0, 0, .22), 0 30px 80px rgba(0, 0, 0, .38); }
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) { .app { -webkit-backdrop-filter: blur(40px) saturate(1.8); backdrop-filter: blur(40px) saturate(1.8); } }
+.side { padding: 18px 10px 12px; gap: 2px; border-right: .5px solid rgba(0, 0, 0, .12); background: rgba(255, 255, 255, .28); }
+.brand { padding: 0 8px 14px; } .brand b { font: 700 17px/1.2 var(--f-display); letter-spacing: -.02em; } .brand span { font-size: 11px; color: var(--ink3); }
+.nav-b { min-height: 32px; padding: 0 8px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--ink); } .nav-b svg { width: 18px; height: 18px; stroke: var(--accent); stroke-width: 1.8; } .nav-b:hover { background: rgba(0, 0, 0, .05); }
+.nav-b[aria-current="page"] { background: rgba(0, 0, 0, .1); color: var(--ink); } .nav-b i { min-width: 20px; font: 600 11px/18px var(--f-text); background: none; color: var(--ink3); } .nav-b[aria-current="page"] i { color: var(--ink2); }
+.proto { border-radius: 10px; background: rgba(255, 255, 255, .55); color: var(--ink2); font-size: 11px; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .1); }
+.top { min-height: 52px; padding: 10px 16px 10px 12px; } .top h1 { font: 700 20px/1.2 var(--f-display); letter-spacing: -.02em; } .top p { font-size: 11px; color: var(--ink3); }
+.view { padding: 0 16px 16px 12px; }
+.btn { border-radius: 8px; font-size: 13px; font-weight: 500; padding: 0 12px; background: var(--accent); box-shadow: 0 .5px 1px rgba(0, 0, 0, .2), inset 0 .5px 0 rgba(255, 255, 255, .25); } .btn:active { filter: brightness(.92); }
+.btn.sec { background: #fff; color: var(--ink); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .14), 0 1px 1.5px rgba(0, 0, 0, .1); } .btn.quiet { background: none; box-shadow: none; color: var(--accent); } .btn.quiet:hover { background: rgba(0, 113, 227, .08); } .btn.danger { background: var(--bad); }
+.chip { min-height: 20px; padding: 1px 7px; border-radius: 6px; font: 500 11px/1.4 var(--f-text); } .chip::before { width: 6px; height: 6px; }
+.s-paid { background: #fdf3d6; color: #7a5200; } .s-lost { background: var(--well); color: var(--ink3); }
+.listp, .detail, .grp-b, .card, .t-list, .t-edit { border-radius: 10px; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .14), 0 1px 3px rgba(0, 0, 0, .05); }
+.fbar { padding: 10px; gap: 6px; background: var(--panel-2); border-bottom: .5px solid var(--line); }
+.fbar input, .fbar select, .field input, .field select, .field textarea, .dock textarea, .dock input[type="text"], .dock-f select, .rbar select { border-radius: 8px; border: .5px solid #c7c7cc; background: #fff; box-shadow: inset 0 .5px 1px rgba(0, 0, 0, .06); }
+.fbar input[type="search"] { background: rgba(118, 118, 128, .12); border-color: transparent; box-shadow: none; }
+.fchips button { border-radius: 6px; min-height: 24px; }
+.row { padding: 10px 12px; border-bottom: .5px solid var(--line); } .row:hover { background: var(--panel-2); } .row-h b { font-size: 13px; } .row-h time, .tag { font-size: 11px; } .row p { font-size: 12px; margin-top: 4px; }
+.row[aria-current="true"] { background: var(--accent); box-shadow: none; color: #fff; border-bottom-color: transparent; } .row[aria-current="true"] .row-h time, .row[aria-current="true"] .tag, .row[aria-current="true"] p, .row[aria-current="true"] .note { color: rgba(255, 255, 255, .86); } .row[aria-current="true"] .chip { background: rgba(255, 255, 255, .22); color: #fff; }
+.d-head { min-height: 52px; border-bottom: .5px solid var(--line); background: rgba(255, 255, 255, .96); } .d-head h2 { font: 600 15px/1.25 var(--f-display); letter-spacing: -.01em; } .d-head p { font-size: 11px; color: var(--ink3); }
+.conv { background: var(--panel-2); } .thread { padding: 14px; gap: 8px; }
+.msg { border-radius: 12px; padding: 9px 12px; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .04); font-size: 13px; } .msg.out { background: var(--accent-soft); box-shadow: 0 0 0 .5px rgba(0, 113, 227, .18); } .msg header { font-size: 11px; } button.msg { font-size: 12px; }
+.dock { padding: 10px 14px; border-top: .5px solid var(--line); background: #fff; } .dock-row .btn:first-child { color: var(--ink3); font-weight: 400; background: rgba(118, 118, 128, .12); box-shadow: none; }
+.strip { border-radius: 8px; font-size: 12px; } .err { border-radius: 8px; font-size: 12px; }
+.panel { padding: 14px; gap: 10px; border-left: .5px solid var(--line); background: var(--panel-2); } .card { padding: 14px; } .card h3 { font: 600 11px/1.4 var(--f-text); letter-spacing: .02em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
+.next { background: #fff; } .next .say { font: 700 17px/1.25 var(--f-display); letter-spacing: -.02em; } .next .sub { font-size: 12px; } .next .acts { gap: 6px; margin-top: 12px; } .next .acts .btn { min-height: 36px; font-weight: 600; }
+.dots li { font-size: 11px; } .dots li::before { height: 3px; border-radius: 3px; background: #dcdce1; } .dots li.now::before { background: var(--accent); } .dots li.now { color: var(--accent); }
+.pick button { height: 36px; border-radius: 8px; background: #fff; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .14), 0 1px 1.5px rgba(0, 0, 0, .08); } .pick button[aria-pressed="true"] { background: var(--accent); }
+.kv, .avail { font-size: 12px; } .field > span { font-size: 11px; font-weight: 500; color: var(--ink3); }
+.menu-p { border-radius: 10px; padding: 5px; background: rgba(250, 250, 252, .92); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .18), 0 10px 30px rgba(0, 0, 0, .22); } .menu-p button { min-height: 28px; border-radius: 6px; padding: 0 10px; } .menu-p button:hover { background: var(--accent); color: #fff; }
+.grp h2 { font: 700 15px/1.3 var(--f-display); letter-spacing: -.01em; } .grp h2 small { font-size: 12px; } .t-row { padding: 10px 12px; border-bottom: .5px solid var(--line); } .t-row p { font-size: 12px; }
+.rm h3 { font: 700 15px/1.3 var(--f-display); letter-spacing: -.01em; } .rm h3 small { font-size: 12px; } .cell { border-radius: 8px; font-size: 12px; } .k-free { box-shadow: inset 0 0 0 .5px #c7c7cc; } .k-conf { background: #2a9d4a; } .k-paid { background: #e0a100; color: #3a2a00; } .occ, .legend { font-size: 12px; } .occ li { border-top: .5px solid var(--line); }
+.t-list button { min-height: 30px; border-radius: 6px; font-size: 13px; color: var(--ink); } .t-list button[aria-current="true"] { background: var(--accent); } .t-list h4, .pk-list h4 { font: 600 11px/1.4 var(--f-text); text-transform: uppercase; letter-spacing: .02em; }
+.ins button { border-radius: 6px; min-height: 26px; background: rgba(118, 118, 128, .12); color: var(--ink); } .prev { border-radius: 10px; background: var(--accent-soft); }
+.undo { border-radius: 12px; min-height: 40px; padding: 4px 6px 4px 14px; background: rgba(40, 40, 42, .86); -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6); font-size: 13px; } .undo button { min-height: 30px; border-radius: 7px; color: #6cb4ff; background: none; font-weight: 600; }
+.veil { background: rgba(0, 0, 0, .28); } .dlg { border-radius: 14px; padding: 20px; background: rgba(250, 250, 252, .96); -webkit-backdrop-filter: blur(30px); backdrop-filter: blur(30px); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .2), 0 30px 70px rgba(0, 0, 0, .35); } .dlg h2 { font: 700 15px/1.3 var(--f-display); letter-spacing: -.01em; } .dlg p { font-size: 13px; } .dlg-b .btn { min-height: 32px; min-width: 96px; } .pk-list button { min-height: 32px; border-radius: 6px; } .pk-list button:hover { background: var(--accent); color: #fff; }
+@media (max-width: 1199px) { .nav-b { min-height: 52px; font-size: 10px; } .nav-b svg { width: 22px; height: 22px; } .nav-b i { background: var(--bad); color: #fff; border-radius: 99px; } .nav-b[aria-current="page"] i { color: #fff; } }
+@media (max-width: 859px) {
+  :root { --tap: 44px; } body { font-size: 15px; } .app { border-radius: 0; box-shadow: none; }
+  .side { background: rgba(249, 249, 249, .94); border-top: .5px solid rgba(0, 0, 0, .2); border-right: 0; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); } .nav-b { color: #8e8e93; min-height: 50px; } .nav-b svg { stroke: currentColor; } .nav-b:hover { background: none; } .nav-b[aria-current="page"] { background: none; color: var(--accent); }
+  .top h1 { font-size: 28px; letter-spacing: -.02em; } .btn { font-size: 15px; border-radius: 10px; } .row { padding: 12px 14px; } .row-h b { font-size: 16px; } .row p { font-size: 14px; } .row-h time, .tag { font-size: 12px; } .chip { font-size: 12px; }
+  .d-head h2 { font-size: 17px; } .d-head p { font-size: 12px; } .d-back { color: var(--accent); font-size: 30px; } .msg { font-size: 15px; border-radius: 16px; } .next .say { font-size: 20px; } .next .sub, .kv, .avail, .t-row p { font-size: 14px; } .next .acts .btn { min-height: 48px; border-radius: 12px; font-size: 16px; } .pick button { height: 44px; }
+  .dlg { border-radius: 14px 14px 0 0; } .dlg-b .btn { min-height: 48px; border-radius: 12px; font-size: 16px; font-weight: 600; } .dlg h2 { font-size: 17px; } .dlg p { font-size: 15px; } .menu-p button { min-height: 44px; } .pk-list button, .t-list button { min-height: 44px; font-size: 15px; } .grp h2, .rm h3 { font-size: 20px; }
+}
 </style>
 
 <a class="skip" href="#view">Skip to the guest list</a>
