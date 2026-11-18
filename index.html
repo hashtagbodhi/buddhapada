@@ -707,6 +707,8 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
 .ios .cta-b { min-height: 48px; border-radius: 999px; background: var(--ink); font-size: 15px; font-weight: 600; letter-spacing: 0; box-shadow: 0 6px 18px rgba(21, 19, 15, .22); } .ios .cta-b:disabled { background: rgba(21, 19, 15, .1); color: var(--ink-3); box-shadow: none; }
 .ios .bk-back { min-height: 48px; font-size: 15px; font-weight: 500; color: var(--ink-2); } .ios .bk-err, .ios-f.bad { color: #a3261a; }
 .ios .bk-bar { background: rgba(250, 247, 242, .86); }
+.ios-r.sum b { max-width: 68%; overflow-wrap: anywhere; white-space: pre-line; }
+.ios a.cta-b { box-sizing: border-box; width: 100%; min-height: 52px; }
 </style>
 
 <div id="app" class="outside">
@@ -2624,10 +2626,10 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
       '<section class="bk-pane" data-s="1" hidden><p class="ios-h">Your Details</p><div class="ios-g">' +
       '<label class="ios-r"><span>Name</span><input type="text" name="name" autocomplete="name" placeholder="Full name" required></label>' +
       '<label class="ios-r"><span>Email</span><input type="email" name="email" autocomplete="email" inputmode="email" placeholder="name@example.com" required></label>' +
-      '<label class="ios-r"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder="Optional"></label></div><p class="ios-f" id="bk-ef">We reply to this address to confirm your room.</p>' +
+      '<label class="ios-r"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder="Phone or WhatsApp" required></label></div><p class="ios-f" id="bk-ef">We reply to this address to confirm your room.</p>' +
       '<p class="ios-h">Have You Been Here Before?</p><div class="ios-seg" role="radiogroup" aria-label="Attended a programme here before" id="bk-before"><label><input type="radio" name="before" value="first"><span>First Time</span></label><label><input type="radio" name="before" value="yes"><span>Yes, I Have</span></label></div>' +
       '<p class="ios-h">Notes</p><div class="ios-g"><textarea name="note" rows="3" placeholder="Arrival time, health or food needs, questions"></textarea></div><p class="ios-f">Optional.</p></section>' +
-      '<section class="bk-pane" data-s="2" hidden><p class="ios-h">Your Request</p><div class="ios-g" id="bk-sum" aria-live="polite"></div>' +
+      '<section class="bk-pane" data-s="2" hidden><p class="ios-h">Your Request</p><div class="ios-g" id="bk-sum" aria-live="polite"></div><p class="ios-h">Your Details</p><div class="ios-g" id="bk-me"></div>' +
       '<p class="ios-h">What Happens Next</p><div class="ios-g"><div class="ios-r num"><i>1</i><span>You send this request to ' + MAIL + ' from your own email.</span></div><div class="ios-r num"><i>2</i><span>We reply to confirm your room and the amount for your stay.</span></div><div class="ios-r num"><i>3</i><span>Nothing is charged here. Meals are paid for as you take them.</span></div></div>' +
       '<p class="ios-h">Good to Know</p><div class="ios-g faq">' + pick.map(function (q) { return "<details><summary><span>" + esc(q[0]) + "</span>" + CH + "</summary><p>" + esc(q[1]) + "</p></details>"; }).join("") + '<button type="button" class="ios-r link" data-go="faq"><span>All Questions</span>' + CH + "</button></div></section>" +
       '<p class="bk-err" id="bk-err" role="alert"></p>' +
@@ -2643,10 +2645,12 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
         if (k === 1) {
           if (!v("name")) return ["Please add your name.", f.elements.name];
           if (!okMail()) return ["Please add an email address we can reply to.", f.elements.email];
+          if (v("phone").replace(/[^0-9]/g, "").length < 7) return ["Please add a phone or WhatsApp number.", f.elements.phone];
           if (!f.elements.before.value) return ["Please tell us whether you have been here before.", q("#bk-before input")];
         }
         return null;
       }
+      function details() { var b = f.elements.before.value, d = [["Name", v("name") || "\u2014"], ["Email", v("email") || "\u2014"], ["Phone", v("phone") || "\u2014"], ["Been Here Before", b === "yes" ? "Yes" : b === "first" ? "No, first time" : "\u2014"]]; if (v("note")) d.push(["Your Message", v("note")]); return d; }
       function sum() {
         var r = room(), n = nights(), need = r.two ? Math.ceil(guests / 2) : guests, total = r.rate * n * need, okDates = v("in") && v("out") && pd(v("out")) >= pd(v("in"));
         var rows = [["Programme", esc(e.title)], ["Dates", okDates ? range({ start: v("in"), end: v("out") }) + " · " + n + (n === 1 ? " night" : " nights") : "—"], ["Guests", guests],
@@ -2654,6 +2658,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
           ["Meals", inr(MEAL_RATE) + " per meal <small>pay only for the meals you take</small>"],
           ["Estimated Stay", "<em>" + inr(total) + "</em> <small>" + inr(r.rate) + " × " + n + (n === 1 ? " night" : " nights") + (need > 1 ? " × " + need + " rooms" : "") + "</small>"]];
         q("#bk-sum").innerHTML = rows.map(function (x) { return '<div class="ios-r sum"><span>' + x[0] + "</span><b>" + x[1] + "</b></div>"; }).join("");
+        var me = details(); q("#bk-me").innerHTML = me.map(function (x) { return '<div class="ios-r sum"><span>' + x[0] + "</span><b>" + esc(x[1]) + "</b></div>"; }).join("");
         q("#bk-n").textContent = !okDates ? "Please check the dates." : n === 0 ? "A day visit, no night's stay." : n + (n === 1 ? " night" : " nights") + (v("in") === e.start && v("out") === e.end ? " · the whole programme" : "");
         q("#bk-n").classList.toggle("bad", !okDates); q("#bk-ev").textContent = inr(total);
         q("#bk-go").disabled = !!check(step);                               /* the button wakes when the step is complete */
@@ -2677,7 +2682,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
         store.set("bp-guest", JSON.stringify({ name: v("name"), email: v("email"), phone: v("phone") }));
         var ref = "BP-" + e.start.slice(2).replace(/-/g, "") + "-" + Math.random().toString(36).slice(2, 6).toUpperCase(), rows = sum(), before = f.elements.before.value === "yes" ? "Yes" : "No, first time";
         var body = "Booking request " + ref + "\n\n" + rows.map(function (x) { return x[0] + ": " + String(x[1]).replace(/ <small>/g, ", ").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&"); }).join("\n") + "\n\nName: " + v("name") + "\nEmail: " + v("email") + (v("phone") ? "\nPhone: " + v("phone") : "") + "\nAttended a programme here before: " + before + (v("note") ? "\n\nNote: " + v("note") : "") + "\n\nSent from the Buddha Pāda shrine room.";
-        bookDone(e, ref, rows.concat([["Been here before", before]]), body, v("email"));
+        bookDone(e, ref, rows.concat(details().map(function (x) { return [x[0], esc(x[1])]; })), body, v("email"));
       });
       show(0, true);
     } };
@@ -2685,9 +2690,9 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   function bookDone(e, ref, rows, body, email) {
     var href = "mailto:" + MAIL + "?subject=" + encodeURIComponent("Booking request " + ref + ": " + e.title) + "&body=" + encodeURIComponent(body);
     var top = stack[stack.length - 1], sc = top.el.querySelector(".nv-scroll");
-    sc.innerHTML = '<div class="bk"><p class="eyebrow">Almost there</p><h2 class="nv-title">Send your request</h2><p class="nv-lede">Your request <b>' + ref + '</b> is ready. Send it to us by email and we will confirm your room and the amount.</p>' +
-      '<div class="bk-sum">' + rows.map(function (q) { return "<div><span>" + q[0] + "</span><b>" + q[1] + "</b></div>"; }).join("") + '</div>' +
-      '<a class="cta-b" href="' + href + '">Send by email</a><button class="cta-l" type="button" id="bk-copy">Copy the request text</button><p class="note" style="text-align:center">We reply to ' + esc(email) + ". Your place is held once we confirm.</p></div>";
+    sc.innerHTML = '<div class="bk ios"><p class="eyebrow">Almost there</p><h2 class="nv-title">Send your request</h2><p class="nv-lede">Your request <b>' + ref + '</b> is ready. Send it to us by email and we will confirm your room and the amount.</p>' +
+      '<p class="ios-h">Your Request</p><div class="ios-g">' + rows.map(function (q) { return '<div class="ios-r sum"><span>' + q[0] + "</span><b>" + q[1] + "</b></div>"; }).join("") + '</div>' +
+      '<a class="cta-b" href="' + href + '" style="margin-top:22px">Send by Email</a><button class="cta-l" type="button" id="bk-copy">Copy the request text</button><p class="ios-f" style="text-align:center">We reply to ' + esc(email) + ". Your place is held once we confirm.</p></div>";
     sc.scrollTop = 0; play("chime", .5);
     sc.querySelector("#bk-copy").onclick = function () { var b = this; try { navigator.clipboard.writeText(body).then(function () { b.textContent = "Copied"; }); } catch (er) {} };
   }
