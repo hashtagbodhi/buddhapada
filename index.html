@@ -862,7 +862,7 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
   }
 
   /* ---------- sound: a muted synthesised pad, bowl, bead and chime; only footsteps and the door are recordings ---------- */
-  var actx = null, master = null, wet = null, breeze = null, soundOn = store.get("bp-sound", "1") === "1", bufs = {}, rawAudio = {}, loops = {}, want = {}, insideHall = false;
+  var actx = null, master = null, wet = null, breeze = null, sitPad = null, soundOn = store.get("bp-sound", "1") === "1", bufs = {}, rawAudio = {}, loops = {}, want = {}, insideHall = false;
   var SOUNDS = { door_open: "mp3", door_close: "mp3", steps: "wav", meow: "mp3", inhale: "mp3", exhale: "mp3" };
   Object.keys(SOUNDS).forEach(function (n) {
     try { fetch("audio/" + n + "." + SOUNDS[n]).then(function (r) { return r.ok ? r.arrayBuffer() : null; }).then(function (ab) { if (ab) { rawAudio[n] = ab; decode(n); } }).catch(function () {}); } catch (e) {}
@@ -888,6 +888,13 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
         [[108, .5, .031], [162, .3, .043], [216, .26, .027], [324, .08, .037]].forEach(function (v, n) {
           var o = a.createOscillator(), g = a.createGain(), l = a.createOscillator(), lg = a.createGain();
           o.frequency.value = v[0]; g.gain.value = v[1] * .6; l.frequency.value = v[2]; lg.gain.value = v[1] * .38; l.connect(lg); lg.connect(g.gain); o.connect(g); g.connect(mute); o.start(); l.start(a.currentTime + n * 3);
+        });
+        /* while someone sits the hall changes key: a lower, stiller drone on a different chord, with a slow far shimmer */
+        sitPad = a.createGain(); sitPad.gain.value = 0;
+        var mute2 = a.createBiquadFilter(); mute2.type = "lowpass"; mute2.frequency.value = 400; mute2.Q.value = .2; mute2.connect(sitPad); sitPad.connect(master); sitPad.connect(wet);
+        [[81, .55, .019], [121.5, .3, .027], [162, .22, .023], [182.25, .12, .031], [243, .07, .017]].forEach(function (v, n) {
+          var o = a.createOscillator(), g = a.createGain(), l = a.createOscillator(), lg = a.createGain();
+          o.frequency.value = v[0]; g.gain.value = v[1] * .6; l.frequency.value = v[2]; lg.gain.value = v[1] * .34; l.connect(lg); lg.connect(g.gain); o.connect(g); g.connect(mute2); o.start(); l.start(a.currentTime + n * 4);
         });
         Object.keys(SOUNDS).forEach(decode);
       } catch (e) {}
@@ -930,7 +937,11 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
     out.connect(master); out.connect(wet); src.start();
   }
   setInterval(function () { if (Math.random() < .35) hallMeow(); }, 10000);
-  function ambience() { if (breeze) breeze.gain.setTargetAtTime(insideHall ? .0675 : .042, actx.currentTime, 4); }
+  function ambience() {
+    if (!breeze) return; var sitting = $("app").classList.contains("sitting");
+    breeze.gain.setTargetAtTime(sitting ? .008 : insideHall ? .0675 : .042, actx.currentTime, sitting ? 3 : 4);
+    if (sitPad) sitPad.gain.setTargetAtTime(sitting ? .07 : 0, actx.currentTime, sitting ? 5 : 3);
+  }
   /* the hall's quiet life: about once a minute one small sound drifts in, eight kinds, each in turn before any repeats */
   function nz(a, t0, dur, type, f0, f1, peak, flutter) {              /* a breath of filtered noise that swells and dies away */
     var src = a.createBufferSource(), flt = a.createBiquadFilter(), g = a.createGain(); src.buffer = noise(a, 2, 0); src.loop = true;
@@ -2800,7 +2811,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
     closePanels(true); $("sitdone").hidden = true; $("app").classList.add("sitting"); $("app").classList.remove("paused"); sitPausedAt = 0; $("sit-pause").textContent = "Pause";
     var begin = function () {
       sitTotal = m * 60000; sitStart = Date.now(); sitEnd = sitStart + sitTotal + SETTLE; sitStart += SETTLE; nextBell = bellEvery * 60000; $("sit-ui").hidden = false; if (!again) play("cloth", .6);
-      gdEnd(); if (sitMode === "guided") gdBegin(); breathStart(); paintVoice();
+      gdEnd(); if (sitMode === "guided") gdBegin(); breathStart(); paintVoice(); ambience();
       clockPaint(); ringBell(.55); clearInterval(sitTick); sitTick = setInterval(clockPaint, 250);
       try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(function (w) { wake = w; }, function () {}); } catch (e) {}
     };
@@ -2808,7 +2819,7 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   }
   function stopSession() { clearInterval(sitTick); sitTick = null; gdEnd(); breathStop(); $("sit-ui").hidden = true; if (wake) { try { wake.release(); } catch (e) {} wake = null; } }
   function endSit(quiet) {                                           /* stand up at once */
-    var was = !!sitTick; $("app").classList.remove("sitting", "paused"); $("sitdone").hidden = true; stopSession();
+    var was = !!sitTick; $("app").classList.remove("sitting", "paused"); $("sitdone").hidden = true; stopSession(); try { ambience(); } catch (e) {}
     if (world) world.stand(); if (was) play("cloth", .5);
   }
   function finishSit(early) {                                        /* the closing: bells, a quiet tally, a dedication */
