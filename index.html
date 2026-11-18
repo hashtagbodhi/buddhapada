@@ -732,6 +732,38 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
 .h-menu { top: calc(86px + env(safe-area-inset-top, 0px)); justify-items: end; padding-right: 22px; } .h-menu p::before { content: ""; display: block; width: 10px; height: 10px; margin: 0 14px 8px auto; border-left: 2px solid #fff; border-top: 2px solid #fff; transform: rotate(45deg); animation: hBob 1.4s ease-in-out infinite; }
 @keyframes hBob { 0%, 100% { translate: 0 0; } 50% { translate: 0 4px; } }
 @media (prefers-reduced-motion: reduce) { .hint-hand, .hint-ring, .hint p::after, .hint p::before { animation: none !important; } .hint-ring { opacity: .7; } }
+/* guide: the control being named glows warm and breathes; its name sits beside it with a small pointer */
+.spot { animation: spot 1.5s ease-in-out infinite; z-index: 7; } @keyframes spot { 0%, 100% { scale: 1; filter: drop-shadow(0 0 0 rgba(255, 232, 180, 0)); } 50% { scale: 1.07; filter: drop-shadow(0 0 16px rgba(255, 232, 180, .95)) brightness(1.1); } }
+.h-spot { right: auto; display: block; text-align: center; } .h-spot .hint-hand { display: none; } .h-spot p { display: inline-block; padding: 9px 14px; border-radius: 14px; background: rgba(20, 16, 12, .62); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-size: 15px; line-height: 20px; text-shadow: none; box-shadow: 0 8px 24px rgba(0, 0, 0, .3); }
+.h-spot::before { content: ""; position: absolute; left: calc(var(--ax, 50%) - 6px); width: 12px; height: 12px; background: rgba(20, 16, 12, .62); transform: rotate(45deg); } .h-spot.below::before { top: -5px; } .h-spot.above::before { bottom: -5px; top: auto; }
+@media (prefers-reduced-motion: reduce) { .spot { animation: none; filter: drop-shadow(0 0 14px rgba(255, 232, 180, .95)); } }
+
+/* practice screens take the whole screen: a quiet label at the top, the one thing that matters large in the middle, the action low where the thumb rests */
+body:has(.panel.full:not([hidden])) #gl { filter: brightness(.32) saturate(.8); }
+.panel.full { align-items: stretch; padding: 0; background: rgba(10, 9, 8, .22) !important; }
+.panel.full .sheet { width: 100%; max-width: 560px; height: 100%; max-height: none; margin: 0 auto; padding: calc(20px + env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px)); gap: 0; color: #fff; }
+.panel.full .x { top: calc(14px + env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); width: 44px; height: 44px; font-size: 24px; color: #fff; background: rgba(255, 255, 255, .12); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .26); z-index: 3; }
+.fs-k { align-self: flex-start; display: flex; align-items: center; min-height: 44px; margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: rgba(255, 255, 255, .78); }
+.panel.full h2 { margin: 0; font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: clamp(26px, 7vw, 34px); line-height: 1.2; font-weight: 500; letter-spacing: -.005em; color: #fff; text-wrap: balance; }
+.fs-sub { margin: 10px 0 0; font-size: 16px; line-height: 23px; color: rgba(255, 255, 255, .78); text-wrap: balance; }
+/* sitting */
+#p-sit.full .sitset { flex: 1; min-height: 0; padding-top: min(4vh, 34px); } #p-sit.full .sit-mark { width: 76px; height: 50px; } #p-sit.full .sitset h2 { margin-top: 14px; }
+#p-sit.full .sit-n { margin-top: min(2vh, 14px); } #p-sit.full .sit-n output { font-size: min(34vw, 19vh, 148px); line-height: 1; } #p-sit.full .sit-n small { margin-top: 6px; font-size: 13px; letter-spacing: .2em; }
+#p-sit.full .chips { gap: 12px; margin: min(3vh, 24px) 0 min(1.5vh, 10px); } #p-sit.full .chip { width: 60px; height: 60px; min-width: 0; padding: 0; border-radius: 50%; font-size: 19px; }
+#p-sit.full .sit-row { grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: min(2.4vh, 20px); } #p-sit.full .sit-row > span { font-size: 12px; letter-spacing: .18em; } #p-sit.full .seg { padding: 4px; } #p-sit.full .seg button { min-height: 48px; font-size: 15px; }
+#p-sit.full .gd-about { margin-top: 12px; font-size: 14px; line-height: 20px; } #p-sit.full .sit-go { margin-top: auto; min-height: 60px; font-size: 18px; } #p-sit.full .sit-stat { margin: 12px 0 0; font-size: 13px; }
+/* mala */
+#p-mala.full .sheet { justify-content: space-between; } #p-mala.full .mantra { padding: 0 6px; } #p-mala.full .m-en, #p-mala.full .m-bo { font-size: clamp(25px, 7vw, 34px); } #p-mala.full .mantra.long .m-en, #p-mala.full .mantra.long .m-bo { font-size: clamp(21px, 5.8vw, 27px); }
+#p-mala.full .m-of { font-size: 12px; letter-spacing: .18em; } #p-mala.full .m-sw { font-size: 14px; min-height: 40px; }
+#p-mala.full .enso { width: min(54vw, 25vh, 220px); height: min(54vw, 25vh, 220px); } #p-mala.full .enso .n { font-size: min(17vw, 8vh, 76px); font-weight: 200; } #p-mala.full .enso .n small { margin-top: 8px; font-size: 14px; } #p-mala.full #rounds { margin: 0; min-height: 20px; font-size: 14px; color: rgba(255, 255, 255, .8); }
+#p-mala.full #mala-cv { height: min(30vh, 290px); } #p-mala.full .hint { margin: 0; font-size: 15px; line-height: 22px; color: rgba(255, 255, 255, .86); text-wrap: balance; }
+#p-mala.full .m-car { max-width: 500px; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 8px; margin-top: 0; } #p-mala.full .m-car > button { width: 44px; height: 44px; } #p-mala.full .m-win .chip { min-height: 50px; font-size: 14px; } #p-mala.full .m-reset { min-height: 44px; font-size: 15px; }
+/* offerings */
+#p-offer.full .sheet { justify-content: flex-start; } #p-offer.full h2 { margin-top: min(9vh, 70px); } #p-offer.full .tiles { gap: 12px; margin-top: 30px; }
+#p-offer.full .tile { min-height: 98px; padding: 18px 20px; gap: 18px; border-radius: 26px; border: 0; background: rgba(255, 255, 255, .1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); } #p-offer.full .tile:active { transform: scale(.98); background: rgba(255, 255, 255, .18); }
+#p-offer.full .tile .ico { width: 56px; height: 56px; border-radius: 50%; background: rgba(255, 255, 255, .14); } #p-offer.full .tile .ico svg { width: 28px; height: 28px; }
+#p-offer.full .tile b { font-family: "Anthropic Serif", "Tiempos Text", "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: 21px; line-height: 26px; font-weight: 500; color: #fff; } #p-offer.full .tile span span { margin-top: 4px; font-size: 15px; line-height: 20px; color: rgba(255, 255, 255, .76); }
+#p-sit.full, #p-mala.full, #p-offer.full { align-items: stretch; } .panel.full .sheet { box-sizing: border-box; }
 </style>
 
 <div id="app" class="outside">
@@ -824,9 +856,10 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
     </div>
   </div>
 
-  <div class="panel" id="p-mala" hidden>
+  <div class="panel full" id="p-mala" hidden>
     <div class="sheet glass deep">
       <button class="x" data-close aria-label="Close">×</button>
+      <p class="fs-k">Mala</p>
       <div class="mantra" id="mantra"><p class="m-bo" id="m-bo" lang="bo"></p><p class="m-en" id="m-en"></p><p class="m-of" id="m-of"></p><button type="button" class="m-sw" id="m-sw" hidden></button></div>
       <div class="enso"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="track" cx="60" cy="60" r="52"/><g class="q"><path d="M60 5v6M115 60h-6M60 115v-6M5 60h6"/></g><circle class="ink" id="enso-ink" cx="60" cy="60" r="52"/></svg><div class="n"><span id="count">0</span><small>of 108</small></div></div>
       <p id="rounds"></p>
@@ -846,9 +879,10 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
     </div>
   </div>
 
-  <div class="panel" id="p-sit" hidden>
+  <div class="panel full" id="p-sit" hidden>
     <div class="sheet glass deep">
       <button class="x" data-close aria-label="Close">×</button>
+      <p class="fs-k">Sitting</p>
       <div class="sitset">
         <svg class="sit-mark" viewBox="-40 -34 80 52" aria-hidden="true"><path d="M0 14C-9 2-9-14 0-28 9-14 9 2 0 14Z" fill="#f9c6d4"/><path d="M0 14C-16 8-24-6-22-20-10-14-2 0 0 14Z" fill="#f4a9bf" opacity=".85"/><path d="M0 14C16 8 24-6 22-20 10-14 2 0 0 14Z" fill="#f4a9bf" opacity=".85"/><path d="M0 14C-22 14-34 4-36-8-22-8-8 2 0 14Z" fill="#ee93ae" opacity=".7"/><path d="M0 14C22 14 34 4 36-8 22-8 8 2 0 14Z" fill="#ee93ae" opacity=".7"/></svg>
         <h2>How long will you sit?</h2>
@@ -884,10 +918,12 @@ body:has(#p-mala:not([hidden])) #gl { filter: brightness(.36) saturate(.85); }
     </div>
   </div>
 
-  <div class="panel" id="p-offer" hidden>
+  <div class="panel full" id="p-offer" hidden>
     <div class="sheet glass deep">
       <button class="x" data-close aria-label="Close">×</button>
+      <p class="fs-k">Offering</p>
       <h2 data-t="offerAsk"></h2>
+      <p class="fs-sub">Choose what you would like to offer at the shrine.</p>
       <div class="tiles">
         <button class="tile" id="o-lamp"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 2.800c1.7 2.1 2.5 3.5 2.5 4.800a2.5 2.5 0 0 1-5 0c0-1.3.8-2.7 2.5-4.800zM6.5 12.800h11l-1.4 3.100a2.8 2.8 0 0 1-2.5 1.600h-3.200a2.8 2.8 0 0 1-2.5-1.600zM12 17.500v2.500M9 21.200h6"/></svg></span><span><b data-t="lamp"></b><span data-t="lampSub"></span></span></button>
         <button class="tile" id="o-incense"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 21v-9.500M9 21l1-8M15 21l-1-8M7 21h10M12 8.500c-1.6-1.2 1.6-2.5 0-4.2"/></svg></span><span><b data-t="incense"></b><span data-t="incenseSub"></span></span></button>
@@ -2115,24 +2151,28 @@ var rigShod = null, rigBare = null, catBody = null, catT = 0, catRig = null, cat
   var HINTS = [
     { k: "look", text: "Drag to look around", done: function (st) { return st.dragged; } },
     { k: "walk", text: "Tap the floor to walk there", done: function (st) { return st.walked; } },
-    { k: "act", text: "Bow, count a mala, sit or offer", done: function (st) { return st.acted; } },
-    { k: "menu", text: "Programmes and visiting", done: function (st) { return st.menued; } }
+    { k: "spot", el: "clock-btn", text: "Time of day, light and sound", done: function (st) { return st.tapped === "clock-btn"; } },
+    { k: "spot", el: "menu-btn", text: "Programmes, registering and visiting", done: function (st) { return st.tapped === "menu-btn"; } },
+    { k: "spot", el: "dock", text: "Your practices: bow, mala, bell, sit, offer", done: function (st) { return st.tapped === "dock"; } }
   ], hintSt = null, hintT = 0;
   function tour() {
-    if (!insideHall) return; var el = $("hint"), st = hintSt = { i: -1, dragged: false, walked: false, acted: false, menued: false, since: 0 };
-    var show = function (i) { st.i = i; st.since = Date.now(); if (i >= HINTS.length) { el.hidden = true; hintSt = null; clearInterval(hintT); store.set("bp-tour", "1"); return; } el.className = "hint h-" + HINTS[i].k; $("hint-t").textContent = HINTS[i].text; el.hidden = false; void el.offsetWidth; el.classList.add("in"); };
+    if (!insideHall) return; var el = $("hint"), st = hintSt = { i: -1, dragged: false, walked: false, tapped: "", since: 0 };
+    var show = function (i) { st.i = i; st.since = Date.now(); document.querySelectorAll(".spot").forEach(function (x) { x.classList.remove("spot"); }); el.style.top = el.style.left = el.style.width = "";
+      if (i >= HINTS.length) { el.hidden = true; hintSt = null; clearInterval(hintT); store.set("bp-tour", "1"); return; } var h = HINTS[i]; el.className = "hint h-" + h.k; $("hint-t").textContent = h.text; el.hidden = false;
+      if (h.el && $(h.el)) { var t = $(h.el), r = t.getBoundingClientRect(), up = r.top > window.innerHeight / 2, w = Math.min(280, window.innerWidth - 24); t.classList.add("spot"); el.classList.add(up ? "above" : "below"); el.style.width = w + "px"; el.style.left = Math.max(12, Math.min(window.innerWidth - w - 12, r.left + r.width / 2 - w / 2)) + "px"; el.style.top = (up ? r.top - 66 : r.bottom + 14) + "px"; el.style.setProperty("--ax", (r.left + r.width / 2 - parseFloat(el.style.left)) + "px"); }
+      void el.offsetWidth; el.classList.add("in"); };
     var next = function () { var i = st.i; $("hint").classList.remove("in"); st.i = i + .5; setTimeout(function () { if (hintSt === st && st.i === i + .5) show(i + 1); }, 650); };
     clearInterval(hintT); hintT = setInterval(function () {
       if (hintSt !== st) return; var busy = $("app").classList.contains("sitting") || $("app").classList.contains("veiled"); el.style.visibility = busy ? "hidden" : "";
       if (st.i % 1 || busy) { if (busy) st.since = Date.now(); return; }
       if (world && world.state().moving) st.walked = true;
-      var h = HINTS[st.i], waited = Date.now() - st.since; if ((h.done(st) && waited > 900) || waited > (st.i < 2 ? 14000 : 7000)) next();
+      var h = HINTS[st.i], waited = Date.now() - st.since; if ((h.done(st) && waited > 900) || waited > (st.i < 2 ? 14000 : 5200)) next();
     }, 250);
     show(0);
   }
   (function () { var d0 = null, cv = $("gl");
     cv.addEventListener("pointerdown", function (e) { d0 = [e.clientX, e.clientY]; }); cv.addEventListener("pointermove", function (e) { if (d0 && hintSt && Math.abs(e.clientX - d0[0]) + Math.abs(e.clientY - d0[1]) > 24) hintSt.dragged = true; }); cv.addEventListener("pointerup", function () { d0 = null; });
-    $("dock").addEventListener("click", function () { if (hintSt) hintSt.acted = true; }); $("menu-btn").addEventListener("click", function () { if (hintSt) hintSt.menued = true; });
+    ["dock", "menu-btn", "clock-btn"].forEach(function (id) { $(id).addEventListener("click", function () { if (hintSt) hintSt.tapped = id; }); });
   })();
   var inside = function () { insideHall = true; ambience(); play("door_close", .35); $("app").classList.remove("outside"); $("leave-pill").hidden = false; say(t("hint")); setTimeout(function () { ringBell(.4); }, 700); if (store.get("bp-tour", "") !== "1") setTimeout(tour, 2600); setTimeout(function () { meow(.7); }, 2200); };
     if (world) world.enter(inside, function () { play("door_open", .4); }, function () { play("cloth", .5); }); else { play("door_open", .4); inside(); }
