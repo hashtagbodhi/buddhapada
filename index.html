@@ -1265,10 +1265,10 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
     /* ---------- floor and ceiling ---------- */
     var floorTex = T("tex/floor.jpg", 2 * W / 2.4, (2 * D + 1.5) / 2.4);
     plane(2 * W, 2 * D + 3.4, M(0xcbb597, { map: floorTex, roughness: .6 }), 0, 0, -1.7, -Math.PI / 2, 0);
-    /* ---------- ceiling, built the way a monastery hall is: main beams on the pillars, their sides carved, a row of painted joist-ends under the ceiling, and lighter ribs dividing every bay into small gold-lined coffers ---------- */
+    /* ---------- ceiling, as in the hall: plain plaster beams; each bay steps up through a carved frieze to a plain panel ---------- */
     plane(2 * W, 2 * D, plaster, 0, H + .02, 0, Math.PI / 2, 0, true);                    // unseen lid, keeps the sun out
     plane(2 * 5.9, 3.4, M(0xf4eee2, { emissive: col(0xfff2d8), emissiveIntensity: .5 }), 0, H, -D - 1.7, Math.PI / 2, 0, true);
-    var BWID = .5, EDGE = .26, INSET = 0, NXC = 3, NZC = 4, RIB = .13, RD = .2, ribs = [], dents = [], cU = [], yB = H - BEAM, edgesX = [-W, -4.8, -1.6, 1.6, 4.8, W], edgesZ = [-D, -6, -2, 2, 6, D];
+    var BWID = .5, EDGE = .26, INSET = .52, yB = H - BEAM, edgesX = [-W, -4.8, -1.6, 1.6, 4.8, W], edgesZ = [-D, -6, -2, 2, 6, D];
     var beamMat = M(0xefe5d0, { roughness: .95, emissive: col(0xefe5d0), emissiveIntensity: .22 });
     [-4.8, -1.6, 1.6, 4.8].forEach(function (x) { box(BWID, BEAM, 2 * D, beamMat, x, H - BEAM / 2, 0); });
     [-4.2, -1.4, 1.4, 4.2].forEach(function (z) { box(2 * W, BEAM - .01, BWID, beamMat, 0, H - BEAM / 2, z); });
@@ -1283,28 +1283,14 @@ body:has(.panel.full:not([hidden])) #gl { filter: brightness(.42) saturate(.8); 
       var xi0 = x0 + INSET, xi1 = x1 - INSET, zi0 = z0 + INSET, zi1 = z1 - INSET;
       band([x1, yB, z0], [x0, yB, z0], [xi0, H, zi0], [xi1, H, zi0], x1 - x0); band([x0, yB, z1], [x1, yB, z1], [xi1, H, zi1], [xi0, H, zi1], x1 - x0);
       band([x0, yB, z0], [x0, yB, z1], [xi0, H, zi1], [xi0, H, zi0], z1 - z0); band([x1, yB, z1], [x1, yB, z0], [xi1, H, zi0], [xi1, H, zi1], z1 - z0);
-      var cw = (x1 - x0) / NXC, ch = (z1 - z0) / NZC, ci, cj, nd, dk;
-      for (ci = 0; ci < NXC; ci++) for (cj = 0; cj < NZC; cj++) quad(pP, cU, [x0 + ci * cw, H, z0 + cj * ch], [x0 + (ci + 1) * cw, H, z0 + cj * ch], [x0 + (ci + 1) * cw, H, z0 + (cj + 1) * ch], [x0 + ci * cw, H, z0 + (cj + 1) * ch], [0, 0], [1, 0], [1, 1], [0, 1]);
-      for (ci = 1; ci < NXC; ci++) ribs.push([x0 + ci * cw, (z0 + z1) / 2, RIB, z1 - z0]);
-      for (cj = 1; cj < NZC; cj++) ribs.push([(x0 + x1) / 2, z0 + cj * ch, x1 - x0, RIB]);
-      nd = Math.round((x1 - x0) / .25); for (dk = 0; dk < nd; dk++) { var ddx = x0 + (dk + .5) * (x1 - x0) / nd; dents.push([ddx, z0 + .04, 0, dk]); dents.push([ddx, z1 - .04, 0, dk]); }
-      nd = Math.round((z1 - z0) / .25); for (dk = 0; dk < nd; dk++) { var ddz = z0 + (dk + .5) * (z1 - z0) / nd; dents.push([x0 + .04, ddz, 1, dk]); dents.push([x1 - .04, ddz, 1, dk]); }
-      if ((bi + bj) % 2 === 0) { var lx0 = x0 + cw, lz0 = z0 + ch * 2; box(.2, .1, .2, woodDark, lx0, H - RD - .05, lz0, true); box(.15, .01, .15, lampMat, lx0, H - RD - .105, lz0, true); }
+      quad(pP, null, [xi0, H, zi0], [xi1, H, zi0], [xi1, H, zi1], [xi0, H, zi1]);
+      if ((bi + bj) % 2 === 0) { box(.2, .12, .2, woodDark, xi0 + .28, H - .06, zi1 - .28, true); box(.15, .01, .15, lampMat, xi0 + .28, H - .125, zi1 - .28, true); }
     }
     var fG = new THREE.BufferGeometry(); fG.setAttribute("position", new THREE.Float32BufferAttribute(fP, 3)); fG.setAttribute("uv", new THREE.Float32BufferAttribute(fU, 2)); fG.computeVertexNormals();
     var fTex = T("tex/frieze2.jpg", 1, 1);
     scene.add(new THREE.Mesh(fG, new THREE.MeshStandardMaterial({ map: fTex, roughness: 1, side: THREE.DoubleSide, emissive: new THREE.Color(0xffffff), emissiveMap: fTex, emissiveIntensity: .3 })));
-    var pG = new THREE.BufferGeometry(); pG.setAttribute("position", new THREE.Float32BufferAttribute(pP, 3)); pG.setAttribute("uv", new THREE.Float32BufferAttribute(cU, 2)); pG.computeVertexNormals();
-    var cofTex = canvasTex(256, function (g, s) { g.fillStyle = "#ece3cf"; g.fillRect(0, 0, s, s); g.strokeStyle = "#c9a04a"; g.lineWidth = 3; g.strokeRect(26, 26, s - 52, s - 52); g.lineWidth = 1.2; g.strokeRect(36, 36, s - 72, s - 72); });
-    scene.add(new THREE.Mesh(pG, new THREE.MeshStandardMaterial({ map: cofTex, roughness: 1, side: THREE.DoubleSide, emissive: new THREE.Color(0xffffff), emissiveMap: cofTex, emissiveIntensity: .3 })));
-    function instanced(list, mat, fn) { if (!list.length) return; var im = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), mat, list.length), o = new THREE.Object3D(); list.forEach(function (q, i) { fn(o, q); o.updateMatrix(); im.setMatrixAt(i, o.matrix); }); im.instanceMatrix.needsUpdate = true; scene.add(im); }
-    instanced(ribs, beamMat, function (o, q) { o.position.set(q[0], H - RD / 2, q[1]); o.scale.set(q[2], RD, q[3]); });
-    function dent(o, q) { o.position.set(q[0], H - RD - .05, q[1]); o.scale.set(q[2] ? .08 : .12, .1, q[2] ? .12 : .08); }
-    instanced(dents.filter(function (q) { return q[3] % 2 === 0; }), M(0xd9a42c, { roughness: .4, metalness: .3, emissive: col(0x6a4a10), emissiveIntensity: .5 }), dent);
-    instanced(dents.filter(function (q) { return q[3] % 2 === 1; }), beamMat, dent);
-    var edgeGold = M(0xd9a42c, { roughness: .4, metalness: .3, emissive: col(0x6a4a10), emissiveIntensity: .45 });
-    [-4.8, -1.6, 1.6, 4.8].forEach(function (x) { [-1, 1].forEach(function (sd) { box(.035, .035, 2 * D, edgeGold, x + sd * BWID / 2, yB + .005, 0, true); }); });
-    [-4.2, -1.4, 1.4, 4.2].forEach(function (z) { [-1, 1].forEach(function (sd) { box(2 * W, .035, .035, edgeGold, 0, yB + .005, z + sd * BWID / 2, true); }); });
+    var pG = new THREE.BufferGeometry(); pG.setAttribute("position", new THREE.Float32BufferAttribute(pP, 3)); pG.computeVertexNormals();
+    scene.add(new THREE.Mesh(pG, M(0xe6dcc6, { roughness: 1, side: THREE.DoubleSide, emissive: col(0xe6dcc6), emissiveIntensity: .3 })));
 
     /* ---------- walls ---------- */
     var AX = 5.9, AZ = -D - 3.4, WZ0 = 2.5, WZ1 = 7.5, WH = 5;                    // alcove, window opening
